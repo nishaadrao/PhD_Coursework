@@ -3,7 +3,12 @@
 %  Anirudh Yadav
 %  18 March 2018
 %
-%  NOTES:...
+%  NOTES: uses a shorter sample starting in 1976 to test a different
+%  measure of labour hours (based on Shimer's preferred measure from CPS).
+%  AFTER TESTING: I realized this measure of hours is NSA, so no good. Use
+%  full-sample file!
+%
+%
 %
 %----------------------------------------------------------------
 % 0. Housekeeping (close all graphic windows)
@@ -18,9 +23,9 @@ close all;
 %----------------------------------------------------------------
 
 % Import raw data
-names = {"gdp", "c", "i", "hours_1","w", "tfp"};
+names = {"gdp", "c", "i", "hours_2", "tfp"};
 for ind = 1:length(names)
-  data.(names{ind}) = xlsread(strcat('/Users/Anirudh/Desktop/PhD/ECON607/HW2/Data/', names{ind}, '.xlsx'));
+  data.(names{ind}) = xlsread(strcat('/Users/Anirudh/Desktop/PhD/ECON607/HW2/Data/short_sample/', names{ind}, '.xlsx'));
 end
 
 % Log the data
@@ -29,7 +34,7 @@ for ind = 1:length(names)
 end
 
 % Create a time variable
-t = datetime(1948,1,1):calmonths(3):datetime(2017,10,1);
+t = datetime(1976,7,1):calmonths(3):datetime(2017,10,1);
 
 %----------------------------------------------------------------
 % 2. Compute trend data and detrended data using HPFILTER
