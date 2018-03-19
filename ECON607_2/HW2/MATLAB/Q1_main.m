@@ -3,7 +3,11 @@
 %  Anirudh Yadav
 %  18 March 2018
 %
-%  NOTES:...
+%  NOTES: The hours measure is constructed from BLS Productivity and Costs survey.
+%  I take the raw index measure (retrieved from FRED) and deflate by the
+%  non-institutional civilian population. I tried to use Shimer's preferred
+%  measure (from CPS data), but I couldn't find a seasonally adjusted
+%  version.
 %
 %----------------------------------------------------------------
 % 0. Housekeeping (close all graphic windows)
