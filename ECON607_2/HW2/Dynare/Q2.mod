@@ -66,7 +66,7 @@ end;
 
 steady;
 
-stoch_simul(order = 1,irf=20);
+stoch_simul(order = 1,irf=40);
 
 
 

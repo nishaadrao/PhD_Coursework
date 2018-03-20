@@ -35,11 +35,28 @@ close all;
 % 2. Run OLS with linear time trend
 %----------------------------------------------------------------
 
+% Create a vector of ones
+intercept = ones(280,1);
+
 % Create data matrix
-X = [lagmatrix(logtfp,1), t];
+X_1 = [intercept, t];
 
-% Run OLS, store residuals
-[beta,Sigma,e] = mvregress(X,logtfp);
+% Run OLS, store estimates
+[rho_a,Sigma_A,e] = mvregress(X_1,logtfp);
 
+%----------------------------------------------------------------
+% 3. Run AR(1) on residuals
+%----------------------------------------------------------------
 
+% Create data matrix
+X_2 = [lagmatrix(e,1), intercept];
 
+% Run OLS, store estimates
+[rho_e,Sigma_e,u] = mvregress(X_2,e);
+
+%----------------------------------------------------------------
+% 4. Compute std dev of residuals from AR(1) regression
+%----------------------------------------------------------------
+ 
+% Exclude first entry which is NaN
+sigma=std(u(2:end));

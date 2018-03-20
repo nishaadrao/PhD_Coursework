@@ -23,8 +23,8 @@ alpha = 1/3;
 beta = 0.99;
 delta = 0.025;
 v = 0.72;
-rho = 0.95; % to update!
-sigma = 1; % to update!
+rho = 0.97; % check with others
+sigma = 0.0085; % check with others!
 
 %----------------------------------------------------------------
 % 2. Compute chi to target N*=1/3
