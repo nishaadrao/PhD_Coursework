@@ -35,7 +35,10 @@ close all;
 % 2. Run OLS with linear time trend
 %----------------------------------------------------------------
 
+% Create data matrix
 X = [lagmatrix(logtfp,1), t];
+
+% Run OLS, store residuals
 [beta,Sigma,e] = mvregress(X,logtfp);
 
 
