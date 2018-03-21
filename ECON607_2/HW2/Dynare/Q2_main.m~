@@ -22,7 +22,7 @@ close all;
 alpha = 1/3;
 beta = 0.99;
 delta = 0.025;
-v = 500000000;
+
 %v = 0.72;
 rho = 0.97; % check with others
 sigma = 0.0085; % check with others!
@@ -42,7 +42,7 @@ chi = (((1-alpha)*knratio^alpha)/(knratio^alpha - delta*knratio))/(nbar^(1+1/v))
 % 3. Save parameter values for Dynare
 %----------------------------------------------------------------
 
-save param_nc alpha beta chi rho sigma v
+save param_nc alpha beta chi rho sigma
 
 %----------------------------------------------------------------
 % 4. Run Dynare

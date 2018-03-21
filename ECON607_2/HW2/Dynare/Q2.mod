@@ -15,10 +15,10 @@ close all;
 % 1. Defining variables
 %----------------------------------------------------------------
 
-var c k i n a y;
+var y c i n w a k;
 varexo e;
 
-parameters alpha beta chi delta rho sigma;
+parameters alpha beta chi delta rho sigma v;
 
 %----------------------------------------------------------------
 % 2. Calibration
@@ -31,6 +31,7 @@ set_param_value('chi',chi);
 set_param_value('delta',delta);
 set_param_value('rho',rho);
 set_param_value('sigma',sigma);
+set_param_value('v',v);
 
 %----------------------------------------------------------------
 % 3. Model
@@ -38,12 +39,12 @@ set_param_value('sigma',sigma);
 
 model;
 exp(c)^(-1) = beta*exp(c(+1))^(-1)*(alpha*exp(a(+1))*exp(k)^(alpha-1)*exp(n(+1))^(1-alpha)+1-delta);
-0 = exp(c)^(-1)*(1-alpha)*exp(a)*exp(k(-1))^(alpha)*exp(n)^(-alpha)-chi*exp(n);
+0 = exp(c)^(-1)*(1-alpha)*exp(a)*exp(k(-1))^(alpha)*exp(n)^(-alpha)-chi*exp(n)^(1/v);
 exp(k) = (1-delta)*exp(k(-1)) + exp(i);
 exp(c)+exp(i) = exp(a)*exp(k(-1))^(alpha)*exp(n)^(1-alpha);
 a = rho*a(-1) + e;
 exp(y) = exp(a)*exp(k(-1))^(alpha)*exp(n)^(1-alpha);
-%exp(w) = (1-alpha)*exp(a)*exp(k(-1))^(alpha)*exp(n)^(-alpha);
+exp(w) = (1-alpha)*exp(a)*exp(k(-1))^(alpha)*exp(n)^(-alpha);
 %exp(r) = alpha*exp(a)*exp(k(-1))^(alpha-1)*exp(n)^(1-alpha);
 end;
 
@@ -66,7 +67,7 @@ end;
 
 steady;
 
-stoch_simul(order = 1,irf=40);
+stoch_simul(order = 1,periods=1000,hp_filter=1600);
 
 
 
