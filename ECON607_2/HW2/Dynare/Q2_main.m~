@@ -66,4 +66,4 @@ std(ytilde)
 ctilde = c - hpfilter(c,1600);
 std(ctilde)
 
-% They're pretty close (std ytilde is a bit higher than Dynare's output).
+% They're pretty close :)
