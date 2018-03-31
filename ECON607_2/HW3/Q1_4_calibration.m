@@ -33,14 +33,10 @@ w = phi*(1+theta) + (1-phi)/(1-tau)*gamma*c;
 
 eqn1 = (mu + 1 - chi -mu*w)*beta == 1;
 
-eqn2 = (theta*(1-beta*(1-chi)))/(beta*f) - 1 + phi*(1+theta) + ((1-phi)*gamma*(f-chi))/((1-tau)*(f+chi))== 0;
+eqn2 = (theta*(1-beta*(1-chi)))/(beta*f) - 1 + phi*(1+theta) + ((1-phi)*gamma*(f-chi*theta))/((1-tau)*(f+chi))== 0;
 
 soltheta1 = solve(eqn1,theta);
 soltheta2 = solve(eqn2,theta);
-
-
-
-
 
 
 % Get solution for theta
