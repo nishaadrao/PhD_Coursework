@@ -128,10 +128,10 @@ cof     = zeros(neq,ncoef);         % Coef matrix. Each row is an equation
 cof(1,Czero)       = 1/sigma;
 cof(1,Clead)       = -1/sigma;
 cof(1,eps_C_zero)  = -1;
-%cof(1,eps_C_lead)  = 1;
+cof(1,eps_C_lead)  = 1;
 cof(1,Zlead)       = (1/beta +delta_bar-1)*beta;
 cof(1,Kzero)       = (1/beta +delta_bar-1)*beta*(alpha-1);
-%cof(1,deltalead)   = -beta;
+cof(1,deltalead)   = -beta;
 
 
 % Law of motion of kapital - should I write it as Kt=...? (yes, if in lead,
@@ -331,7 +331,8 @@ legend('C', 'K', 'Z');
 % realize that all shocks are already in the loglin form!
 T=300; %
 %T=3000000;
-deltat=normrnd(0,sig_D,[1,T]);
+%deltat=normrnd(0,sig_D,[1,T]);
+deltat=betarnd(0.1,3.78,[1,T]);
 epsZt=normrnd(0,sig_Z,[1,T]);
 epsCt=normrnd(0,sig_Pr,[1,T]);
 shock = zeros(neq,T);
@@ -367,7 +368,7 @@ BEB=BVAR*Epsilon*BVAR';
 % the BEB matrix (as there is no intertemporal aspect to delta)
 dc=BEB(1,4); 
 dd=BEB(4,4);
-beta0=dc/dd 
+beta0=dc/dd; 
 
 % The estimate is pretty different.
 % Which I think makes sense, as C is not iid, in fact the persistance is
@@ -377,6 +378,6 @@ beta0=dc/dd
 % If I increase T to be very high, the estimated coefficient is converging
 % to beta0.
 
-
+plot(1:201,DATA(:,1))
 
 

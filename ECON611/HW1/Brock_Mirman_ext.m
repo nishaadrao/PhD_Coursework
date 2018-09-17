@@ -6,7 +6,7 @@
 
 clc; clear all; close all;
 
-nimpdat 	= 50;	% No. of quarters in impulse response. 
+nimpdat 	= 200;	% No. of quarters in impulse response. 
 
 % ======================================================================= %
 % 			     Parameters 
@@ -129,8 +129,8 @@ cof(1,eps_C_zero)  = -s;
 cof(1,Clead)       = -1;
 cof(1,eps_C_lead)  = s;
 cof(1,Zlead)       = beta*(r+deltabar);
-cof(1,Klead)       = -beta*(r+deltabar)*(1-alpha);
-cof(1,deltalead)   = beta*deltabar;
+cof(1,Kzero)       = -beta*(r+deltabar)*(1-alpha);
+cof(1,deltalead)   = beta;
 
 % Resource constraint
 % NOTE: here's the key trick: we need to write the LOMK with K_{t+1} as K_t
@@ -139,7 +139,7 @@ cof(1,deltalead)   = beta*deltabar;
 % 
 
 cof(2,Kzero)        = -1;
-cof(2,deltazero)    = -deltabar;
+cof(2,deltazero)    = -1;
 cof(2,Klag)        = (1+r);
 cof(2,Zzero)        = K^(alpha-1);
 cof(2,Czero)        = -C/K;
@@ -256,6 +256,8 @@ BVAR = b;
 % ======================================================================= %
 % ======================================================================= %
 
+%{
+
 % Productivity shock
 
 shock = zeros(neq,1);                       % Shock vector
@@ -339,3 +341,60 @@ plot(time, DATA(:,Kpos),'-g');
 hold off; 
 %legend('d','Z','C','K'); 
 legend('Z','C','K'); 
+
+%}
+
+% ======================================================================= %
+% ======================================================================= %
+%                           SIMULATIONS
+% ======================================================================= %
+% ======================================================================= %
+
+% SIMULATE SHOCK PROCESSES 
+
+% Note I calculated the beta distribution parameters for the depreciation
+% process by following: 
+% https://stats.stackexchange.com/questions/12232/calculating-the-parameters-of-a-beta-distribution-using-the-mean-and-variance
+
+alpha_d = ((1 - deltabar)/sig_D - 1/deltabar) * deltabar^2;
+beta_d  = alpha_d*(1/deltabar - 1);
+
+shock_vec        = zeros(nimpdat,neq);  
+
+for t = 1:nimpdat;                          % loop through periods 
+ 	
+     %y = betarnd(alpha_d,beta_d);           % delta
+     y = normrnd(0.025,sig_D);
+     shock_vec(t,4)=y;
+    
+      
+      
+     y = normrnd(1,sig_C);                  % eps_C
+ 	  shock_vec(t,5)=y;
+      
+     y = normrnd(0,sig_Z);                  % eps_Z
+      shock_vec(t,6)=y;
+      
+end;
+
+% Quick plot of shocks
+% time=1:nimpdat;
+% figure(1)
+% plot(time,shock_vec(:,3),time,shock_vec(:,2),time,shock_vec(:,1))
+
+
+% SIMULATE Y VECTOR
+
+
+y           = zeros(neq,1);                             % start at steady st 
+DATA        = zeros(nimpdat,neq); 
+%DATA(1,:) 	= y';                                    % store initial value 
+
+for t = 1:nimpdat;                                   % loop through periods 
+ 	  y = AVAR*y + BVAR*shock_vec(t,:)';   
+ 	  DATA(t,:)=y';
+end;
+
+figure(2)
+time=1:nimpdat;
+plot(time,DATA(:,2))
