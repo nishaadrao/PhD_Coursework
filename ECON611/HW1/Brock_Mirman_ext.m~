@@ -6,7 +6,7 @@
 
 clc; clear all; close all;
 
-nimpdat 	= 50;	% No. of quarters in impulse response. 
+nimpdat 	= 20;	% No. of quarters in impulse response. 
 
 % ======================================================================= %
 % 			     Parameters 
@@ -24,14 +24,14 @@ s           = .2;       % intertemporal substitution
 
 alpha       = .3;       % capital share in production function
 
-rho_Z       = .95;       % Persistence for income
+rho_Z       = .5;       % Persistence for income
 
 
 % Shock Variances
 
 sig_Z       = .01; 
 sig_C       = .01; 
-sig_D       = .005;
+sig_D       = .01;
 
 % ======================================================================= %
 % Steady State
@@ -133,10 +133,8 @@ cof(1,Klead)       = -beta*(r+deltabar)*(1-alpha);
 cof(1,deltalead)   = beta*deltabar;
 
 % Resource constraint
-% NOTE: here's the key trick: we need to write the LOMK with K_{t+1} as K_t
-% and K_t as K_{t-1}. This is similar to what we do in Dynare! 
+% NOTE: here's the key trick: we need to write this with K_{t+1}=
 % Hat tip: TR!
-% 
 
 cof(2,Kzero)        = -1;
 cof(2,deltazero)    = -deltabar;
@@ -303,14 +301,13 @@ time = 1:nimpdat;
 
 
 figure(2) 
-%plot(time, DATA(:,eps_C_pos),'-r');
+plot(time, DATA(:,eps_C_pos),'-r');
 hold on; 
 plot(time, DATA(:,Zpos), 'b');
 plot(time, DATA(:,Cpos),'-k');
 plot(time, DATA(:,Kpos),'-g');
 hold off; 
-%legend('e-C','Z','C','K'); 
-legend('Z','C','K');
+legend('e-C','Z','C','K'); 
 
 % Depreciation shock
 
@@ -331,11 +328,10 @@ time = 1:nimpdat;
 
 
 figure(3) 
-%plot(time, DATA(:,deltapos),'-r');
+plot(time, DATA(:,deltapos),'-r');
 hold on; 
 plot(time, DATA(:,Zpos), 'b');
 plot(time, DATA(:,Cpos),'-k');
 plot(time, DATA(:,Kpos),'-g');
 hold off; 
-%legend('d','Z','C','K'); 
-legend('Z','C','K'); 
+legend('d','Z','C','K'); 
