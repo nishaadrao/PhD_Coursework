@@ -124,12 +124,12 @@ cof     = zeros(neq,ncoef);         % Coef matrix. Each row is an equation
 
 % Euler Equation
 
-cof(1,Czero)       = 1;
-cof(1,eps_C_zero)  = -s;
-cof(1,Clead)       = -1;
-cof(1,eps_C_lead)  = s;
-cof(1,Zlead)       = beta*(r+deltabar);
-cof(1,Kzero)       = -beta*(r+deltabar)*(1-alpha);
+cof(1,Czero)        = 1/s;
+cof(1,eps_C_zero)   = -1;
+cof(1,Clead)        = -1/s;
+cof(1,eps_C_lead)   = 1;
+cof(1,Zlead)        = beta*(r+deltabar);
+cof(1,Kzero)        = -beta*(1-alpha)*(r+deltabar);
 cof(1,deltalead)   = beta;
 
 % Resource constraint
@@ -250,7 +250,7 @@ b(1:length(s0(:,1)),1:length(s0(1,:))) = inv(s0);  % Store coefs
 AVAR = amat; 
 BVAR = b; 
 
-% ======================================================================= %
+%% ====================================================================== %
 % ======================================================================= %
 %                           IMPULSE RESPONSES
 % ======================================================================= %
@@ -344,57 +344,75 @@ legend('Z','C','K');
 
 %}
 
-% ======================================================================= %
+%% ====================================================================== %
 % ======================================================================= %
 %                           SIMULATIONS
 % ======================================================================= %
 % ======================================================================= %
 
-% SIMULATE SHOCK PROCESSES 
+%% SIMULATE SHOCK PROCESSES 
 
-% Note I calculated the beta distribution parameters for the depreciation
-% process by following: 
-% https://stats.stackexchange.com/questions/12232/calculating-the-parameters-of-a-beta-distribution-using-the-mean-and-variance
-
-alpha_d = ((1 - deltabar)/sig_D - 1/deltabar) * deltabar^2;
-beta_d  = alpha_d*(1/deltabar - 1);
-
-shock_vec        = zeros(nimpdat,neq);  
-
-for t = 1:nimpdat;                          % loop through periods 
- 	
-     %y = betarnd(alpha_d,beta_d);           % delta
-     y = normrnd(0.025,sig_D);
-     shock_vec(t,4)=y;
-    
-      
-      
-     y = normrnd(1,sig_C);                  % eps_C
- 	  shock_vec(t,5)=y;
-      
-     y = normrnd(0,sig_Z);                  % eps_Z
-      shock_vec(t,6)=y;
-      
-end;
+% These shocks produce `nice' plots of simulated data
+deltashock=normrnd(0,sig_D,[1,nimpdat]);
+cshock=normrnd(0,sig_C,[1,nimpdat]);
+zshock=normrnd(0,sig_Z,[1,nimpdat]);
+shock = zeros(neq,nimpdat);
+shock([4:6],:)=[deltashock;cshock;zshock];
 
 % Quick plot of shocks
-% time=1:nimpdat;
-% figure(1)
-% plot(time,shock_vec(:,3),time,shock_vec(:,2),time,shock_vec(:,1))
-
-
-% SIMULATE Y VECTOR
-
-
-y           = zeros(neq,1);                             % start at steady st 
-DATA        = zeros(nimpdat,neq); 
-%DATA(1,:) 	= y';                                    % store initial value 
-
-for t = 1:nimpdat;                                   % loop through periods 
- 	  y = AVAR*y + BVAR*shock_vec(t,:)';   
- 	  DATA(t,:)=y';
-end;
-
-figure(2)
+%{
 time=1:nimpdat;
-plot(time,DATA(:,2))
+plot(time,shock(4,:)',time,shock(5,:)',time,shock(6,:)')
+%}
+
+% SIMULATE DATA
+
+y           = zeros(6,1);             % initial value (ie starting at ss)
+DATA        = zeros(nimpdat,neq);   
+
+for t = 1:nimpdat                          % loop through periods 
+ 	  y = AVAR*y+BVAR*shock(:,t);
+ 	  DATA(t,:)=y';
+end
+
+% Quick plot of data
+%{
+time=1:nimpdat;
+plot(time,DATA(:,1),time,DATA(:,2),time,DATA(:,3),time,zeros(1,nimpdat),'-k')
+legend('C','K','Z');
+%}
+
+%% SIMPLE REGRESSION ANALYSIS
+
+% Get OLS coefficient for the regression of C_t on delta_t
+
+X = DATA(:,4);
+Y = DATA(:,1);
+
+betahat = (X'*Y)/(X'*X);
+
+%% ====================================================================== %
+% ======================================================================= %
+%                       ANALYTICAL VARIANCE OF Y
+% ======================================================================= %
+% ======================================================================= %
+ 
+
+% Construct variance matrix for the shocks
+omegaE          = zeros(neq,neq);
+omegaE(4,4)     = sig_D;
+omegaE(5,5)     = sig_C;
+omegaE(6,6)     = sig_Z;
+
+% Compute quadratic form with BVAR and vectorize using reshape
+BOB             = BVAR*omegaE*BVAR';
+BOBvec          = reshape(BOB,[neq*neq,1]);
+
+% Compute analytical var-cov matrix of Y using CH's trick method
+Vvec            = inv(eye(neq*neq)- kron(AVAR,AVAR))*BOBvec;
+V               = reshape(Vvec,[neq,neq]);
+
+% Compute asymptotic beta
+beta            = V(deltapos,Cpos)/V(deltapos,deltapos);
+
+

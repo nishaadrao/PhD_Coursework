@@ -252,6 +252,7 @@ BVAR = b; % initial contemporenous shock
 % ======================================================================= %
 % ======================================================================= %
 
+%{
 %% MU shock
 
 shock = zeros(neq,1);                       % Shock vector
@@ -325,18 +326,24 @@ plot(time, DATA(:,Zpos),'-k');
 hold off; 
 legend('C', 'K', 'Z');
 
+%}
+
 %% Simulation of the model (f)
 % First simulate shocks - assume a distribution?
 % assume delta~N(0,0.005^2), eps_C~N(0, 0.01^2), eps_Z~N(0,0.01^2)
 % realize that all shocks are already in the loglin form!
 T=300; %
 %T=3000000;
-%deltat=normrnd(0,sig_D,[1,T]);
-deltat=betarnd(0.1,3.78,[1,T]);
+deltat=normrnd(0,sig_D,[1,T]);
+%deltat=betarnd(0.1,3.78,[1,T]);
 epsZt=normrnd(0,sig_Z,[1,T]);
 epsCt=normrnd(0,sig_Pr,[1,T]);
 shock = zeros(neq,T);
 shock([4:6],:)=[deltat;epsZt;epsCt];
+
+time=1:T;
+%plot(time,shock(4,:)',time,shock(5,:)',time,shock(6,:)')
+
 
 y           = zeros(6,1);             % initial value (ie starting at ss)
 DATA        = zeros(T,neq);   
@@ -378,6 +385,7 @@ beta0=dc/dd;
 % If I increase T to be very high, the estimated coefficient is converging
 % to beta0.
 
-plot(1:201,DATA(:,1))
+
+%plot(1:201,DATA(:,1))
 
 
