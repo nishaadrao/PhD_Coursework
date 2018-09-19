@@ -284,7 +284,7 @@ plot(time, DATA(:,Cpos),'-k');
 plot(time, DATA(:,Kpos),'-g');
 hold off; 
 legend('e-Z','Z','C','K'); 
-
+saveas(figure(1),'IR_1_Z','epsc');
 
 % MU shock
 
@@ -313,6 +313,8 @@ plot(time, DATA(:,Kpos),'-g');
 hold off; 
 %legend('e-C','Z','C','K'); 
 legend('Z','C','K');
+saveas(figure(2),'IR_1_MU','epsc');
+
 
 % Depreciation shock
 
@@ -341,6 +343,7 @@ plot(time, DATA(:,Kpos),'-g');
 hold off; 
 %legend('d','Z','C','K'); 
 legend('Z','C','K'); 
+saveas(figure(3),'IR_1_D','epsc');
 
 %}
 
