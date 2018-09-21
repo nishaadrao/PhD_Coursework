@@ -1,5 +1,6 @@
 ## ECON675: ASSIGNMENT 1
 ## Q2: IMPLEMENTING LEAST SQUARES ESTIMATORS
+## Q3: ANALYSIS OF EXPERIMENTS
 ## Anirudh Yadav 
 ## 8/16/2018
 
@@ -12,8 +13,11 @@ options(scipen = 999)       #forces R to use normal numbers instead of scientifi
 
 
 #==============================================================#
-#================= QUESTION 4 =================================#
+#================= QUESTION 2: OLS ============================#
 #==============================================================#
+
+
+##################### PART 4 ###################################
 
 
 #------- Generate some random data ----------------------------#
@@ -111,9 +115,7 @@ results2 <- linear_reg(X,Y)
 
 diff <- results1-results2
 
-#==============================================================#
-#================= QUESTION 5 =================================#
-#==============================================================#
+##################### PART 5 ###################################
 
 
 #------- Input data & processing ------------------------------#
@@ -166,3 +168,35 @@ V_check     <- vcovHC(ols, type = "HC0")
 se_check    <- as.matrix(sqrt(diag(V_check)))
 
 
+
+#==============================================================#
+#================= QUESTION 3: EXPERIMENTS ====================#
+#==============================================================#
+
+
+################### PART 1: NEYMAN'S APPROACH ##################
+
+# (a): Compute difference in means estimator
+N1 = sum(df$treat)
+N0 = nrow(df)-N1
+
+meanearnings       <- as.vector(tapply(df$earn78,df$treat,mean))
+Tdm                <- meanearnings[2]-meanearnings[1]
+
+# (b): Construct conservative 95% CI
+N1 = sum(df$treat)
+N0 = nrow(df)-N1
+  
+  # Get sample standard deviations of earn78 by treatment group
+  stddevs          <- aggregate(df$earn78,list(treat=df$treat),sd)
+  # write some manual code to check that this is using the correct sd formula
+  samplevars       <- as.matrix(stddevs^2)
+  
+  seconserv         <- sqrt(1/N1*samplevars[2,2] + 1/N0*samplevars[1,2])
+  
+  # Compute lower and upper bounds of the interval and store in vector
+  CIlower = Tdm - qnorm(0.975)*seconserv
+  CIupper = Tdm + qnorm(0.975)*seconserv
+  
+results3            <- cbind(Tdm,seconserv,CIlower,CIupper)
+  
