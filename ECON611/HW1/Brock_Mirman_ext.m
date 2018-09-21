@@ -379,7 +379,7 @@ for t = 1:nimpdat                          % loop through periods
 end
 
 % Quick plot of data
-%{
+
 time=1:nimpdat;
 plot(time,DATA(:,1),time,DATA(:,2),time,DATA(:,3),time,zeros(1,nimpdat),'-k')
 legend('C','K','Z');
@@ -416,6 +416,6 @@ Vvec            = inv(eye(neq*neq)- kron(AVAR,AVAR))*BOBvec;
 V               = reshape(Vvec,[neq,neq]);
 
 % Compute asymptotic beta
-beta            = V(deltapos,Cpos)/V(deltapos,deltapos);
+beta0            = V(deltapos,Cpos)/V(deltapos,deltapos);
 
 
