@@ -6,7 +6,8 @@
 #------- Load packages ----------------------------------------#
 #______________________________________________________________#
 rm(list = ls())             #clear workspace
-library('dplyr')            #for data manipulation
+library(dplyr)            #for data manipulation
+library(ggplot2)
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 
@@ -20,12 +21,13 @@ data <- read.csv('PhD_Coursework/ECON675/HW1/LaLonde_1986.csv')
 data <- as.data.frame(data)
 
 # Attach data frame so we can refer to variables just using their names
-attach(data)
+#attach(data)
 
 #==============================================================#
 #================= QUESTION 1: NEYMAN's APPROACH ==============#
 #==============================================================#
-Y.obs       = earn78
+Y.obs       = data$earn78
+treat       = data$treat
 
 #------- Compute difference in means estimator ----------------#
 #______________________________________________________________#
@@ -38,7 +40,9 @@ N1 = sum(treat)
 N0 = nrow(data)-N1
 
 # Compute "conservative" standard error
-se.conserv         <- sqrt(1/N1*sd(Y.obs[treat==1],na.rm=TRUE)^2 + 1/N0*sd(Y.obs[treat==0],na.rm=TRUE)^2)
+s.1                <- sd(Y.obs[treat==1],na.rm=TRUE)^2
+s.0                <- sd(Y.obs[treat==0],na.rm=TRUE)^2
+se.conserv         <- sqrt(1/N1*s.1 + 1/N0*s.0)
 
 # Compute lower and upper bounds of the interval and store in vector
 CI.lower = T.obs.dm - qnorm(0.975)*se.conserv
@@ -127,18 +131,21 @@ FisherInterval <- function(K=10000,C.vec=seq(10000,-1500,-250),ks=FALSE){
 
   # Generate K random draws of the assignment vector
   T.MAT = replicate(K,sample(treat))
-
+  
   # Compute observed difference in means
   T.obs    = mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE)
   
   for (j in 1:length(C.vec)){
-
+    
+    # Compute observed difference in means
+    T.obs    = abs(mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE))-C.vec[j]
+    
     # Compute missing potential outcomes under the null
     Y.1 = ifelse(treat==1,earn78,earn78+C.vec[j])
     Y.0 = ifelse(treat==1,earn78-C.vec[j],earn78)
 
       for (i in 1:K) {
-          T.dm    = mean(Y.1[T.MAT[,i]==1],na.rm=TRUE)-mean(Y.0[T.MAT[,i]==0],na.rm=TRUE) - C.vec[j]
+          T.dm    = abs(mean(Y.1[T.MAT[,i]==1],na.rm=TRUE)-mean(Y.0[T.MAT[,i]==0],na.rm=TRUE)) - C.vec[j]
           T.vec[i]            <- T.dm
           }
   
@@ -148,4 +155,40 @@ FisherInterval <- function(K=10000,C.vec=seq(10000,-1500,-250),ks=FALSE){
   return(cbind(C.vec,P.vec))
 }
 
+
+#==============================================================#
+#================= QUESTION 3: POWER CALCULATIONS =============#
+#==============================================================#
+
+#------- Plot pwr fn for tau=0 --------------------------------#
+#______________________________________________________________#
+
+PowerFun <- function(x) {
+  1 - pnorm(qnorm(0.975)-x/se.conserv) + pnorm(-qnorm(0.975)-x/se.conserv)
+}
+
+# Use ggplot2
+p1   <- ggplot(data.frame(x = c(-5000, 5000)), aes(x = x)) + stat_function(fun = PowerFun)
+
+# Use curve
+curve(1 - pnorm(qnorm(0.975)-x/se.conserv) + 
+                pnorm(-qnorm(0.975)-x/se.conserv),-5000,5000,xlab="tau",ylab="Power")
+
+
+#------- Sample size calculation ------------------------------#
+#______________________________________________________________#
+
+# Parameterize the equation
+p     = 2/3
+tau   = 1000
+
+# Write down the power function, which implicitly defines N
+# Note that I use the sample variances to proxy for the population variances
+Fun <- function(N){
+  -0.8 + 1 - pnorm(qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) +
+    pnorm(-qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) 
+}
+
+# Solve for N
+N.sol <- uniroot(Fun,c(0,100000000))$root
 
