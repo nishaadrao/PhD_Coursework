@@ -3,16 +3,19 @@
 ## Anirudh Yadav 
 ## 8/16/2018
 
-#------- Load packages ----------------------------------------#
-#______________________________________________________________#
+######################################################################
+# Load packages, clear workspace
+######################################################################
 rm(list = ls())             #clear workspace
-library(dplyr)            #for data manipulation
-library(ggplot2)
+library(dplyr)              #for data manipulation
+library(ggplot2)            #for pretty plots
+library(boot)               #for bootstrapping
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 
-#------- Input data & processing ------------------------------#
-#______________________________________________________________#
+######################################################################
+# Input data
+######################################################################
 
 # Get LaLonde data
 data <- read.csv('PhD_Coursework/ECON675/HW1/LaLonde_1986.csv')
@@ -20,22 +23,21 @@ data <- read.csv('PhD_Coursework/ECON675/HW1/LaLonde_1986.csv')
 # Convert to data frame
 data <- as.data.frame(data)
 
-# Attach data frame so we can refer to variables just using their names
-#attach(data)
+######################################################################
+# Q1 (a): difference in means estimator
+######################################################################
 
-#==============================================================#
-#================= QUESTION 1: NEYMAN's APPROACH ==============#
-#==============================================================#
+# Rename variables
 Y.obs       = data$earn78
 treat       = data$treat
 
-#------- Compute difference in means estimator ----------------#
-#______________________________________________________________#
+# Compute difference in means estimator
 T.obs.dm    = mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE)
 
 
-#------- Construct conservative CIs  --------------------------#
-#______________________________________________________________#
+######################################################################
+# Q1 (b): conservative confidence intervals
+######################################################################
 N1 = sum(treat)
 N0 = nrow(data)-N1
 
@@ -48,29 +50,24 @@ se.conserv         <- sqrt(1/N1*s.1 + 1/N0*s.0)
 CI.lower = T.obs.dm - qnorm(0.975)*se.conserv
 CI.upper = T.obs.dm + qnorm(0.975)*se.conserv
 
+# Store results
 results            <- cbind(T.obs.dm,se.conserv,CI.lower,CI.upper)
 
 
-#==============================================================#
-#================= QUESTION 2: FISHER'S APPROACH ==============#
-#==============================================================#
-
-#------- P-values ---------------------------------------------#
-#______________________________________________________________#
-
+######################################################################
+# Q2 (a): Fisher Exact P-values
+######################################################################
 
 # The FEP function computes Fisher (approximate) p-values for 
 # sharp null of no treatment effect, for the difference in means statistic
 # and the K-S statistic.
 
 # NOTES: 
-# [1] This function takes ~150 secs to run using the KS statistic with 250k draws!
+# This function takes ~150 secs to run using the KS statistic with 250k draws!
 # Is there a more efficient way to do this?
-# [2] Below, I've used the in-built ks.test() function to get the K-S statistic; 
-# I tried to look at the source code to see how to compute the statistic manually, but it was
-# too hard!
 
-FEP <- function(K=250000,ks=FALSE){
+
+FEP <- function(K=249999,ks=FALSE){
   
   # Initialze vector of length K
   T.vec = vector(length=K)
@@ -90,7 +87,7 @@ FEP <- function(K=250000,ks=FALSE){
               T.vec[i]            <- T.dm
             }
   
-  }else{
+      }else{
     
     # USE K-S statistic
     options(warn=-1) #turn warnings off
@@ -117,11 +114,14 @@ FEP <- function(K=250000,ks=FALSE){
   
 }
 
-#------- 95% Confidence Interval-------------------------------#
-#______________________________________________________________#
 
+######################################################################
+# Q2 (a): Fisher confidence intervals
+######################################################################
 
-FisherInterval <- function(K=10000,C.vec=seq(10000,-1500,-250),ks=FALSE){
+## First I follow the approach in Imbens & Rubin, s5.7 ##
+
+FisherInterval <- function(K=9999,C.vec=seq(5000,-1500,-250)){
 
   # Initialize vector of lenght C.vec
   P.vec = vector(length=length(C.vec))
@@ -132,20 +132,17 @@ FisherInterval <- function(K=10000,C.vec=seq(10000,-1500,-250),ks=FALSE){
   # Generate K random draws of the assignment vector
   T.MAT = replicate(K,sample(treat))
   
-  # Compute observed difference in means
-  T.obs    = mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE)
-  
   for (j in 1:length(C.vec)){
     
     # Compute observed difference in means
-    T.obs    = abs(mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE))-C.vec[j]
+    T.obs    = abs(mean(Y.obs[treat==1],na.rm=TRUE)-mean(Y.obs[treat==0],na.rm=TRUE)- C.vec[j])
     
     # Compute missing potential outcomes under the null
-    Y.1 = ifelse(treat==1,earn78,earn78+C.vec[j])
-    Y.0 = ifelse(treat==1,earn78-C.vec[j],earn78)
+    Y.1 = ifelse(treat==1,Y.obs,Y.obs+C.vec[j])
+    Y.0 = ifelse(treat==1,Y.obs-C.vec[j],Y.obs)
 
       for (i in 1:K) {
-          T.dm    = abs(mean(Y.1[T.MAT[,i]==1],na.rm=TRUE)-mean(Y.0[T.MAT[,i]==0],na.rm=TRUE)) - C.vec[j]
+          T.dm    = abs(mean(Y.1[T.MAT[,i]==1],na.rm=TRUE)-mean(Y.0[T.MAT[,i]==0],na.rm=TRUE) - C.vec[j])
           T.vec[i]            <- T.dm
           }
   
@@ -155,39 +152,60 @@ FisherInterval <- function(K=10000,C.vec=seq(10000,-1500,-250),ks=FALSE){
   return(cbind(C.vec,P.vec))
 }
 
+# Run function with 10000 draws
+# FisherInterval()
 
-#==============================================================#
-#================= QUESTION 3: POWER CALCULATIONS =============#
-#==============================================================#
 
-#------- Plot pwr fn for tau=0 --------------------------------#
-#______________________________________________________________#
+## Another way to compute the CI is using bootstrap ##
+
+  # Compute missing potential outcomes under the null
+  Y.1 = ifelse(treat==1,Y.obs,Y.obs+T.obs.dm)
+  Y.0 = ifelse(treat==1,Y.obs-T.obs.dm,Y.obs)
+
+  # Specify the statistic that we will compute for different permutations
+  T.dm <- function(x, ind) {
+      T.k <- mean(Y.1[data$treat[ind]==1]) - mean(Y.0[data$treat[ind]==0])
+      return(T.k)
+  }
+  
+  # Run bootstrap
+  boot.result  <- boot(data = data, R = 9999, statistic = T.dm, sim = "permutation", stype = "i")
+  boot.CI      <- quantile(boot.result$t, c(0.025, 0.975))
+  
+  # Empirical 95% CI for constant treatment effect = T.obs.dm
+  print (boot.CI)
+
+######################################################################
+# Q3 (a): Plot power function
+######################################################################
 
 PowerFun <- function(x) {
-  1 - pnorm(qnorm(0.975)-x/se.conserv) + pnorm(-qnorm(0.975)-x/se.conserv)
-}
+            1 - pnorm(qnorm(0.975)-x/se.conserv) + pnorm(-qnorm(0.975)-x/se.conserv)
+            }
 
-# Use ggplot2
+# Plot usinging ggplot2
 p1   <- ggplot(data.frame(x = c(-5000, 5000)), aes(x = x)) + stat_function(fun = PowerFun)
 
-# Use curve
+# Plot using curve
 curve(1 - pnorm(qnorm(0.975)-x/se.conserv) + 
                 pnorm(-qnorm(0.975)-x/se.conserv),-5000,5000,xlab="tau",ylab="Power")
 
 
-#------- Sample size calculation ------------------------------#
-#______________________________________________________________#
+######################################################################
+# Q3 (b): Sample size calculation
+######################################################################
 
 # Parameterize the equation
 p     = 2/3
 tau   = 1000
 
 # Write down the power function, which implicitly defines N
-# Note that I use the sample variances to proxy for the population variances
+# [Note that I use the sample variances to proxy for the population variances]
+
 Fun <- function(N){
-  -0.8 + 1 - pnorm(qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) +
-    pnorm(-qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) 
-}
+        -0.8 + 1 - pnorm(qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) +
+          pnorm(-qnorm(0.975)-tau/sqrt(1/N*s.1*(1/p)+1/N*s.0*(1/(1-p)))) 
+        }
 
 # Solve for N
 N.sol <- uniroot(Fun,c(0,100000000))$root

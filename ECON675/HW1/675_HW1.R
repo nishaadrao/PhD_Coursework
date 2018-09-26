@@ -3,22 +3,18 @@
 ## Anirudh Yadav 
 ## 8/16/2018
 
-#-------Load packages-----------------------------------------
-#-------------------------------------------------------------
+######################################################################
+# Load packages, clear workspace
+######################################################################
 rm(list = ls())             #clear workspace
 library('MASS')             #for ginv function
 library('sandwich')         #for variance-covargiance estimation  
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 
-#==============================================================#
-#================= QUESTION 4 =================================#
-#==============================================================#
-
-
-#------- Generate some random data ----------------------------#
-#______________________________________________________________#
-
+######################################################################
+# Generate some random data
+######################################################################
 # Draw some random numbers from the std norm distribution
 # and use these as our data for testing the OLS function below.
 # Specifically, we'll use these data to test whether the two
@@ -37,17 +33,17 @@ betatrue <- as.matrix(c(1,2,3))
 Y        <- X%*%betatrue + U
 
 
-#------- Write function for OLS results -----------------------#
-#______________________________________________________________#
+######################################################################
+# Q4: Write function for computing OLS results + related stats
+######################################################################
 
 linear_reg <- function(X,Y, cholinv=FALSE, alpha=0.05){
 
 # Compute crossproduct matrix 
-  
   if(!cholinv){
       # using symmetric inverse
       M = solve(crossprod(X))
-      
+  
   }else{
       #using Cholesky inverse
       m  = chol(crossprod(X))
@@ -108,16 +104,11 @@ linear_reg <- function(X,Y, cholinv=FALSE, alpha=0.05){
 # Test whether choice of inverse affects results
 results1 <- linear_reg(X,Y)
 results2 <- linear_reg(X,Y,cholinv=TRUE)
+diff     <- results1-results2
 
-diff <- results1-results2
-
-#==============================================================#
-#================= QUESTION 5 =================================#
-#==============================================================#
-
-
-#------- Input data & processing ------------------------------#
-#______________________________________________________________#
+######################################################################
+# Q5: Input data, create additional covariates
+######################################################################
 
 # Get LaLonde data
 data <- read.csv('PhD_Coursework/ECON675/HW1/LaLonde_1986.csv')
@@ -140,20 +131,18 @@ X <- cbind(df$ones,df$treat,df$black,df$age,df$educ,df$educsq,df$earn74,df$black
 # Create Y vector
 Y <- cbind(df$earn78)
 
-
-#-------  Run linear_reg function -----------------------------#
-#______________________________________________________________#
+######################################################################
+# Q5(a): run matrix implementation of OLS
+######################################################################
 
 # Run linear_reg function using different inverses
 results1 <- linear_reg(X,Y)
 results2 <- linear_reg(X,Y,cholinv=TRUE)
 
 
-
-#-------  Compute OLS results with lm() -----------------------#
-#______________________________________________________________#
-
-# Below I use R's lm() function to run the regression above (Q5(b))
+######################################################################
+# Q5(b): compute OLS results using in-build lm() function
+######################################################################
 
 # Fit the linear regression
 ols    <- lm(Y ~ X-1)      #nb. the minus 1 is becuase the lm package includes an intercept automatically
