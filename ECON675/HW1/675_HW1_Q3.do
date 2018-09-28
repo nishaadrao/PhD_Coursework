@@ -107,33 +107,36 @@ local alpha = 0.05
 local z     = invnormal(1-`alpha'/2)
 
 * Plot power function
-twoway (function y = 1 - normal(`z'- x/`v') + normal(-`z'-x/`v'), range(-4000 4000)), ///
+twoway (function y = 1 - normal(`z'- x/`v') + normal(-`z'-x/`v'), range(-4000 //
+		4000)), ///
 	   yline(`alpha', lpattern(dash)) yti("Power") xti("tau")
 	   
 ********************************************************************************
 * Q3(b): Sample size calculation 
 ********************************************************************************
 mata:
+
+mata clear
+ 
+  function mypowerfunc(N, S0, S1, p, tau){
+
+  return(1 - normal(invnormal(0.975)-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))) +
+  normal(-invnormal(0.975)-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))) -0.8)
+ 
+		}
+		
 	y = st_data(., "earn78")
-	t = st_data(., "treat")
-	
-	p = 2/3
-	z = invnormal(0.975)
-	tau = 1000
-	
-	
-	S1 = variance(select(y,t:==1));
-	S0 = variance(select(y,t:==0));
+	t = st_data(., "treat")	
+		
+	S1 = variance(select(y,t:==1))
+	S0 = variance(select(y,t:==0))
+    p     = 2/3
+	tau   = 1000
 
-	function mypower(N,tau,S1,S0,p,z) return(-0.8 + 1 - normal(z-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))) + normal(-z-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))))
-	
-	rc = mm_root(N=., &mypower(),0, 10000,0,1000,tau,S1,S0,p,z) 
-	
-	
-end
-
-* Display required sample size
-mata: N	   
-	   
-	   
-	   
+ 
+	mm_root(x=., &mypowerfunc(), 1000, 1500, 0, 10000, S0,S1, p ,tau)
+      
+	x
+	  
+end 
+ 
