@@ -88,7 +88,52 @@ replace Y1_imputed = earn78 + `tau' if treat==0
 gen     Y0_imputed = earn78
 replace Y0_imputed = earn78 - `tau' if treat==1
 
-bootstrap treat diffmean=(r(mu_2)-r(mu_1)), reps(1999) nowarn: ttest earn78, by(treat)
+* Write program to put into bootstrap function
+program define meandiff, rclass
+	summarize   Y1_imputed if treat==1
+	local 		tau1 = r(mean)
+	sum 		Y0_imputed if treat==0
+	local 		tau0 = r(mean)
+	return      scalar meandiff = `tau1' - `tau0'
+end
 
+* Run bootstrap function using meandiff program
+bootstrap diff = r(meandiff), reps(1999): meandiff
 
+********************************************************************************
+* Q3(a): Plot power function
+********************************************************************************
+local alpha = 0.05
+local z     = invnormal(1-`alpha'/2)
 
+* Plot power function
+twoway (function y = 1 - normal(`z'- x/`v') + normal(-`z'-x/`v'), range(-4000 4000)), ///
+	   yline(`alpha', lpattern(dash)) yti("Power") xti("tau")
+	   
+********************************************************************************
+* Q3(b): Sample size calculation 
+********************************************************************************
+mata:
+	y = st_data(., "earn78")
+	t = st_data(., "treat")
+	
+	p = 2/3
+	z = invnormal(0.975)
+	tau = 1000
+	
+	
+	S1 = variance(select(y,t:==1));
+	S0 = variance(select(y,t:==0));
+
+	function mypower(N,tau,S1,S0,p,z) return(-0.8 + 1 - normal(z-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))) + normal(-z-tau/sqrt(1/N*S1*(1/p)+1/N*S0*(1/(1-p)))))
+	
+	rc = mm_root(N=., &mypower(),0, 10000,0,1000,tau,S1,S0,p,z) 
+	
+	
+end
+
+* Display required sample size
+mata: N	   
+	   
+	   
+	   
