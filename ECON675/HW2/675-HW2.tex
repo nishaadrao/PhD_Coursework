@@ -1,0 +1,114 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{ECON675: Assignment 2}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+%\setcounter{tocdepth}{2}
+%\tableofcontents
+
+\section{Question 1: Kernel Density Estimation}
+
+\subsection{Density derivatives}
+I follow the derivation in Hansen's notes. We are interested in estimating
+\begin{align*}
+f^{(s)}(x) = \frac{d^s}{dx^s}f(x).
+\end{align*}
+The natural estimator is
+\begin{align*}
+\hat f^{(s)}(x)= \frac{d^s}{dx^s}\hat f(x)
+\end{align*}
+Now, we know that $\hat f(x) = \frac{1}{nh}\sum_i K\left(\frac{X_i - x}{h}\right)$. Thus,
+\begin{align*}
+\hat f^{(1)}(x) &= \frac{-1}{nh^2}\sum_{i=1}^n K^{(1)}\left(\frac{X_i - x}{h}\right),\\
+\hat f^{(2)}(x) &= \frac{1}{nh^3}\sum_{i=1}^n K^{(2)}\left(\frac{X_i - x}{h}\right),\\
+&\vdots \\
+\hat f^{(s)}(x) &= \frac{(-1)^s}{nh^{1+s}}\sum_{i=1}^n K^{(s)}\left(\frac{X_i - x}{h}\right).
+\end{align*}
+Now,
+\begin{align*}
+\E[\hat f^{(s)}(x)] &= \frac{1}{n} \sum_{i=1}^n \E\left[ \frac{(-1)^s}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right]\\
+&=\E\left[ \frac{(-1)^s}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right], \text{ since $X_i$ are iid}.\\
+&=\int_{-\infty}^{\infty} \frac{(-1)^s}{h^{1+s}}K^{(s)}\left(\frac{z - x}{h}\right)f(z)dz
+\end{align*}
+Next, we want to use integration by parts: $\int u dv = uv - \int vdu$. Define
+\begin{align*}
+dv = \frac{(-1)^s}{h^{s}}\frac{1}{h}K^{(s)}\left(\frac{z - x}{h}\right) \implies v = \frac{(-1)^s}{h^{s}}K^{(s-1)}\left(\frac{z - x}{h}\right)
+\end{align*}
+And
+\begin{align*}
+u = f(z) \implies du = f^{(1)}(z).
+\end{align*}
+Thus,
+\begin{align*}
+\E[\hat f^{(s)}(x)] &= \left[ \frac{(-1)^s}{h^{s}}K^{(s-1)}\left(\frac{z - x}{h}\right)  f^{(1)}(z)\right]_{-\infty}^{\infty} - \int_{-\infty}^\infty \frac{(-1)^s}{h^{s}}K^{(s-1)}\left(\frac{z - x}{h}\right) f^{(1)}(z)dz.\\
+&=- \int_{-\infty}^\infty \frac{(-1)^s}{h^{s}}K^{(s-1)}\left(\frac{z - x}{h}\right) f^{(1)}(z)dz
+\end{align*}
+Repeating this $s$ times give
+\begin{align*}
+\E[\hat f^{(s)}(x)] &= (-1)^s \int_{-\infty}^\infty \frac{(-1)^s}{h}K\left(\frac{z - x}{h}\right) f^{(s)}(z)dz\\
+&=\int_{-\infty}^\infty \frac{1}{h}K\left(\frac{z - x}{h}\right) f^{(s)}(z)dz
+\end{align*}
+Next, use the following change of variables: $u = \frac{z - x}{h}$, which implies $z = x + hu \implies dz = hdu$. Thus,
+\begin{align}
+\E[\hat f^{(s)}(x)] &= \int_{-\infty}^\infty K(u) f^{(s)}(x+hu)du \label{eq:der1}
+\end{align}
+The next step is to take a Taylor expansion of $f^{(s)}(x+hu)$ around $x+hu = x$, which is valid if $h \to 0$. We get
+\begin{align*}
+f^{(s)}(x+hu) = f^{(s)}(x) + f^{(s+1)}(x)hu + \frac{1}{2}f^{(s+2)}(x)h^2u^2 + ... + \frac{1}{P!} f^{(s+P)}(x)h^Pu^P + o(h^P).
+\end{align*}
+Substituting this expression back into (\ref{eq:der1}), integrating over each term, and using the fact that $\int_{-\infty}^\infty K(u)du = 1$ and the notation
+\begin{align*}
+\mu_\ell(K) = u^\ell K(u)
+\end{align*}
+gives
+\begin{align*}
+\E[\hat f^{(s)}(x)] &= f^{(s)}(x) + f^{(s+1)}(x)h\mu_1(K) + \frac{1}{2}f^{(s+2)}(x)h^2\mu_2(K) + ... + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P).
+\end{align*}
+Finally, noting that since $K$ is a $P$-order kernel, $\mu_\ell(K) = 0$ for all $\ell < P$, gives the desired result
+\begin{align*}
+\E[\hat f^{(s)}(x)] &= f^{(s)}(x) + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P).
+\end{align*}
+
+
+
+
+\end{document}
