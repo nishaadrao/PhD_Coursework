@@ -104,10 +104,29 @@ gives
 \E[\hat f^{(s)}(x)] &= f^{(s)}(x) + f^{(s+1)}(x)h\mu_1(K) + \frac{1}{2}f^{(s+2)}(x)h^2\mu_2(K) + ... + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P).
 \end{align*}
 Finally, noting that since $K$ is a $P$-order kernel, $\mu_\ell(K) = 0$ for all $\ell < P$, gives the desired result
-\begin{align*}
-\E[\hat f^{(s)}(x)] &= f^{(s)}(x) + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P).
-\end{align*}
+\begin{align}
+\E[\hat f^{(s)}(x)] &= f^{(s)}(x) + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P). \label{eq:der2}
+\end{align}
 
+Next we consider the variance of the derivative estimator.
+\begin{align*}
+\V[\hat f^{(s)}(x)] &= \V\left[\frac{(-1)^s}{nh^{1+s}}\sum_{i=1}^n K^{(s)}\left(\frac{X_i - x}{h}\right)\right]\\
+&=\frac{1}{nh^{2+2s}}\V\left[K^{(s)}\left(\frac{X_i - x}{h}\right)\right],
+\end{align*}
+since $\{X_i\}$ are iid there are no covariance terms and each term has the same variance. Continuing,
+\begin{align*}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{2+2s}} \left\{\E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \right\}\\
+&=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \frac{1}{n} \E\left[\frac{1}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \\
+&=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] + o\left(\frac{1}{nh^{1+2s}}\right),
+\end{align*}
+since from above we know that the second term ultimately negligible compared to $\frac{1}{nh^{1+2s}}$ as $h \to \infty$. Thus,
+\begin{align*}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}\frac{1}{h}K^{(s)}\left(\frac{z- x}{h}\right)^2 f(z) dz + o\left(\frac{1}{nh^{1+2s}}\right)
+\end{align*}
+Again we use the change of variables $u = \frac{z - x}{h}$ so that
+\begin{align*}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}K^{(s)}(u)^2 f(x+hu) dz + o\left(\frac{1}{nh^{1+2s}}\right)
+\end{align*}
 
 
 
