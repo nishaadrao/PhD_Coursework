@@ -114,19 +114,34 @@ Next we consider the variance of the derivative estimator.
 &=\frac{1}{nh^{2+2s}}\V\left[K^{(s)}\left(\frac{X_i - x}{h}\right)\right],
 \end{align*}
 since $\{X_i\}$ are iid there are no covariance terms and each term has the same variance. Continuing,
+\begin{align}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{2+2s}} \left\{\E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \right\} \nonumber \\
+&=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \frac{1}{n} \E\left[\frac{1}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \label{eq:der3}
+\end{align}
+Now, from above we know that
 \begin{align*}
-\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{2+2s}} \left\{\E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \right\}\\
-&=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] - \frac{1}{n} \E\left[\frac{1}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right]^2 \\
-&=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] + o\left(\frac{1}{nh^{1+2s}}\right),
+\E\left[\frac{1}{h^{1+s}}K^{(s)}\left(\frac{X_i - x}{h}\right)\right] & =  f^{(s)}(x) + \frac{1}{P!} f^{(s+P)}(x)h^P\mu_P(K) + o(h^P)\\
+&= f^{(s)}(x) + o(1)
 \end{align*}
-since from above we know that the second term ultimately negligible compared to $\frac{1}{nh^{1+2s}}$ as $h \to \infty$. Thus,
+since the remainder goes to zero as $h\to0$. Thus, the second term in (\ref{eq:der3}) is $O(\frac{1}{n})$; i.e. the same order as $1/n$. Furthermore $O(\frac{1}{n})$ is of smaller order than $O(\frac{1}{nh^{1+2s}})$ since $h \to 0$ and $n\to \infty$. Accordingly, we can write
+\begin{align*}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{2+2s}} \E\left[K^{(s)}\left(\frac{X_i - x}{h}\right)^2\right] + o\left(\frac{1}{nh^{1+2s}}\right),
+\end{align*}
+Thus,
 \begin{align*}
 \V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}\frac{1}{h}K^{(s)}\left(\frac{z- x}{h}\right)^2 f(z) dz + o\left(\frac{1}{nh^{1+2s}}\right)
 \end{align*}
 Again we use the change of variables $u = \frac{z - x}{h}$ so that
 \begin{align*}
-\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}K^{(s)}(u)^2 f(x+hu) dz + o\left(\frac{1}{nh^{1+2s}}\right)
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}K^{(s)}(u)^2 f(x+hu) du + o\left(\frac{1}{nh^{1+2s}}\right)
 \end{align*}
+With the usual Taylor expansion of $f(x+hu)$ we can write
+\begin{align*}
+\V[\hat f^{(s)}(x)] &=\frac{1}{nh^{1+2s}} \int_{-\infty}^{\infty}K^{(s)}(u)^2 (f(x) + O(h)) du + o\left(\frac{1}{nh^{1+2s}}\right)\\
+&=\frac{f(x)}{nh^{1+2s}} \int_{-\infty}^{\infty}K^{(s)}(u)^2 du + o\left(\frac{1}{nh^{1+2s}}\right)\\
+&=\frac{1}{nh^{1+2s}}f(x)\vartheta_{s}(K) + o\left(\frac{1}{nh^{1+2s}}\right),
+\end{align*}
+where $\vartheta_{s}(K) =  \int_{-\infty}^{\infty}K^{(s)}(u)^2 du$ as required.
 
 
 
