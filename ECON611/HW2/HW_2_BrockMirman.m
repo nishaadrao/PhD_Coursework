@@ -268,12 +268,10 @@ BVAR = b;
 
 %% ====================================================================== %
 % ======================================================================= %
-%                           IMPULSE RESPONSES
+%                      IMPULSE RESPONSES (CHECK)
 % ======================================================================= %
 % ======================================================================= %
-
-
-
+%{
 % Productivity shock
 
 shock = zeros(neq,1);                       % Shock vector
@@ -301,77 +299,42 @@ plot(time, DATA(:,Kpos),'-g');
 hold off; 
 legend('e-Z','Z','C','K'); 
 saveas(figure(1),'IR_1_Z','epsc');
-
-%{
-
-% MU shock
-
-shock = zeros(neq,1);                       % Shock vector
-
-shock(eps_C_pos,1) = 1;
-
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
- 	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
-
-time = 1:nimpdat; 
-
-
-figure(2) 
-%plot(time, DATA(:,eps_C_pos),'-r');
-hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
-hold off; 
-%legend('e-C','Z','C','K'); 
-legend('Z','C','K');
-saveas(figure(2),'IR_1_MU','epsc');
-
-
-% Depreciation shock
-
-shock = zeros(neq,1);                       % Shock vector
-
-shock(deltapos,1) = 1;
-
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
- 	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
-
-time = 1:nimpdat; 
-
-
-figure(3) 
-%plot(time, DATA(:,deltapos),'-r');
-hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
-hold off; 
-%legend('d','Z','C','K'); 
-legend('Z','C','K'); 
-saveas(figure(3),'IR_1_D','epsc');
-
 %}
 
 %% ====================================================================== %
 % ======================================================================= %
-%                           SIMULATIONS
+%                           RECOVER SHOCKS
+% ======================================================================= %
+% ======================================================================= %
+load('Brock_Mirman_DATA.mat');
+
+% Construct square A and B matrices
+A = AVAR(1:4,1:4);
+B = BVAR(1:4,5:8);
+
+
+% Recover shocks from simulated data
+shock_rec       = zeros(size(DATA,1),4);   
+
+for t = 2:size(DATA,1)                         
+ 	  u = inv(B)*(DATA(t,:)'-A*DATA(t-1,:)');
+ 	  shock_rec(t,:)=u';
+end
+
+% Plot shocks
+time=1:size(DATA,1);
+figure(1)
+plot(time,shock_rec(:,1),time,shock_rec(:,2),time,shock_rec(:,3),time,shock_rec(:,4))
+legend('e_Z','e_D','e_C','e_G');
+
+
+%% ====================================================================== %
+% ======================================================================= %
+%                       SIMULATIONS (CHECK)
 % ======================================================================= %
 % ======================================================================= %
 %% SIMULATE SHOCK PROCESSES 
-
+%{
 % These shocks produce `nice' plots of simulated data
 e_Z=normrnd(0,sig_Z,[1,nimpdat]);
 e_D=normrnd(0,sig_D,[1,nimpdat]);
@@ -404,18 +367,69 @@ figure(3)
 time=1:nimpdat;
 plot(time,DATA(:,1),time,DATA(:,2),time,DATA(:,3),time,DATA(:,4),time,zeros(1,nimpdat),'-k')
 legend('C','K','I','Z');
-%}
+
 
 % Recover shocks from simulated data
-shock_rec       = zeros(nimpdat,neq);   
+shock_rec_sim       = zeros(nimpdat,neq);   
 
 for t = 2:nimpdat                          
  	  u = inv(BVAR)*(DATA(t,:)'-AVAR*DATA(t-1,:)');
- 	  shock_rec(t,:)=u';
+ 	  shock_rec_sim(t,:)=u';
 end
 
 figure(4)
-plot(time,shock_rec(:,5),time,shock_rec(:,6),time,shock_rec(:,7),time,shock_rec(:,8))
+plot(time,shock_rec_sim(:,5),time,shock_rec_sim(:,6),time,shock_rec_sim(:,7),time,shock_rec_sim(:,8))
 legend('e_Z','e_D','e_C','e_G');
+%}
+
+
+%% ====================================================================== %
+% ======================================================================= %
+%                           LOG LIKELIHOOD
+% ======================================================================= %
+% ======================================================================= %
+
+% Create var-cov matrix
+sigma = diag([sig_Z,sig_D,sig_C,sig_G]);
+
+
+% Compute MVN pdf values using handwritten function below
+pdf_vals       = zeros(size(DATA,1),1);
+
+for t = 2:size(DATA,1)                         
+ 	  p = mymvn(shock_rec(t,:),sigma);
+ 	  pdf_vals(t,1)=p;
+end
+
+% Cross-check using MATLAB's mvnpdf function
+pdf_vals_check       = zeros(size(DATA,1),1);
+
+for t = 2:size(DATA,1)                         
+ 	  q = mvnpdf(shock_rec(t,:),[0,0,0,0],sigma);
+ 	  pdf_vals_check(t,1)=q;
+end
+
+
+% Compute log-likelihood
+
+log_pdf = log(pdf_vals);
+
+L       = sum(log_pdf(2:size(pdf_vals,1),1));
+
+
+% Write function to compute MVN pdf
+
+function pdf = mymvn(x,sigma)
+    p   = size(x,1);
+    
+    r   = chol(sigma);
+    
+    pdf = (2*pi)^(-p/2)*det(r)*exp(-0.5*x*inv(sigma)*x');
+    
+end
+
+
+
+
 
 
