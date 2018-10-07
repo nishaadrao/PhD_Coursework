@@ -143,6 +143,29 @@ With the usual Taylor expansion of $f(x+hu)$ we can write
 \end{align*}
 where $\vartheta_{s}(K) =  \int_{-\infty}^{\infty}K^{(s)}(u)^2 du$ as required.
 
+\newpage
 
+\subsection{Optimal bandwidth}
+We have
+\begin{align*}
+\text{AIMSE} [h] &= \int_{-\infty}^{\infty} \left[\left(h^P \mu_P(K) \cdot \frac{f^{(P+s)}(x)}{P!}\right)^2+\frac{1}{nh^{1+2s}}\vartheta_s(K)f(x)\right]dx\\
+&= h^{2P}\left(\frac{\mu_P(K)}{P!}\right)^2\vartheta_{s+P}(f) + \frac{1}{nh^{1+2s}}\vartheta_s(K),
+\end{align*}
+since $f(x)$ integrates to 1 and where $\vartheta_{s+P}(f) = \int (f^{(P+s)}(x))^2dx$. Thus,
+\begin{align*}
+\frac{d}{dh}\text{AIMSE} [h] = 2Ph^{2P-1}\left(\frac{\mu_P(K)}{P!}\right)^2\vartheta_{s+P}(f) - (1+2s)\frac{1}{nh^{2+2s}}\vartheta_s(K)&=0\\
+\implies 2Ph^{1+2P+2s}\left(\frac{\mu_P(K)}{P!}\right)^2\vartheta_{s+P}(f)  &=(1+2s)\frac{1}{n}\vartheta_s(K),
+\end{align*}
+which gives the optimal bandwidth
+\begin{align*}
+h^* = \left[\frac{1+2s}{2Pn}\left(\frac{P!}{\mu_P(K)}\right)^2\frac{\vartheta_s(K)}{\vartheta_{s+P}(f)}\right]^{\frac{1}{1+2P+2s}}.
+\end{align*}
+A fully data-driven method for estimating $h^*$ is cross-validation. This procedure attempts to directly estimate the mean-squared error, and then choose the bandwidth which minimizes this estimate. From the lecture notes the cross-validation bandwidth is the value $h$ which minimizes the criteria
+\begin{align*}
+\hat h_{CV} = \arg \min_{h} CV(h) &= \frac{1}{n^2h} \sum_{i=1}^n \sum_{j=1}^n (K*K) \left(\frac{X_i - X_j}{h}\right) - \frac{2}{n}\sum_{i=1}^n \hat f_{(i)}(X_i)
+\end{align*}
+where $ \hat f_{(i)}(x_i)$ is the density estimate computed without observation $X_i$.
+
+\subsection{Monte Carlo experiment}
 
 \end{document}
