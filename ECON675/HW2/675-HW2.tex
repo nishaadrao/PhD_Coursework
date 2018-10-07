@@ -168,4 +168,13 @@ where $ \hat f_{(i)}(x_i)$ is the density estimate computed without observation 
 
 \subsection{Monte Carlo experiment}
 
+\textbf{(a)} First, we want to compute the theoretically optimal bandwidth for $s=0$, $n=1000$, using the Epanechnikov kernel $(P=2)$, with the following Gaussian DGP:
+\begin{align*}
+x_i \sim 0.5 \N(-1.5,-1.5) + 0.5\N(1,1)
+\end{align*}
+From Table 1 in Hansen's notes, $\mu_2(K)=1/5$ and $\vartheta(K)=3/5$ for the Epanechnikov kernel. Thus, the only other ingredient we need is $\vartheta_{2}(f) = \int [f^{(2)}(x)]^2 dx$ for the above DGP.
+\begin{align*}
+h^*
+\end{align*}
+
 \end{document}
