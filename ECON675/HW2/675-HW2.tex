@@ -42,8 +42,10 @@
 
 \maketitle
 
-%\setcounter{tocdepth}{2}
-%\tableofcontents
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\newpage
 
 \section{Question 1: Kernel Density Estimation}
 
@@ -172,9 +174,17 @@ where $ \hat f_{(i)}(x_i)$ is the density estimate computed without observation 
 \begin{align*}
 x_i \sim 0.5 \N(-1.5,-1.5) + 0.5\N(1,1)
 \end{align*}
-From Table 1 in Hansen's notes, $\mu_2(K)=1/5$ and $\vartheta(K)=3/5$ for the Epanechnikov kernel. Thus, the only other ingredient we need is $\vartheta_{2}(f) = \int [f^{(2)}(x)]^2 dx$ for the above DGP.
+From Table 1 in Hansen's notes, $\mu_2(K)=1/5$ and $\vartheta(K)=3/5$ for the Epanechnikov kernel. Thus, the only other ingredient we need is $\vartheta_{2}(f) = \int [f^{(2)}(x)]^2 dx$ for the above DGP. Note that the second derivative of the normal density with mean $\mu$ and variance $\sigma^2$ is
 \begin{align*}
-h^*
+\phi^{(2)}_{\mu, \sigma^2}(x) = \frac{1}{\sqrt{2\pi \sigma^2}}\exp\left(-\frac{(x-\mu)^2}{\sigma^2}\right)\left[\left(\frac{x-\mu}{\sigma^2}\right)^2 - \frac{1}{\sigma^2}\right]
+\end{align*}
+Since differentiation is a linear operation, we have
+\begin{align*}
+\vartheta_{2}(f) = \int_{-\infty}^\infty [0.5\times\phi^{(2)}_{-1.5, 1.5}(x) + 0.5\times \phi^{(2)}_{1, 1}(x)]^2 dx \approx 0.0388.
+\end{align*}
+Finally, we get the theoretically optimal bandwidth
+\begin{align*}
+h^* = \left[\frac{1}{2 \times 2 \times 1000}\left(\frac{2!}{1/5}\right)^2\frac{3/5}{\vartheta_{2}(f)}\right]^{\frac{1}{1+2\times 2}} \approx 0.827.
 \end{align*}
 
 \end{document}
