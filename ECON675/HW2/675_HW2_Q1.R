@@ -82,4 +82,5 @@ fhatmat       <- function(h=h_aimse){
 # Compute density estimates for each h in h.list
 y.mat      <- sapply(h.list,fhat)
 
+#y.mat.big<- sapply(h.list,fhatmat)
   
