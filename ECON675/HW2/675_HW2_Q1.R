@@ -44,14 +44,20 @@ h_aimse <- ((1/(2*P*n))*(factorial(P)/k2)^2*(k3/k1))^(1/(1+2*P))
 ######################################################################
 # Q3 (b): monte carlo
 ######################################################################
-set.seed(0)
+
 
 # Write function for EP kernel
-K <- function(x){
-  y <- .75 * (1-x^2) * (abs(x) <= 1)
+K.ep    <- function(x){
+      y <- .75 * (1-x^2) * (abs(x) <= 1)
+}
+
+# Write function to compute true density value
+f.true  <- function(x){
+     y<-0.5*dnorm(x,-1.5,sqrt(1.5))+0.5*dnorm(x,1,1)
 }
 
 # Generate equally spaced points at which the density is to be estimated
+# Might not actually have to use this!!!
 x.grid     <- seq.int(from=-7, to=7, length.out = 1000)
 
 # Generate big matrix of random draws from the given Gaussian DGP
@@ -72,8 +78,14 @@ h.list = h_aimse*seq(0.5,1.5,0.1)
 
 # Compute density estimates for a given bandwidth
 fhat       <- function(h=h_aimse){
-  sapply(x.grid,function(x) 1/(1000*h)*sum(K((x.rand-x)/h)))
+  sapply(x.rand,function(x) 1/(1000*h)*sum(K((x.rand-x)/h)))
 }  
+
+# Compute MSE for vector of density estimates, y
+mse        <- function(y,h=h_aimse){
+  1/1000*sum(y - f.true(y))^2
+}
+
 
 fhatmat       <- function(h=h_aimse){
   sapply(x.grid,function(x) 1/(1000*h)*colSums(K((X.mat-x)/h)))
