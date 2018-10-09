@@ -205,11 +205,11 @@ More compactly, we write
 \begin{align*}
 \hat{\mtx{\beta}}_{\texttt{LP}}(x)  = \arg \min_{\beta \in \R^{p+1}}\sum_{i=1}^n [y_i - \mtx{r}_p(x_i - x)'\mtx{\beta}]^2K\left(\frac{x_i - x}{h}\right)
 \end{align*}
-where $\mtx{r}_p(u)$ is an operator such that $\mtx{r}_p(u) = (1 , u , u^2 ,...,u^p)'$. \\
+where $\mtx{r}_p(u)= (1 , u , u^2 ,...,u^p)'$. \\
 
 From the lecture notes, we know that
 \begin{align*}
-\hat{\mtx{\beta}}(x)  = (\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
+\hat{\mtx{\beta}}_{\texttt{LP}}(x)  = (\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
 \end{align*}
 where
 \begin{align*}
@@ -225,7 +225,7 @@ and $\mtx{W} = \text{diag}\left(K\left(\frac{x_1 - x}{h}\right), K\left(\frac{x_
 
 Then
 \begin{align*}
-\hat{\mtx{e}}(x) &= \mtx{e}_1'\hat{\mtx{\beta}}(x) \\
+\hat{\mtx{e}}(x) &= \mtx{e}_1'\hat{\mtx{\beta}}_{\texttt{LP}}(x)  \\
 &=\mtx{e}_1'(\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
 \end{align*}
 where $ \mtx{e}_1$ the first standard basis vector of length $(1+p)$ (i.e. it has a 1 in the first entry and zeros in the remaining $p$ entries). I think in summation form we can write
@@ -277,11 +277,11 @@ From the above results we know that both the local polynomial and series estimat
 \begin{align*}
 \hat{\mtx{e}}(x) = \mtx{S}\mtx{y}
 \end{align*}
-where $\mtx{S}$ is the `smoothing' matrix. Note that for local polynomial and series estimators the smoothing matrix is constant preserving in the sense $\mtx{S}{\mtx{1}} = \mtx{1}$. That is, the rows of \mtx{S} sum to one. In leave-one-out cross validation, we want to use the same smoother with the $i$-th row and column deleted to be an $(n -1) \times (n - 1)$ smoother matrix. Accordingly, we must renormalize the rows to sum to one. Let $w_{ij}$ denote the elements of $\mtx{S}$. When we delete the $i$-th column, then the $i$-th row now sums to $1- w_{ii}$. So, we divide by to renormalize. Accordingly, the leave-one-out estimator is
+where $\mtx{S}$ is the `smoothing' matrix. Note that for local polynomial and series estimators the smoothing matrix is constant preserving in the sense $\mtx{S}{\mtx{1}} = \mtx{1}$. That is, the rows of \mtx{S} sum to one. In leave-one-out cross validation, we want to use the same smoother with the $i$-th row and column deleted; we also want this to be an $(n -1) \times (n - 1)$ smoother matrix. Accordingly, we must renormalize the rows to sum to one. Let $w_{ij}$ denote the elements of $\mtx{S}$. When we delete the $i$-th column, then the $i$-th row now sums to $1- w_{ii}$. So, we divide by $1- w_{ii}$ to renormalize. Accordingly, the leave-one-out estimator is
 \begin{align*}
 \hat e_{(i)}(x_i) = \frac{1}{1-w_{ii}} \sum_{j=1,j\neq i}^n w_{ij}y_i
 \end{align*}
-And note that
+And note that the full-sample estimator is just
 \begin{align*}
 \hat e(x_i) = \sum_{j=1}^n w_{ij}y_i.
 \end{align*}
@@ -296,6 +296,31 @@ From the above expression we get
 \therefore y_i - \hat e_{(i)}(x_i) &= \frac{1}{1-w_{ii}}(y_i - \hat e(x_i)),
 \end{align*}
 which gives the desired result.
+
+\subsection{Asymptotic distribution}
+
+\newpage
+
+\section{Semiparametric semi-linear model}
+We have the partially linear model
+\begin{align}
+y_i = t_i \theta_0 + g_0(\mtx{x_i}) + \e_i, \label{eq:3a}
+\end{align}
+with the usual heteroskedasticity assumptions for the error.
+\subsection{}
+From Li-Racine 7.1.1 (p 222) we know that for $\theta_0$ to be identifiable, $t_i$ must not contain a constant (since $t_i$ is a treatment dummy, this is clearly satisfied) or any deterministic functions of $\mtx{x}_i$. \\
+
+Now, somehow we need to show
+\begin{align*}
+\E[(t_i-h_0(\mtx{x}_i))(y_i - t_i\theta_0)]&=0
+\end{align*}
+Then we have
+\begin{align*}
+\E[y_i (t_i-h_0(\mtx{x}_i))- t_i\theta_0(t_i-h_0(\mtx{x}_i))]&=0\\
+\E[t_i\theta_0(t_i-h_0(\mtx{x}_i))] &= \E[y_i (t_i-h_0(\mtx{x}_i))]\\
+\therefore \theta_0 &= \E[t_i(t_i-h_0(\mtx{x}_i))]^{-1}\E[y_i (t_i-h_0(\mtx{x}_i))].
+\end{align*}
+The IV interpretation is that we are using $t_i-h_0(\mtx{x}_i)$ as an instrument for $t_i$.
 
 
 \end{document}
