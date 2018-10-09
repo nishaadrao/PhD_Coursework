@@ -191,7 +191,7 @@ h^* = \left[\frac{1}{2 \times 2 \times 1000}\left(\frac{2!}{1/5}\right)^2\frac{3
 
 \section{Linear smoothers, cross-validation and series}
 
-\subsection{} We are interested in estimating the regression function $e(x) = \E[y_i | x_i = x]$. The idea of local polynomial regression is to approximate $e(x)$ locally by a polynomial of degree $p$, and estimate this local approximation by weighted least squares. For each $x$ we solve
+\subsection{Local polynomial and series estimation as linear smoothers} We are interested in estimating the regression function $e(x) = \E[y_i | x_i = x]$. The idea of local polynomial regression is to approximate $e(x)$ locally by a polynomial of degree $p$, and estimate this local approximation by weighted least squares. For each $x$ we solve
 \begin{align*}
 \hat{\mtx{\beta}}(x) &= \arg \min_{\beta \in \R^{p+1}}\sum_{i=1}^n[y_i - \beta_0 - \beta_1(x_i-x) - \beta_2(x_i-x)^2 -...-\beta_p(x_i-x)^p]^2K\left(\frac{x_i - x}{h}\right).
 \end{align*}
@@ -203,8 +203,99 @@ Note that this is motivated by a Taylor expansion of the true regression functio
 
 More compactly, we write
 \begin{align*}
-\hat{\mtx{\beta}}(x)  = \arg \min_{\beta \in \R^{p+1}}\sum_{i=1}^n [y_i - \mtx{r}_p(x_i - x)'\mtx{\beta}]^2K\left(\frac{x_i - x}{h}\right)
+\hat{\mtx{\beta}}_{\texttt{LP}}(x)  = \arg \min_{\beta \in \R^{p+1}}\sum_{i=1}^n [y_i - \mtx{r}_p(x_i - x)'\mtx{\beta}]^2K\left(\frac{x_i - x}{h}\right)
 \end{align*}
-where $\mtx{r}_p(u)$ is an operator such that $\mtx{r}_p(u) = (1 , u , u^2 ,...,u^p)'$. 
+where $\mtx{r}_p(u)$ is an operator such that $\mtx{r}_p(u) = (1 , u , u^2 ,...,u^p)'$. \\
+
+From the lecture notes, we know that
+\begin{align*}
+\hat{\mtx{\beta}}(x)  = (\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
+\end{align*}
+where
+\begin{align*}
+\mtx{R}_p = 
+\begin{bmatrix}
+1 & (x_1 - x) & (x_1-x)^2 & \dots& (x_1-x)^p \\
+1 & (x_2 - x) & (x_2-x)^2 & \dots &(x_2-x)^p\\
+\vdots & \vdots & \dots & \ddots & \vdots \\
+1 & (x_n - x) & (x_n-x)^2 & \dots &(x_n-x)^p
+\end{bmatrix}
+\end{align*}
+and $\mtx{W} = \text{diag}\left(K\left(\frac{x_1 - x}{h}\right), K\left(\frac{x_2 - x}{h}\right),..., K\left(\frac{x_n - x}{h}\right) \right)$.\\
+
+Then
+\begin{align*}
+\hat{\mtx{e}}(x) &= \mtx{e}_1'\hat{\mtx{\beta}}(x) \\
+&=\mtx{e}_1'(\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
+\end{align*}
+where $ \mtx{e}_1$ the first standard basis vector of length $(1+p)$ (i.e. it has a 1 in the first entry and zeros in the remaining $p$ entries). I think in summation form we can write
+\begin{align*}
+\hat{\mtx{e}}(x) &= \mtx{e}_1' (\sum_{i=1}^n \mtx{r}_p(x_i-x)\mtx{r}_p(x_i-x)' w_i)^{-1}(\sum_{i=1}^n \mtx{r}_p(x_i-x)w_iy_i)
+\end{align*}
+where $w_i = K\left(\frac{x_i - x}{h}\right)$.\\
+
+Next we consider series estimation of the regression function $e(x)$. A series approximation to $e(x)$ is a global approximation, unlike the local polynomial regression. A series approximation that uses a polynomial basis (c.f. splines) takes the form
+\begin{align*}
+\hat{\mtx{\beta}}_{\texttt{Series}} = \arg \min_{\beta \in \R^{p+1}} \sum_{i=1}^n (y_i - \mtx{r}_p(x_i)' \mtx{\beta})^2
+\end{align*}
+where $\mtx{r}_p(x_i) = (1, x_i, x_i^2, ..., x_i^p)$. And
+\begin{align*}
+\hat e(x) =  \mtx{r}_p(x)'\hat{\mtx{\beta}}_{\texttt{Series}} 
+\end{align*} 
+
+Accordingly, we have
+\begin{align*}
+\hat{\mtx{\beta}}_{\texttt{Series}} = \left(\mtx{R}'_p \mtx{R}_p \right)^{-1} \mtx{R}_p \mtx{y}
+\end{align*}
+where
+\begin{align*}
+\mtx{R}_p = 
+\begin{bmatrix}
+1 & (x_1) & (x_1)^2 & \dots& (x_1)^p \\
+1 & (x_2) & (x_2)^2 & \dots &(x_2)^p\\
+\vdots & \vdots & \dots & \ddots & \vdots \\
+1 & (x_n) & (x_n)^2 & \dots &(x_n)^p
+\end{bmatrix}
+\end{align*}
+And,
+\begin{align*}
+\hat e(x) =  \mtx{r}_p(x)' \left(\mtx{R}'_p \mtx{R}_p \right)^{-1} \mtx{R}_p \mtx{y},
+\end{align*}
+which is of the linear smoother form. In summation form
+\begin{align*}
+\hat e(x) =  \mtx{r}_p(x)' (\sum_{i=1}^n  \mtx{r}_p(x_i) \mtx{r}_p(x_i)')^{-1} (\sum_{i=1}^n  \mtx{r}_p(x_i) y_i).
+\end{align*}
+
+\subsection{Cross validation}
+The idea of cross-validation is to choose the tuning parameter (e.g. bandwidth, etc.) that minimizes the mean squared leave-one-out error
+\begin{align*}
+\hat c = \arg \min_c \frac{1}{n} \sum_{i=1}^n (y_i - \hat e_{(i)}(x_i; c))^2
+\end{align*}
+where $\hat e_{(i)}(x_i)$ is the estimator of the regression function that ``leaves out'' $x_i$.\\ 
+
+From the above results we know that both the local polynomial and series estimators can be written as
+\begin{align*}
+\hat{\mtx{e}}(x) = \mtx{S}\mtx{y}
+\end{align*}
+where $\mtx{S}$ is the `smoothing' matrix. Note that for local polynomial and series estimators the smoothing matrix is constant preserving in the sense $\mtx{S}{\mtx{1}} = \mtx{1}$. That is, the rows of \mtx{S} sum to one. In leave-one-out cross validation, we want to use the same smoother with the $i$-th row and column deleted to be an $(n -1) \times (n - 1)$ smoother matrix. Accordingly, we must renormalize the rows to sum to one. Let $w_{ij}$ denote the elements of $\mtx{S}$. When we delete the $i$-th column, then the $i$-th row now sums to $1- w_{ii}$. So, we divide by to renormalize. Accordingly, the leave-one-out estimator is
+\begin{align*}
+\hat e_{(i)}(x_i) = \frac{1}{1-w_{ii}} \sum_{j=1,j\neq i}^n w_{ij}y_i
+\end{align*}
+And note that
+\begin{align*}
+\hat e(x_i) = \sum_{j=1}^n w_{ij}y_i.
+\end{align*}
+From the above expression we get
+\begin{align*}
+\hat e_{(i)}(x_i)(1-w_{ii}) &=\sum_{j=1,j\neq i}^n w_{ij}y_i\\
+\hat e_{(i)}(x_i) &= \sum_{j=1,j\neq i}^n w_{ij}y_i + w_{ii}\hat e_{(i)}(x_i)\\
+&=\sum_{j=1}^n w_{ij}y_i + w_{ii}\hat e_{(i)}(x_i) - w_{ii}y_i\\
+&=\hat e(x_i)  + w_{ii}\hat e_{(i)}(x_i) - w_{ii}y_i\\
+\implies y_i - \hat e_{(i)}(x_i) &= y_i -\hat e(x_i)  - w_{ii}\hat e_{(i)}(x_i) + w_{ii}y_i\\
+&=y_i - \hat e(x_i) + w_{ii}(y_i - \hat e_{(i)}(x_i))\\
+\therefore y_i - \hat e_{(i)}(x_i) &= \frac{1}{1-w_{ii}}(y_i - \hat e(x_i)),
+\end{align*}
+which gives the desired result.
+
 
 \end{document}
