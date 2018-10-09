@@ -8,6 +8,7 @@
 ######################################################################
 rm(list = ls())             #clear workspace
 library(dplyr)              #for data manipulation
+library(data.table)         #for data manipulation
 library(ggplot2)            #for pretty plots
 library(boot)               #for bootstrapping
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
@@ -48,14 +49,20 @@ h_aimse <- ((1/(2*P*n))*(factorial(P)/k2)^2*(k3/k1))^(1/(1+2*P))
 # Function for EP kernel
 K.ep    <- function(x){
       y <- .75 * (1-x^2) * (abs(x) <= 1)
+      return(y)
 }
 
 # Function to compute true density value
 f.true  <- function(x){
      y<-0.5*dnorm(x,-1.5,sqrt(1.5))+0.5*dnorm(x,1,1)
+     return(y)
 }
 
-# Generate big matrix of random draws from the given Gaussian DGP
+# Create vector of bandwidths
+h.list = h_aimse*seq(0.5,1.5,0.1)
+
+
+# Generate vector of random draws from the given Gaussian DGP
 N          <- 1000
 M          <- 1000
 
@@ -63,50 +70,49 @@ components <- sample(1:2,prob=c(0.5,0.5),size=n,replace=TRUE)
 mu.vec     <- c(-1.5,1)
 sd.vec     <- sqrt(c(1.5,1))
 
-x.rand     <- rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components])
+randx     <- rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components])
 
-# Create vector of bandwidths
-h.list = h_aimse*seq(0.5,1.5,0.1)
 
-# Function for computing mse for a given bandwidth, and random sample
-mse      <- function(h=h_aimse){
+# Function for computing imses for a given bandwidth and random sample
+imse         <- function(x.rand=randx, h=h_aimse){
   
   # First compute vector of density estimates at each x_i
   y   = sapply(x.rand,function(x) 1/(1000*h)*sum(K.ep((x.rand-x)/h)))
-
-  # Compute mse
-  mse = 1/1000*sum(y - f.true(y))^2
   
+  # Convert y to data.table for easy manipulation
+  y   = as.data.table(y)
+  
+  # Add true density values
+  y[, y.true := f.true(x.rand)]
+  
+  # Compute squared errors
+  y[, sq_er.li := (y - y.true)^2]
+  
+  # Compute imse.li
+  imse.li <- y[, mean(sq_er.li)]
+  
+  # Compute leave-one-out fhats for each x_i
+  lo   = sapply(1:N,function(i) 1/(1000*h)*sum(K.ep((as.matrix(x.rand)[-i,]-x.rand[i])/h)))
+  
+  # Add to data.table
+  y[, fhat.lo := lo]
+  
+  # Compute squared errors
+  y[, sq_er.lo := (fhat.lo - y.true)^2]
+  
+  # Compute imse
+  imse.li <- y[, mean(sq_er.li)]
+  
+  # Compute imse.lo
+  imse.lo <- y[, mean(sq_er.lo)]
+  
+  output <- c(imse.li,imse.lo)
+  
+  return(output)
 }  
 
-# Compute density estimates for each h in h.list
-mse.vec      <- sapply(h.list,mse)
+# Compute mse for each h in h.list
+imse.vec      <- sapply(h.list,imse)
 
 
-
-
-
-
-
-### TO DELETE
-
-# # Each column of X.mat contains 1000 draws from the DGP
-# X.mat      <- replicate(M,rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components]))
-# 
-# # Generate equally spaced points at which the density is to be estimated
-# # Might not actually have to use this!!!
-# x.grid     <- seq.int(from=-7, to=7, length.out = 1000)
-# 
-# # Compute MSE for vector of density estimates, y
-# mse.old        <- function(y){
-#   1/1000*sum(y - f.true(y))^2
-# }
-# 
-# fhatmat       <- function(h=h_aimse){
-#   sapply(x.grid,function(x) 1/(1000*h)*colSums(K((X.mat-x)/h)))
-# } 
-# 
-#
-# 
-# y.mat.big<- sapply(h.list,fhatmat)
   
