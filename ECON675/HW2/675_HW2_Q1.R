@@ -114,5 +114,10 @@ imse         <- function(x.rand=randx, h=h_aimse){
 # Compute mse for each h in h.list
 imse.vec      <- sapply(h.list,imse)
 
+# THIS IS CLOSE TO BEING VERY EFFICIENT!!!
+# JUST NEED TO FIGURE OUT HOW TO LOOP OVER THE h's and the X's together!!
+X.mat      <- replicate(M,rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components]))
+system.time(yo<-sapply(1:M,function(i) imse(X.mat[,i])))
+
 
   
