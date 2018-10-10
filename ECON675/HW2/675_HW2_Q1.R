@@ -7,6 +7,7 @@
 # Load packages, clear workspace
 ######################################################################
 rm(list = ls())             #clear workspace
+library(foreach)
 library(dplyr)              #for data manipulation
 library(data.table)         #for data manipulation
 library(ggplot2)            #for pretty plots
@@ -106,10 +107,38 @@ imse         <- function(x.rand=randx, h=h_aimse){
   # Compute imse.lo
   imse.lo <- y[, mean(sq_er.lo)]
   
-  output <- c(imse.li,imse.lo)
+  output <- cbind(imse.li,imse.lo)
   
   return(output)
 }  
+
+
+# Function for computing full-sample imse for a given bandwidth and random sample
+imse.li         <- function(x.rand=randx, h=h_aimse){
+  
+  # First compute vector of density estimates at each x_i
+  y   = sapply(x.rand,function(x) 1/(1000*h)*sum(K.ep((x.rand-x)/h)))
+  
+  # Convert y to data.table for easy manipulation
+  y   = as.data.table(y)
+  
+  # Add true density values
+  y[, y.true := f.true(x.rand)]
+  
+  # Compute squared errors
+  y[, sq_er.li := (y - y.true)^2]
+  
+  # Compute imse.li
+  imse.li <- y[, mean(sq_er.li)]
+  
+  output <- imse.li
+  
+  return(output)
+}  
+
+
+
+
 
 # Compute mse for each h in h.list
 imse.vec      <- sapply(h.list,imse)
@@ -117,7 +146,10 @@ imse.vec      <- sapply(h.list,imse)
 # THIS IS CLOSE TO BEING VERY EFFICIENT!!!
 # JUST NEED TO FIGURE OUT HOW TO LOOP OVER THE h's and the X's together!!
 X.mat      <- replicate(M,rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components]))
-system.time(yo<-sapply(1:M,function(i) imse(X.mat[,i])))
-
-
+#system.time(yo<-sapply(1:M,function(i) imse(X.mat[,i])))
+system.time(
+x <- foreach(h=h.list, .combine='cbind') %:%
+       foreach(i=1:100, .combine='c') %do% {
+         imse.li(X.mat[,i],h)
+    })
   
