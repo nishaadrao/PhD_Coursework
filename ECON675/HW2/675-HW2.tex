@@ -197,7 +197,8 @@ h^* = \left[\frac{1}{2 \times 2 \times 1000}\left(\frac{2!}{1/5}\right)^2\frac{3
         \caption{Estimated IMSE for $M=1000$ simulations.}
 
 \end{figure}
-Somewhat strangely, I find that $h_{\widehat{IMSE,LI}}=h_{\widehat{IMSE,LO}} = 1.1 \times h^*$. Are these estimators biased upwards?\\
+
+\textbf{(c)} Somewhat strangely, I find that $h_{\widehat{IMSE,LI}}=h_{\widehat{IMSE,LO}} = 1.1 \times h^*$. I suppose as we increase $M$, the estimates should converge to $h^*$.\\
 
 \textbf{(d)} I get the following rule-of-thumb bandwidth
 \begin{align*}
@@ -316,6 +317,36 @@ From the above expression we get
 which gives the desired result.
 
 \subsection{Asymptotic distribution}
+First note that we have iid data. Also note that we must have $\sum_{i=1}^n w_{n,i}(x_i) = 1$. To ease notation, denote $\E[\cdot | x_1, x_2,...,x_n; x]$ as $\E[\cdot| x]$. Then
+\begin{align*}
+\E[\hat e(x)|x] &= \E[\sum_{i=1}^n w_{n,i}(x_i)y_i|x]\\
+&=\sum_{i=1}^n\E[ w_{n,i}(x_i)y_i|x]\\
+&=\sum_{i=1}^nw_{n,i}(x_i)\E[y_i|x]\\
+&=\E[y_i|x].
+\end{align*}
+Thus, so long as $\hat e(x)$ has a finite second moment we can use the classical CLT to get asymptotic normality. Now, 
+\begin{align*}
+\V[\hat e(x) | x] &= \V[\sum_{i=1}^n w_{n,i}(x)y_i|x]\\
+&=\sum_{i=1}^n\V[w_{n,i}(x)y_i|x]\\
+&=\V[y_i|x]\sum_{i=1}^nw_{n,i}(x)^2\\
+\end{align*}
+Then we get the consistent variance estimator
+\begin{align*}
+\hat{V}(x) = \hat{\sigma}^2  \sum_{i=1}^nw_{n,i}(x)^2
+\end{align*}
+where $\hat{\sigma}^2 = \frac{1}{n-1}\sum_{i=1}^n (y_i - \hat e(x_i))^2$
+
+
+\subsection{Confidence interval}
+The pointwise asymptotically valid 95\% CI for $e(x)$ is
+\begin{align*}
+CI_{95}(x) = [ \hat e(x) - 1.96 \sqrt{\hat{V}(x)},\hat e(x) + 1.96\cdot \sqrt{\hat{V}(x)}].
+\end{align*}
+This is clearly different to a confidence band that is uniformly valid over all $x$. Uniform confidence bands would be specified as
+ \begin{align*}
+\sup_{x \in \chi}\left|\frac{\hat e(x) - e(x)}{\sqrt{\hat\V(x)}} \right| \leq q_{1-\alpha/2},
+\end{align*}
+which is clearly a harder problem than the pointwise intervals.
 
 \newpage
 
@@ -326,7 +357,7 @@ y_i = t_i \theta_0 + g_0(\mtx{x_i}) + \e_i, \label{eq:3a}
 \end{align}
 with the usual heteroskedasticity assumptions for the error.
 \subsection{}
-From Li-Racine 7.1.1 (p 222) we know that for $\theta_0$ to be identifiable, $t_i$ must not contain a constant (since $t_i$ is a treatment dummy, this is clearly satisfied) or any deterministic functions of $\mtx{x}_i$. \\
+From Li-Racine 7.1.1 (p 222) we know that for $\theta_0$ to be identifiable, $t_i$ must not contain a constant (since $t_i$ is a treatment dummy, this is clearly satisfied) or any deterministic functions of $\mtx{x}_i$. 
 
 Now, somehow we need to show
 \begin{align*}
