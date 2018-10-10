@@ -62,8 +62,7 @@ f.true  <- function(x){
 # Create vector of bandwidths
 h.list = h_aimse*seq(0.5,1.5,0.1)
 
-
-# Generate vector of random draws from the given Gaussian DGP
+# Generate big matrix of random draws from the given Gaussian DGP
 N          <- 1000
 M          <- 1000
 
@@ -71,14 +70,14 @@ components <- sample(1:2,prob=c(0.5,0.5),size=n,replace=TRUE)
 mu.vec     <- c(-1.5,1)
 sd.vec     <- sqrt(c(1.5,1))
 
-randx     <- rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components])
+set.seed(5290)
+X.mat      <- replicate(M,rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components]))
 
-
-# Function for computing imses for a given bandwidth and random sample
-imse         <- function(x.rand=randx, h=h_aimse){
+# Function for computing LOO imse for a given bandwidth and random sample
+imse.lo         <- function(x.rand=randx, h=h_aimse){
   
-  # First compute vector of density estimates at each x_i
-  y   = sapply(x.rand,function(x) 1/(1000*h)*sum(K.ep((x.rand-x)/h)))
+  # Compute leave-one-out fhats for each x_i
+  y   = sapply(1:N,function(i) 1/(1000*h)*sum(K.ep((as.matrix(x.rand)[-i,]-x.rand[i])/h)))
   
   # Convert y to data.table for easy manipulation
   y   = as.data.table(y)
@@ -87,34 +86,18 @@ imse         <- function(x.rand=randx, h=h_aimse){
   y[, y.true := f.true(x.rand)]
   
   # Compute squared errors
-  y[, sq_er.li := (y - y.true)^2]
-  
-  # Compute imse.li
-  imse.li <- y[, mean(sq_er.li)]
-  
-  # Compute leave-one-out fhats for each x_i
-  lo   = sapply(1:N,function(i) 1/(1000*h)*sum(K.ep((as.matrix(x.rand)[-i,]-x.rand[i])/h)))
-  
-  # Add to data.table
-  y[, fhat.lo := lo]
-  
-  # Compute squared errors
-  y[, sq_er.lo := (fhat.lo - y.true)^2]
-  
-  # Compute imse
-  imse.li <- y[, mean(sq_er.li)]
+  y[, sq_er.lo := (y - y.true)^2]
   
   # Compute imse.lo
   imse.lo <- y[, mean(sq_er.lo)]
   
-  output <- cbind(imse.li,imse.lo)
+  output <- imse.lo
   
   return(output)
 }  
 
-
 # Function for computing full-sample imse for a given bandwidth and random sample
-imse.li         <- function(x.rand=randx, h=h_aimse){
+imse.li         <- function(x.rand, h=h_aimse){
   
   # First compute vector of density estimates at each x_i
   y   = sapply(x.rand,function(x) 1/(1000*h)*sum(K.ep((x.rand-x)/h)))
@@ -136,20 +119,64 @@ imse.li         <- function(x.rand=randx, h=h_aimse){
   return(output)
 }  
 
+# RUN SIMULATIONS - TOTAL RUNTIME APPROX 13-15 MINS
+# IMSE_LI <- foreach(h=h.list, .combine='cbind') %:%
+#   foreach(i=1:1000, .combine='c') %do% {
+#     imse.li(X.mat[,i],h)
+#   }
+# 
+# IMSE_LO <- foreach(h=h.list, .combine='cbind') %:%
+#   foreach(i=1:1000, .combine='c') %do% {
+#     imse.lo(X.mat[,i],h)
+#   }
+
+# Plot IMSEs
+# IMSE_comb <- as.data.frame(cbind(h.list,colMeans(IMSE_LI),colMeans(IMSE_LO)))
+# colnames(IMSE_comb) <- c("h", "IMSE_li","IMSE_lo")
+# g <- melt(IMSE_comb, id="h")
+# 
+# ggplot(g) + 
+#   geom_line(aes(x=h, y=value, colour=variable)) + 
+#   scale_colour_manual(values=c("blue","green")) + 
+#   labs(title="Simulated IMSEs for Full and LOO Samples",y="IMSE") +theme(plot.title = element_text(hjust = 0.5))
 
 
+######################################################################
+# Q3 (d): rule-of-thumb bandwidth
+######################################################################
+
+# Write function to compute squared second derivative of normal density
+d2normsq  <- function(x, mu=0, v=1) {
+  (dnorm(x,mu,sqrt(v))*(((x-mu)/v)^2-1/v))^2
+}
 
 
-# Compute mse for each h in h.list
-imse.vec      <- sapply(h.list,imse)
-
-# THIS IS CLOSE TO BEING VERY EFFICIENT!!!
-# JUST NEED TO FIGURE OUT HOW TO LOOP OVER THE h's and the X's together!!
-X.mat      <- replicate(M,rnorm(n=N,mean=mu.vec[components],sd=sd.vec[components]))
-#system.time(yo<-sapply(1:M,function(i) imse(X.mat[,i])))
-system.time(
-x <- foreach(h=h.list, .combine='cbind') %:%
-       foreach(i=1:100, .combine='c') %do% {
-         imse.li(X.mat[,i],h)
-    })
+# Write function to compute ROT bandwidth for random sample
+h.rot <- function(x.rand){
   
+  # Compute sample mean and variance
+  mu = mean(x.rand)
+  v  = var(x.rand)
+  
+  # Compute second derivative of normal density
+  k1     <-integrate(d2normsq,mu=mu,v=v, -Inf, Inf)$val
+  
+  # Compute ROT bandwidth
+  h <- ((1/N)*(1/k2)^2*(k3/k1))^(1/5)
+  
+}
+
+# Run simulation using foreach
+h.rot.vec <- foreach(i=1:1000, .combine='c') %do% h.rot(X.mat[,i])
+
+# Run simulation using sapply - FASTER!
+h.rot.vec2<- sapply(1:M,function(i) h.rot(X.mat[,i]))
+
+# Compute mean h.rot.vec
+mean(h.rot.vec2)
+
+
+
+
+
+

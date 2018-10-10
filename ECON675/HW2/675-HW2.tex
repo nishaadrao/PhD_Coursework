@@ -187,6 +187,24 @@ Finally, we get the theoretically optimal bandwidth
 h^* = \left[\frac{1}{2 \times 2 \times 1000}\left(\frac{2!}{1/5}\right)^2\frac{3/5}{\vartheta_{2}(f)}\right]^{\frac{1}{1+2\times 2}} \approx 0.827.
 \end{align*}
 
+\textbf{(b)} I plot the IMSE estimates for the full-sample and leave-one-out sample below (see Appendix for the code).
+
+\begin{figure}[h]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.8\textwidth]{Q1_IMSE.pdf}
+        \caption{Estimated IMSE for $M=1000$ simulations.}
+
+\end{figure}
+Somewhat strangely, I find that $h_{\widehat{IMSE,LI}}=h_{\widehat{IMSE,LO}} = 1.1 \times h^*$. Are these estimators biased upwards?\\
+
+\textbf{(d)} I get the following rule-of-thumb bandwidth
+\begin{align*}
+\bar{h}_{\texttt{AIMSE}} = \frac{1}{M} \sum_{i=1}^M \hat{h}_{\texttt{AIMSE},m} \approx 0.985,
+\end{align*}
+which is about $1.2 \times h^*$.
+
 \newpage
 
 \section{Linear smoothers, cross-validation and series}
