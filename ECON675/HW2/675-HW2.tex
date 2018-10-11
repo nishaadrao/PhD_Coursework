@@ -420,5 +420,50 @@ Then we have
 \end{align*}
 The IV interpretation is that we are using $t_i-h_0(\mtx{x}_i)$ as an instrument for $t_i$.
 
+\subsection{Series estimation}
+\textbf{(a)} Consider the power series approximation
+\begin{align*}
+\E[y_i |\mtx{x}_i] \approx t_i \theta_0 + \mtx{p}^K(\mtx{x}_i)'\mtx{\gamma}_K.
+\end{align*}
+Using the usual partition regression formula we get the OLS estimator
+\begin{align*}
+\hat \theta(K) = (\mtx{t}'\mtx{M}_{X}\mtx{t})^{-1}\mtx{t}'\mtx{M}_X\mtx{Y}
+\end{align*}
+where $\mtx{t} = (t_1, ...,t_n)'$ and 
+\begin{align*}
+\mtx{M}_X = \mtx{I} - \mtx{P}_X
+\end{align*}
+and
+\begin{align*}
+\mtx{P}_X =\mtx{R}_p \left(\mtx{R}'_p \mtx{R}_p \right)^{-1} \mtx{R}'_p \
+\end{align*}
+\begin{align*}
+\mtx{R}_p = 
+\begin{bmatrix}
+1 & (\mtx{x}_1) & (\mtx{x}_1)^2 & \dots& (\mtx{x}_1)^p \\
+1 & (\mtx{x}_2) & (\mtx{x}_2)^2 & \dots& (\mtx{x}_2)^p\\
+\vdots & \vdots & \dots & \ddots & \vdots \\
+1 & (\mtx{x}_n) & (\mtx{x}_n)^2 & \dots& (\mtx{x}_n)^p
+\end{bmatrix}
+\end{align*}
+
+\textbf{(b)}
+We have the moment condition
+\begin{align*}
+\theta_0 &= \E[t_i(t_i-h_0(\mtx{x}_i))]^{-1}\E[y_i (t_i-h_0(\mtx{x}_i))]
+\end{align*}
+The M-estimator is simply
+\begin{align*}
+\hat \theta_M &=\left(\frac{1}{n}\sum_{i=1}^nt_i(t_i-\hat h(\mtx{x}_i))\right)^{-1} \left(\frac{1}{n}\sum_{i=1}^n y_i (t_i-\hat h(\mtx{x}_i))\right)\\
+&=\left(\sum_{i=1}^nt_i(t_i- \hat h(\mtx{x}_i))\right)^{-1} \left(\sum_{i=1}^n y_i (t_i- \hat h(\mtx{x}_i))\right).
+\end{align*}
+where $\hat h(\mtx{x}_i)$ is the estimated propensity score (could be estimated by logit/probit, etc.)
+
+\subsection{Asymptotics}
+\textbf{(a)}\\
+
+\textbf{(b)}
+
+
 
 \end{document}
