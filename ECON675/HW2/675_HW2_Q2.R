@@ -193,7 +193,7 @@ ggplot(dplot.data,aes(x=x.grid,y=value,color=variable))+
   geom_line(linetype = "dashed")+geom_point()+
   labs(title="True and Series Estimate of the Derivative Regression Function")+
   labs(y=expression(paste(mu(x))),x=expression(paste(x))) +theme(plot.title = element_text(hjust = 0.5))+
-  scale_color_manual(values=c("black", "blue"),labels = c(expression(paste(hat(mu))),expression(paste(mu))))
+  scale_color_manual(values=c("black", "blue"),labels = c(expression(paste(d*hat(mu)/dx)),expression(paste(d*mu/dx))))
 
 
  
