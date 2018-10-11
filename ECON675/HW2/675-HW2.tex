@@ -354,29 +354,48 @@ which is clearly a harder problem than the pointwise intervals.
 
 \textbf{(b)} I plot the average CV(K), across the $M=1000$ simulations below. 
 
-\begin{figure}[h]
+\begin{figure}[h!]
     \centering
     
         %\centering
-        \includegraphics[width=0.8\textwidth]{Q2_CV.pdf}
+        \includegraphics[width=0.7\textwidth]{Q2_CV.pdf}
         \caption{Estimated CV error for $M=1000$ simulations.}
 
 \end{figure}
+\newpage
 
+Accordingly, the cross validation polynomial order is $\hat K_{CV} = 7 $.\\
 
+\textbf{(c)} I plot the true regression function and the series estimate below.
 
-Accordingly, the cross validation polynomial order is $\hat K_{CV} = $.
-
-\textbf{(c)}
-
-\begin{figure}[h]
+\begin{figure}[h!]
     \centering
     
         %\centering
-        \includegraphics[width=0.8\textwidth]{Q2_diag.pdf}
-        \caption{Something.}
-
+        \includegraphics[width=0.7\textwidth]{Q2_diag.pdf}
+        %\caption{}
 \end{figure}
+
+\textbf{(d)} Next we want to estimate the derivative of the true regression function. I shall assume that $\hat K_{CV}=7$ is also the optimal order for the series estimate of $\mu^{(1)}(x)$. Now, the derivative of the true regression function is
+\begin{align*}
+\frac{d}{dx}\mu(x) = \exp(-0.1(4x-1)^2)\left[5 \cos(5x) - 0.8 (4x-1)\sin(5x)\right].
+\end{align*}
+And the series estimate of the derivative is simply the derivative of the original series estimate:
+\begin{align*}
+\widehat{\frac{d}{dx}\mu(x)}&=\frac{d}{dx}\hat \mu(x)\\
+&=(0,1,2x,3x^2,4x^3,5x^4,6x^5,7x^6) \cdot \hat{\beta}_{CV}
+\end{align*}
+I plot the true derivative and the series estimate below.
+
+\begin{figure}[h!]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{Q2_diagder.pdf}
+        %\caption{}
+\end{figure}
+
+
 
 \newpage
 

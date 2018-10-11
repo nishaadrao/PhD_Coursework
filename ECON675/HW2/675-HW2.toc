@@ -8,5 +8,5 @@
 \contentsline {subsection}{\numberline {2.3}Asymptotic distribution}{9}{subsection.2.3}
 \contentsline {subsection}{\numberline {2.4}Confidence intervals}{10}{subsection.2.4}
 \contentsline {subsection}{\numberline {2.5}Monte Carlo experiment}{10}{subsection.2.5}
-\contentsline {section}{\numberline {3}Semiparametric semi-linear model}{11}{section.3}
-\contentsline {subsection}{\numberline {3.1}}{11}{subsection.3.1}
+\contentsline {section}{\numberline {3}Semiparametric semi-linear model}{13}{section.3}
+\contentsline {subsection}{\numberline {3.1}}{13}{subsection.3.1}

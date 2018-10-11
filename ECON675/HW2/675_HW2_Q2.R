@@ -38,7 +38,7 @@ y.mat   = exp(-0.1*(4*x.mat-1)^2)*sin(5*x.mat) + u.mat
 # Q5 (b): cross-validation series estimator
 ######################################################################
 
-
+# Write function to compute CV errors for K in 1:20
 cross.val <- function(i){
 
 data = data.table(y=y.mat[,i],x=x.mat[,i],const=1)
@@ -52,6 +52,7 @@ for (k in 1:20) {
   X <- as.matrix(data[, c("const",grep("x_", colnames(data), value = TRUE)), with = FALSE])
   Y <- as.matrix(data[,y])
   
+  # Compute projection matrix using QR decomp
   X.Q   <- qr.Q(qr(X))
   XX <- X.Q %*% t(X.Q)
   Y.hat <- XX %*% Y
@@ -64,62 +65,57 @@ return(temp)
 }
 
 # RUN SIMULATION -- RUNTIME 5 MINS
-results <- sapply(1:M,function(i) cross.val(i))
+results     <- sapply(1:M,function(i) cross.val(i))
 
-results.avg=rowMeans(results)
+# Get average CV errors across simulations
+results.avg <- rowMeans(results)
 
-K.hat=which.min(results.avg)
+# Get the optimal K
+K.hat       <- which.min(results.avg)
 
 
 # #Plot CV
-# g <- as.data.frame(cbind(1:20,results.avg))
-# colnames(g) <- c("K", "CV")
-# 
-# 
-# ggplot(g,aes(x=K, y=CV)) +
-#   geom_line(linetype = "dashed")+
-#   geom_point()+
-#   labs(title="Simulated Cross-Validation Errors for M=1000 Simulations") +theme(plot.title = element_text(hjust = 0.5))
+g <- as.data.frame(cbind(1:20,results.avg))
+colnames(g) <- c("K", "CV")
+
+
+ggplot(g,aes(x=K, y=CV)) +
+  geom_line(linetype = "dashed")+
+  geom_point()+
+  labs(title="Simulated Cross-Validation Errors for M=1000 Simulations") +theme(plot.title = element_text(hjust = 0.5))
 
 ######################################################################
 # Q5 (c): diagnostics
 ######################################################################
 
-# Generate grid of x-valus
-x.vec = seq(-1,1,0.1)
+# Generate grid of x-values for plot
+x.grid = seq(-1,1,0.1)
 
-# Write function to compute optimal beta's (i.e. K=7) and standard errors
+# Write function to compute optimal beta's (i.e. for K=7)
 cv.beta <- function(i){
   
   data = data.table(y=y.mat[,i],x=x.mat[,i],const=1)
   
   for (k in 1:7) {
-    
     data[, temp := x^k]
     setnames(data, "temp", paste0("x_", k))
-  }  
+    }  
     
     X <- as.matrix(data[, c("const",grep("x_", colnames(data), value = TRUE)), with = FALSE])
     Y <- as.matrix(data[,y])
     
     beta <- solve(crossprod(X))%*%crossprod(X,Y) 
     
-    X.Q   <- qr.Q(qr(X))
-    XX <- X.Q %*% t(X.Q)
-    Y.hat <- XX %*% Y
-    W <- diag(XX)
-    
     return(t(beta)) 
 
 }
 
-# Write function to compute optimal standard errors
+# Write function to compute optimal standard errors (i.e for K=7)
 cv.se <- function(i){
   
   data = data.table(y=y.mat[,i],x=x.mat[,i],const=1)
   
   for (k in 1:7) {
-    
     data[, temp := x^k]
     setnames(data, "temp", paste0("x_", k))
   }  
@@ -153,26 +149,51 @@ opt.beta  <- rowMeans(results.beta)
 opt.se    <- rowMeans(results.se)
 
 # Compute regressors for each number in the x.grid
-X.new     <- t(sapply(x.vec, function(x) return(cbind(1,x,x^2,x^3,x^4,x^5,x^6,x^7))))
+X.new     <- t(sapply(x.grid, function(x) return(cbind(1,x,x^2,x^3,x^4,x^5,x^6,x^7))))
 
 # Compute y.hats
-y.hats    <- X.new%*%as.vector(opt.beta)
+y.hats    <- as.numeric(X.new%*%as.vector(opt.beta))
 
-# Write the true regression function
+# Write the true regression function and compute for x.grid values
 f.true <- function(x) exp(-0.1*(4*x-1)^2)*sin(5*x)
+y.true <- f.true(x.grid)
+
 
 # MAKE PLOT
 
-plot.data = as.data.frame(cbind(x.vec,y.hats))
+# Get data in right format for ggplot
+plot.data = melt(as.data.frame(cbind(x.grid,y.hats,y.true)),id="x.grid")
 
-ggplot(plot.data,aes(x=x.vec,y=V2))+
+ggplot(plot.data,aes(x=x.grid,y=value,color=variable))+
   geom_line(linetype = "dashed")+geom_point()+
-  stat_function(fun =f.true)+
-  labs(title="True and Series Estimate of the Regression function",y="y",x="x") +theme(plot.title = element_text(hjust = 0.5))
+  labs(title="True and Series Estimate of the Regression function")+
+  labs(y=expression(paste(mu(x))),x=expression(paste(x))) +theme(plot.title = element_text(hjust = 0.5))+
+  scale_color_manual(values=c("black", "blue"),labels = c(expression(paste(hat(mu))),expression(paste(mu))))
+
+######################################################################
+# Q5 (d): derivative of the regression function
+######################################################################
 
 
+# Compute regressors for each number in the x.grid
+X.der     <- t(sapply(x.grid, function(x) return(cbind(0,1,2*x,3*x^2,4*x^3,5*x^4,6*x^5,7*x^6))))
+
+# Compute y.hats
+dy.hats    <- as.numeric(X.der%*%as.vector(opt.beta))
+
+# Write the true derivative function and compute for x.grid values
+df.true <- function(x) exp(-0.1*(4*x-1)^2)*(5*cos(5*x)-0.8*sin(5*x)*(4*x-1))
+dy.true <- df.true(x.grid)
 
 
+# MAKE PLOT
+dplot.data = melt(as.data.frame(cbind(x.grid,dy.hats,dy.true)),id="x.grid")
+
+ggplot(dplot.data,aes(x=x.grid,y=value,color=variable))+
+  geom_line(linetype = "dashed")+geom_point()+
+  labs(title="True and Series Estimate of the Derivative Regression Function")+
+  labs(y=expression(paste(mu(x))),x=expression(paste(x))) +theme(plot.title = element_text(hjust = 0.5))+
+  scale_color_manual(values=c("black", "blue"),labels = c(expression(paste(hat(mu))),expression(paste(mu))))
 
 
-# 
+ 
