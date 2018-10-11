@@ -337,7 +337,7 @@ Then we get the consistent variance estimator
 where $\hat{\sigma}^2 = \frac{1}{n-1}\sum_{i=1}^n (y_i - \hat e(x_i))^2$
 
 
-\subsection{Confidence interval}
+\subsection{Confidence intervals}
 The pointwise asymptotically valid 95\% CI for $e(x)$ is
 \begin{align*}
 CI_{95}(x) = [ \hat e(x) - 1.96 \sqrt{\hat{V}(x)},\hat e(x) + 1.96\cdot \sqrt{\hat{V}(x)}].
@@ -347,6 +347,36 @@ This is clearly different to a confidence band that is uniformly valid over all 
 \sup_{x \in \chi}\left|\frac{\hat e(x) - e(x)}{\sqrt{\hat\V(x)}} \right| \leq q_{1-\alpha/2},
 \end{align*}
 which is clearly a harder problem than the pointwise intervals.
+
+\subsection{Monte Carlo experiment}
+
+\textbf{(a)} See attached code.\\
+
+\textbf{(b)} I plot the average CV(K), across the $M=1000$ simulations below. 
+
+\begin{figure}[h]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.8\textwidth]{Q2_CV.pdf}
+        \caption{Estimated CV error for $M=1000$ simulations.}
+
+\end{figure}
+
+
+
+Accordingly, the cross validation polynomial order is $\hat K_{CV} = $.
+
+\textbf{(c)}
+
+\begin{figure}[h]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.8\textwidth]{Q2_diag.pdf}
+        \caption{Something.}
+
+\end{figure}
 
 \newpage
 

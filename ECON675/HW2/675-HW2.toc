@@ -6,6 +6,7 @@
 \contentsline {subsection}{\numberline {2.1}Local polynomial and series estimation as linear smoothers}{7}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Cross validation}{8}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Asymptotic distribution}{9}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Confidence interval}{10}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.4}Confidence intervals}{10}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Monte Carlo experiment}{10}{subsection.2.5}
 \contentsline {section}{\numberline {3}Semiparametric semi-linear model}{11}{section.3}
 \contentsline {subsection}{\numberline {3.1}}{11}{subsection.3.1}
