@@ -36,18 +36,17 @@
 
 
 \title{ECON675: Assignment 2}
-\author{Anirudh Yadav}
+\author{Anirudh Yadav\thanks{I worked on the code for this assignment with several classmates.}}
 \setlength\parindent{0pt}
 \begin{document}
 
 \maketitle
-
 \setcounter{tocdepth}{2}
 \tableofcontents
 
 \newpage
 
-\section{Question 1: Kernel density estimation}
+\section{Kernel density estimation}
 
 \subsection{Density derivatives}
 I follow the derivation in Hansen's notes. We are interested in estimating
@@ -89,7 +88,7 @@ Repeating this $s$ times give
 \E[\hat f^{(s)}(x)] &= (-1)^s \int_{-\infty}^\infty \frac{(-1)^s}{h}K\left(\frac{z - x}{h}\right) f^{(s)}(z)dz\\
 &=\int_{-\infty}^\infty \frac{1}{h}K\left(\frac{z - x}{h}\right) f^{(s)}(z)dz
 \end{align*}
-Next, use the following change of variables: $u = \frac{z - x}{h}$, which implies $z = x + hu \implies dz = hdu$. Thus,
+Next, use the following change of variables: $u = \frac{z - x}{h}$, which implies $z = x + hu \implies dz = hdu$, to get
 \begin{align}
 \E[\hat f^{(s)}(x)] &= \int_{-\infty}^\infty K(u) f^{(s)}(x+hu)du \label{eq:der1}
 \end{align}
@@ -99,7 +98,7 @@ f^{(s)}(x+hu) = f^{(s)}(x) + f^{(s+1)}(x)hu + \frac{1}{2}f^{(s+2)}(x)h^2u^2 + ..
 \end{align*}
 Substituting this expression back into (\ref{eq:der1}), integrating over each term, and using the fact that $\int_{-\infty}^\infty K(u)du = 1$ and the notation
 \begin{align*}
-\mu_\ell(K) = u^\ell K(u)
+\mu_\ell(K) = \int u^\ell K(u) du
 \end{align*}
 gives
 \begin{align*}
@@ -226,7 +225,7 @@ More compactly, we write
 \end{align*}
 where $\mtx{r}_p(u)= (1 , u , u^2 ,...,u^p)'$. \\
 
-From the lecture notes, we know that
+Since this is just a weighted least squares problem, we know that
 \begin{align*}
 \hat{\mtx{\beta}}_{\texttt{LP}}(x)  = (\mtx{R}'_p \mtx{W} \mtx{R}_p)^{-1}\mtx{R}'_p \mtx{W} \mtx{y}
 \end{align*}
@@ -427,7 +426,7 @@ The IV interpretation is that we are using $t_i-h_0(\mtx{x}_i)$ as an instrument
 \end{align*}
 Using the usual partition regression formula we get the OLS estimator
 \begin{align*}
-\hat \theta(K) = (\mtx{t}'\mtx{M}_{X}\mtx{t})^{-1}\mtx{t}'\mtx{M}_X\mtx{Y}
+\hat \theta(K) = (\mtx{t}'\mtx{M}_{P}\mtx{t})^{-1}\mtx{t}'\mtx{M}_P\mtx{y}
 \end{align*}
 where $\mtx{t} = (t_1, ...,t_n)'$ and 
 \begin{align*}
