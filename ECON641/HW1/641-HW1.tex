@@ -1,0 +1,120 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{ECON641 -- Problem Set 1}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+\newpage
+
+\section{Warmup: factor intensity reversals}
+First, I outline the small open economy environment of the $2\times 2$ HO model (for my own purposes). 
+\begin{itemize}
+\item Two goods, 1 and 2.
+\item Two factors, $L$ and $K$; with endogenous factor prices $w$ and $r$, respectively.
+\item Production technology is the same in both industries, but they may differ in their relative factor intensities.
+\item Exogenously given goods prices, $p_1$ and $p_2$ (i.e. the demand side of the economy is pinned down).
+\end{itemize}
+Roughly speaking, `no factor intensity reversals' (NFIR) means the following: for any vector of factor prices $(w,r)$, the ordering of relative factor intensities in both industries is always the same. For example, in equilibrium the production of good 1 may be more capital intensive than production of good 2; NFIR implies that at any other vector of factor prices, the production of good 1 must always be more capital intensive compared to good 2. We can show that production technology exhibits NFIR if, given $p_1$ and $p_2$, equilibrium factor prices are uniquely pinned down.\\
+
+\subsection{Cobb Douglas}
+
+Cobb Douglas production clearly satisfies NFIR. To see this, suppose that $F_1(K_1,L_1) = AK_1^\alpha L_1^{1-\alpha}$ and $F_2(K_2,L_2) = AK_2^\beta L_2^{1-\beta}$. The first order conditions for the profit maximization problem for industry 1 are standard:
+\begin{align}
+p_1\alpha AK_1^{\alpha-1}L_1^{1-\alpha} &= r,\\
+p_1(1-\alpha) AK_1^{\alpha}L_1^{-\alpha} &= w.
+\end{align}
+Dividing (2) by (1) gives
+\begin{align}
+\frac{1-\alpha}{\alpha} k_1 = \frac{w}{r} \implies k_1 = \frac{\alpha}{1-\alpha}\frac{w}{r}, \text{ where } k_1 = K_1/L_1
+\end{align}
+Now, the zero profit condition in industry 1 is
+\begin{align}
+rK_1 + w L_1 &= p_1  AK_1^\alpha L_1^{1-\alpha} \nonumber\\
+\implies r k_1 + w &= p_1 A k_1^\alpha
+\end{align}
+Plugging (3) into (4) and rearranging gives
+\begin{align}
+p_1 = C_\alpha r^\alpha w^{1-\alpha}
+\end{align}
+where $C_\alpha = \frac{1}{A(1-\alpha)}\left(\frac{1-\alpha}{\alpha}\right)^\alpha$. An analogous derivation for industry 2 gives
+\begin{align}
+p_2 = C_\beta r^\beta w^{1-\beta}
+\end{align}
+where $C_\beta = \frac{1}{A(1-\beta)}\left(\frac{1-\beta}{\beta}\right)^\beta$.
+Clearly, given $p_1$ and $p_2$, there is a unique solution to (5) and (6), $(w^*,r^*)$, (unless $\alpha = \beta$).\\
+
+Another (perhaps more intuitive) way to establish NFIR would be to use equation (3) and the equivalent expression for industry 2. These expressions imply that in equilibrium:
+\begin{align*}
+\frac{k_1}{k_2} = \frac{\alpha (1-\beta)}{\beta(1-\alpha)}.
+\end{align*}
+That is, the relative factor intensities between the two industries is independent of factor prices.\\
+
+
+\subsection{CES}
+
+CES production \textit{does not} exhibit NFIR. To see this, suppose $F_i(K_i,L_i) = \left[K_i^{\frac{\sigma_i - 1}{\sigma_i}} + L_i^{\frac{\sigma_i - 1}{\sigma_i}}\right]^{\frac{\sigma_i}{\sigma_i - 1}}$ for $i = 1,2$. The FOCs for industry $i$ are
+\begin{align}
+p_i\left[K_i^{\frac{\sigma_i - 1}{\sigma_i}} + L_i^{\frac{\sigma_i - 1}{\sigma_i}}\right]^{\frac{1}{\sigma_i - 1}}K_i^{-1/\sigma_i} &= r \label{eq:ces1}\\
+p_i\left[K_i^{\frac{\sigma_i - 1}{\sigma_i}} + L_i^{\frac{\sigma_i - 1}{\sigma_i}}\right]^{\frac{1}{\sigma_i - 1}}L_i^{-1/\sigma_i} &= w \label{eq:ces1}
+\end{align}
+Combining these expressions gives
+\begin{align*}
+k_i^{-1/\sigma_i} &= \frac{r}{w}\\
+\implies k_i &= \left(\frac{r}{w}\right)^{-\sigma_i}.
+\end{align*}
+Thus, in equilibrium, the relative factor intensities between the two industries is
+\begin{align*}
+\frac{k_1}{k_2} = \left(\frac{r}{w}\right)^{\sigma_2-\sigma_1},
+\end{align*}
+which clearly depends on factor prices (unless $\sigma_1 = \sigma_2$).\\
+
+\subsection{Leontief}
+
+Clearly the Leontief production function exhibits NFIR. Suppose both industries have the same production function $F(K,L) = \min\{K,L\}$. Then in equilibrium, both industries must have $k_i = 1$. Then, relative factor intensities do not depend on factor prices. More generally, suppose $F_i(K_i,L_i) = \min\{\alpha_iK,\beta_iL\}$. Then in equilibrium, each industry's capital-labor ratio will be $k_i = \beta_i/\alpha_i$. Again, relative factor intensities are independent of factor prices.
+
+
+
+
+
+\end{document}
