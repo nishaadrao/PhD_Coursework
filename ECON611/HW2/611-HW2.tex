@@ -45,8 +45,65 @@
 %\setcounter{tocdepth}{2}
 %\tableofcontents
 
+\section{Maximum likelihood estimation of a simple DSGE model}
 
+\newpage
 
+\section{An endowment economy}
+
+\subsection{}
+I'll assume that each agent faces the natural borrowing limit, so that for all $t$
+\begin{align*}
+-s_t &\leq \sum_{j=0}^\infty\beta^jy_{t+j} = \frac{1}{1-\beta} \equiv \underline s\\
+\implies s_t &\geq -\underline s.
+\end{align*}
+So, the consumer's problem is
+\begin{align*}
+&\max_{c, s} \sum_{t=0}^\infty \beta^t \ln(c_t)\\
+&\text{s.t } c_t + s_t = y_t + (1+r_{t-1})s_{t-1}\\
+&\text{\& } s_t \geq -\underline s.
+\end{align*}
+Note that both consumer's face identical problems, so I haven't included $i$ superscripts. Since there is no uncertainty, the Bellman is 
+\begin{align*}
+V(s_{-1} , y) = \max_s \{ \ln(y+(1+r_{-1})s_{-1} - s) + \beta V(s,y') + \lambda(s)\}
+\end{align*}
+where $\lambda$ is the multiplier on the borrowing constraint. Combining the FOC wrt $s$, with the B-S condition gives the following optimality condition
+\begin{align}
+\frac{1}{c_t} \geq (1+r_t)\beta \frac{1}{c_{t+1}} \text{ } (= \text{ if } s_t >- \underline s) \label{eq:1}
+\end{align}
+Now, a competitive equilibrium is a sequence of allocations $\{c^i_t, s^i_t\}_{t,i}$ such that the optimality condition (\ref{eq:1}) and the budget constraint hold each period, given a sequence of interest rates $\{r_t\}_t$, and the bond market clears each period (there also should be a transversality condition). It is easy to guess and verify that an equilibrium exists where for each agent, $c_t = 1$, $s_t = 0$ and $(1+r_t) = 1/\beta$ for all $t$. Clearly, this allocation satisfies the optimality constraint (which holds with equality each period) and the budget constraint (since $c_t = y_t$ each period) and bond market clearing (since neither agent saves/borrows). Thus, in the competitive equilibrium, both agents consume their endowments each period, and there are no gains from trade.
+
+\subsection{}
+Neither agent will react to this news in period 0. The only plausible reaction to the news would be for agents to borrow against potentially higher income next period (there is no way that this news could induce a savings response). But both agents want to make the same trade, since they are identical before the shock. Obviously, both agents cannot increase their borrowing simultaneously in period zero because this would contradict bond market clearing. Thus, in equilibrium, neither agent reacts to the news in period zero.
+
+\subsection{}
+This problem is essentially the same as the 2 country IRBC example we looked at in class.\\ 
+
+The present value of agent $A$'s endowment at $t=1$ is
+\begin{align*}
+\sum_{j=0}^\infty \beta^jy^A_{t+j} &= 2 + \beta(1) + \beta^2(1) + \beta^3(1)+...\\
+&= 1 + \frac{1}{1-\beta}
+\end{align*}
+The annuity value $\bar c^A$ that has the same value as this endowment stream is 
+\begin{align*}
+\frac{\bar c^A}{1-\beta} &= 1 + \frac{1}{1-\beta}\\
+\implies \bar c^A &=1 + (1-\beta) = 2-\beta.
+\end{align*}
+I shall guess and verify that in equilibrium $c_t^A =\bar c^A$ for all $t$. First note that the associated savings scheme comes from the budget constraint. Under the proposed allocation, $A$'s period 2 budget constraint is
+\begin{align*}
+c_2^A + s^A_2 = y^A_2 + (1+r_1)s^A_1
+\end{align*}
+And since $c_1^A = c_2^A =\bar c^A  =2-\beta$ we must have $s_1 = \beta$. Thus, 
+\begin{align*}
+\bar c^A + s^A_2  &=1 + 1 \text{ with } 1+r_1 = 1/\beta\\
+\implies s^A_2 &= \beta.
+\end{align*}
+Following this logic, it is pretty easy to see that $s_t^A = \beta$ for all $t \geq 1$. Bond market clearing then implies that $s_t^B = -\beta$ for all $t$. So we have the following allocations
+\begin{align*}
+c_t^A &= 2-\beta, s_t^A = \beta\\
+c_t^B &= 1+\beta, s_t^B = -\beta
+\end{align*}
+for all $t$, with $(1+r_t) = 1/\beta$ for all $t$. Clearly, these allocations satisfy the agents' optimality condition (\ref{eq:1}) (since no agent is borrowing constrained), budget constraints, and bond market clearing; so it is an equilibrium.
 
 
 
