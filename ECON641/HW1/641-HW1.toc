@@ -6,3 +6,4 @@
 \contentsline {section}{\numberline {3}Technology growth in a parameterized version of DFS}{5}{section.3}
 \contentsline {subsection}{\numberline {3.1}}{5}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}}{6}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}}{7}{subsection.3.3}
