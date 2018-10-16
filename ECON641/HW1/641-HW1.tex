@@ -117,6 +117,80 @@ Clearly the Leontief production function exhibits NFIR. Suppose both industries 
 
 \section{$2 \times 2 \times 2$ HO Model}
 
+\newpage
+
+\section{Technology growth in a parameterized version of DFS}
+
+\subsection{}
+I follow the derivation in EK (2005). We are given the distribution of efficiencies for producing goods $j$ at Home and Foreign:
+\begin{align*}
+F_i(z)=\Pr[Z_i(j) \leq z ] = \exp(-T_iz^{-\theta})
+\end{align*}
+
+\iffalse
+Now, if we pick some random $j \in [0,1]$, the probability distribution of its efficiency, $Z_i(j)$, is obviously same as above. Accordingly, we can order goods such that
+\begin{align*}
+j &= \exp(-T_iz_i(j)^{-\theta})\\
+\implies z_i(j) &= \left(-\frac{T_i}{\ln j}\right)^{-1/\theta}.
+\end{align*}
+(Essentially, think of the index $j$ as the vertical axis of the CDF above).\\
+\fi
+
+
+Now, we want to derive the DFS-type $A(j)$ curve. I follow EK's derivation, which defines $A(j)$ as F's efficiency of producing $j$ to $H$'s corresponding efficiency.\footnote{Note that in DFS, $A(j)$ was the ratio of $H$'s efficiency of producing $j$ to $F$'s corresponding efficiency.} \\
+
+In the EK setup the efficiencies are realizations of a random variable. Accordingly, we think of $j$ as the \textit{probability} that the $F$'s relative efficiency of producing $j$ is less than some number:
+\begin{align*}
+j &= \Pr\left[\frac{Z^*}{Z} \leq A\right]\\
+&=\Pr\left[Z^* \leq AZ\right]\\
+&= \int_0^\infty \exp(-T^*(Az)^{-\theta}) f(z)dz.
+\end{align*}
+Now,
+\begin{align*}
+f(z) = \frac{d}{dz} \exp(-Tz^{-\theta}) = \theta T z^{-\theta-1}\exp(-Tz^{-\theta})
+\end{align*}
+Substituting into the above integral gives
+\begin{align*}
+j &= T\int_0^\infty \exp(-T^*(Az)^{-\theta}) \times \theta z^{-\theta-1}\exp(-Tz^{-\theta})dz\\
+&=T\int_0^\infty \exp(-(T^*A^{-\theta}+T)z^{-\theta}) \times\theta z^{-\theta-1}dz\\
+&= \frac{T}{(T^*A^{-\theta}+T)} \int_0^\infty \exp(-(T^*A^{-\theta}+T)z^{-\theta}) \times -\theta z^{-\theta-1}(T^*A^{-\theta}+T)dz\\
+&=\frac{T}{(T^*A^{-\theta}+T)} \int_0^\infty \exp(-(T^*A^{-\theta}+T)z^{-\theta}) \times \theta z^{-\theta-1}(T^*A^{-\theta}+T)dz\\
+&=\frac{T}{(T^*A^{-\theta}+T)},
+\end{align*}
+since $\int_0^\infty \exp(-(T^*A^{-\theta}+T)z^{-\theta}) \times \theta z^{-\theta-1}(T^*A^{-\theta}+T)dz = 1$ (because it is the integral of the Frechet pdf with scale $(T^*A^{-\theta}+T)$). Thus, rearranging to get an expression for $A(j)$ gives
+\begin{align*}
+A(j) = \left[\left(\frac{1-j}{j}\right)\frac{T}{T^*}\right]^{-1/\theta}.
+\end{align*}
+
+\newpage
+
+\subsection{}
+First note that there are no trade costs so that $d_{ni} = 1$ for all $n,i \in \{F,H\}$.\\
+
+Now, we know that within a country, goods will be purchased from the lowest cost source. Since Home has a comparative advantage at lower values of $j$, we know that Home will produce the range of goods $[0,\bar j]$ where
+\begin{align*}
+\frac{w}{z(\bar j)} = \frac{w^*}{z^*(\bar j)}.
+\end{align*}
+The LHS of the above expression is the unit cost of producing $\bar j$ at home, and the RHS is the cost of buying the good from Foreign. Rearranging the above expression gives
+\begin{align}
+\frac{z(\bar j)}{z^*(\bar j)} &= \frac{w}{w^*} \nonumber\\
+\implies A(\bar j) &= \omega, \label{eq:EK1}
+\end{align}
+where $\omega = w/w^*$. Similarly, Foreign will produce a range of goods $[\underline j, 1]$ domestically, such that
+\begin{align}
+\frac{w^*}{z^*(\underline j)} &= \frac{w}{z(\underline j)} \nonumber \\
+\implies A(\underline j) = \omega. \label{eq:EK2}
+\end{align}
+Thus, there is a unique cuttoff good.\\
+
+Next, we need to invoke market clearing. Here, we note that preferences are Cobb Douglas, with equal weights across each good. Thus, each country spends a constant share of its income on each good. We know that Home produces $[0,\bar j]$ goods domestically, and exports $[0, \underline j]$ goods to Foreign. Thus, market clearing at Home requires
+\begin{align}
+wL = \bar j wL + \underline j w^*L^* \label{eq:EK3}\\
+\end{align}
+Substituting (\ref{eq:EK1}) and (\ref{eq:EK2}) into (\ref{eq:EK3}) and rearranging gives
+\begin{align*}
+L = L A^{-1}(\omega) + \frac{1}{\omega} L^* A^{-1}(\omega)
+\end{align*}
 
 
 \end{document}
