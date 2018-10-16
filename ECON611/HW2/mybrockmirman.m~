@@ -8,6 +8,10 @@ clc; clear all; close all;
 
 nimpdat 	= 200;	% No. of quarters in impulse response. 
 
+fun
+
+
+
 % ======================================================================= %
 % 			     Parameters 
 % ======================================================================= %
@@ -268,41 +272,6 @@ BVAR = b;
 
 %% ====================================================================== %
 % ======================================================================= %
-%                      IMPULSE RESPONSES (CHECK)
-% ======================================================================= %
-% ======================================================================= %
-%{
-% Productivity shock
-
-shock = zeros(neq,1);                       % Shock vector
-
-shock(eps_Z_pos,1) = 1;
-
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
- 	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
-
-time = 1:nimpdat; 
-
-
-figure(1) 
-plot(time, DATA(:,eps_Z_pos),'-r');
-hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
-hold off; 
-legend('e-Z','Z','C','K'); 
-saveas(figure(1),'IR_1_Z','epsc');
-%}
-
-%% ====================================================================== %
-% ======================================================================= %
 %                           RECOVER SHOCKS
 % ======================================================================= %
 % ======================================================================= %
@@ -327,62 +296,6 @@ figure(1)
 plot(time,shock_rec(:,1),time,shock_rec(:,2),time,shock_rec(:,3),time,shock_rec(:,4))
 legend('e_Z','e_D','e_C','e_G');
 
-
-%% ====================================================================== %
-% ======================================================================= %
-%                       SIMULATIONS (CHECK)
-% ======================================================================= %
-% ======================================================================= %
-%% SIMULATE SHOCK PROCESSES 
-%{
-% These shocks produce `nice' plots of simulated data
-e_Z=normrnd(0,sig_Z,[1,nimpdat]);
-e_D=normrnd(0,sig_D,[1,nimpdat]);
-e_C=normrnd(0,sig_C,[1,nimpdat]);
-e_G=normrnd(0,sig_G,[1,nimpdat]);
-
-shock = zeros(neq,nimpdat);
-shock([5:8],:)=[e_Z;e_D;e_C;e_G];
-
-% Quick plot of shocks
-
-figure(2)
-time=1:nimpdat;
-plot(time,shock(5,:)',time,shock(6,:)',time,shock(7,:)',time,shock(8,:)')
-legend('e_Z','e_D','e_C','e_G');
-
-% SIMULATE DATA
-
-y           = zeros(neq,1);             % initial value (ie starting at ss)
-DATA        = zeros(nimpdat,neq);   
-
-for t = 1:nimpdat                          % loop through periods 
- 	  y = AVAR*y+BVAR*shock(:,t);
- 	  DATA(t,:)=y';
-end
-
-% Quick plot of data
-
-figure(3)
-time=1:nimpdat;
-plot(time,DATA(:,1),time,DATA(:,2),time,DATA(:,3),time,DATA(:,4),time,zeros(1,nimpdat),'-k')
-legend('C','K','I','Z');
-
-
-% Recover shocks from simulated data
-shock_rec_sim       = zeros(nimpdat,neq);   
-
-for t = 2:nimpdat                          
- 	  u = inv(BVAR)*(DATA(t,:)'-AVAR*DATA(t-1,:)');
- 	  shock_rec_sim(t,:)=u';
-end
-
-figure(4)
-plot(time,shock_rec_sim(:,5),time,shock_rec_sim(:,6),time,shock_rec_sim(:,7),time,shock_rec_sim(:,8))
-legend('e_Z','e_D','e_C','e_G');
-%}
-
-
 %% ====================================================================== %
 % ======================================================================= %
 %                           LOG LIKELIHOOD
@@ -401,14 +314,6 @@ for t = 2:size(DATA,1)
  	  pdf_vals(t,1)=p;
 end
 
-% Cross-check using MATLAB's mvnpdf function
-pdf_vals_check       = zeros(size(DATA,1),1);
-
-for t = 2:size(DATA,1)                         
- 	  q = mvnpdf(shock_rec(t,:),[0,0,0,0],sigma);
- 	  pdf_vals_check(t,1)=q;
-end
-
 
 % Compute log-likelihood
 
@@ -417,46 +322,5 @@ log_pdf = log(pdf_vals);
 L       = sum(log_pdf(2:size(pdf_vals,1),1));
 
 
-%% ====================================================================== %
-% ======================================================================= %
-%                           EXTRA QUESTION 
-% ======================================================================= %
-% ======================================================================= %
-
-alpha_vec = 0.11:0.01:0.40;
-delta_vec = 0.01:0.01:0.10;
 
 
-[ALPHA,DELTA] = meshgrid(alpha_vec,delta_vec);
-
-LMAT          = zeros(length(delta_vec),length(alpha_vec));
-
-% Run nested loop to compute likelihoods for different combos of alpha and
-% delta
-
-for d=1:length(delta_vec)
-
-    deltabar = delta_vec(d);
-
-    for a=1:length(alpha_vec)
-
-        alpha = alpha_vec(a);
-        
-        LMAT(d,a)=mybrockmirman(alpha,deltabar);
-
-    end
-
-end
-
-%% MAKE SURFACE PLOT
-figure(5)
-surf(ALPHA,DELTA,LMAT)
-title('Log Likelihoodvalues for Different Values of (\alpha,\delta)')
-xlabel('\alpha')
-ylabel('\delta')
-zlabel('L')
-
-% Get alpha/delta combo that maximizes L
-[Lmax,Idx] = max(LMAT(:));
-[LmaxRow,LmaxCol] = ind2sub(size(LMAT), Idx);
-MLE_vec = [alpha_vec(LmaxCol),delta_vec(LmaxRow)];

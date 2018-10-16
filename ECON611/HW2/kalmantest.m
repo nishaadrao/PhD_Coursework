@@ -15,8 +15,6 @@ close all
 % 
 % Debugging log:
 % 1. Fixed a bug in line 82 --> (y(:,i) was changed to y(:,i+1)), November 2010
-
-
 %% Model characteristics
 % X(t) = A * X(t-1) + V(t) ---> A: State transition matrix, V=N(Mv,Q) : Process noise
 % y(t) = C * X(t)   + N(t) ---> C: Output matrix          , N=N(Mr,R) : Observation noise

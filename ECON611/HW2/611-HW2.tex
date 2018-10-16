@@ -47,6 +47,32 @@
 
 \section{Maximum likelihood estimation of a simple DSGE model}
 
+\subsection{} See attached code.
+
+\subsection{}
+\textbf{(a)} I plot the recovered structural shocks below.
+
+\begin{figure}[h]
+    \centering
+        \includegraphics[width=0.6\textwidth]{shock_1.eps}
+        \caption{Recovered Structural Shocks from the Brock-Mirman Model}
+\end{figure}
+To check the procedure I simulate shock processes for $\e_t = [\e_t^\delta, \e_t^c, \e_t^z, \e_t^g]$ and recover them. The recovered shocks are the same as the simulated shocks.\\
+
+\textbf{(b)} I get $L =-6270.22$ (see attached code for details).\\
+
+\textbf{(c) extra question.}
+I plot the surface plot below.
+
+\begin{figure}[h]
+    \centering
+        \includegraphics[width=0.8\textwidth]{surface.eps}
+        \caption{Log-Likelihood Values for Different $(\alpha,\delta)$ Parameters}
+\end{figure}
+
+The likelihood is maximized at $(\alpha_{MLE},\delta_{MLE}) = (0.2,0.05)$, which doesn't correspond to our usual calibration. Interestingly, the likelihood seems quite flat, which we talked about in class.
+
+
 \newpage
 
 \section{An endowment economy}
@@ -75,7 +101,7 @@ Neither agent will react to this news in period 0. The only plausible reaction t
 \subsection{}
 This problem is essentially the same as the 2 country IRBC example we looked at in class.\\ 
 
-I'm not sure exactly how to solve for the time paths by hand, but here's the intuition. Consider agent $A$, who gets the positive income shock. She wants to amortize this shock over her lifetime. To do so, she needs to save in period 1, which must mean that agent $B$ has to borrow in equilibrium. Thus, consumption of both agents increase in period 1. Next, note that if agent $B$ does nothing (i.e. just consumes her endowment every period), her lifetime utility is zero. Thus, agent $A$ chooses her savings in period 1 such that taking the other side of the bond trade gives $B$ a lifetime utility of exactly zero (I think this explains why $A$'s consumption isn't perfectly smooth). Thus, we get the pattern we saw in class: both agents have higher consumption in period 1; for $t\geq 2$, $A$'s consumption remains above 1 forever, and $B$'s is slightly below 1 forever. 
+I'm not sure exactly how to solve for the time paths by hand, but here's the intuition. Consider agent $A$, who gets the positive income shock. She wants to amortize this shock over her lifetime like a good PIH agent would do. To do so, she needs to save in period 1, which must mean that agent $B$ has to borrow in equilibrium. Thus, consumption of both agents increase in period 1. Next, note that if agent $B$ does nothing (i.e. just consumes her endowment every period), her lifetime utility is zero. Thus, agent $A$ chooses her savings in period 1 such that taking the other side of the bond trade gives $B$ a lifetime utility of exactly zero (I think this explains why $A$'s consumption isn't perfectly smooth). Thus, we get the pattern we saw in class: both agents have higher consumption in period 1; for $t\geq 2$, $A$'s consumption remains above 1 forever, and $B$'s is slightly below 1 forever. 
 
 \iffalse
 The present value of agent $A$'s endowment at $t=1$ is
@@ -147,11 +173,32 @@ We consider a one-time shock to $A$'s income in period 1. I plot the time paths 
 
 \begin{figure}[h]
     \centering
-        \includegraphics[width=0.6\textwidth]{IRF_r.eps}
+        \includegraphics[width=0.5\textwidth]{IRF_r.eps}
         \caption{$r_t$}
 \end{figure}
  
 \subsection{} I'm guessing that $(1+r_0)$ increases at the time of the announcement in period 0 because both agents want to borrow.
 
+\newpage
+
+\section{The Kalman Filter}
+\subsection{}
+The Kalman Filter works as follows
+\begin{enumerate}
+\item \textit{Initialization:} with $\rho=0.8$ our initial assesment is $\hat y_{1|0} = 0$ and $V_{1|0} = \frac{\sigma^2_e}{1-\rho^2}$. 
+\item \textit{Forecast of $x_t$:} the optimal date $t$ forecast of the observable is $\hat x_{t|t-1} = \hat y_{t|t-1}$. Pick up the associated MSE
+\begin{align*}
+\E[(x_t - \hat x_{t|t-1})^2] = V_{t|t-1} + \sigma^2_m.
+\end{align*}
+\item \textit{Update forecast of $y_t$:} the updated forecast of $y_t$ given observed data $x_t$ is
+\begin{align*}
+\hat y_{t|t} = \hat y_{t|t-1} + V_{t|t-1}[V_{t|t-1} + \sigma^2_m]^{-1}(x_t - \hat y_{t|t-1})
+\end{align*}
+\item \textit{Compute forecast of $y_{t+1}$ given $x_t$}:
+\begin{align*}
+\hat y_{t+1|t} = \rho \hat y_{t|t} = \rho \hat y_{t|t-1} + \rho V_{t|t-1}[V_{t|t-1} + \sigma^2_m]^{-1}(x_t - \hat y_{t|t-1})
+\end{align*}
+\item \textit{Iterate.}
+\end{enumerate}
 
 \end{document}
