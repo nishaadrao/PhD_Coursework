@@ -182,23 +182,89 @@ We consider a one-time shock to $A$'s income in period 1. I plot the time paths 
 \newpage
 
 \section{The Kalman Filter}
+My implementation of the Kalman Filter/Smoother is definitely wrong (given my weird results), and I'm not sure why. Nonetheless, I present my results below.\\
+
 \subsection{}
 The Kalman Filter works as follows
 \begin{enumerate}
 \item \textit{Initialization:} with $\rho=0.8$ our initial assesment is $\hat y_{1|0} = 0$ and $V_{1|0} = \frac{\sigma^2_e}{1-\rho^2}$. 
 \item \textit{Forecast of $x_t$:} the optimal date $t$ forecast of the observable is $\hat x_{t|t-1} = \hat y_{t|t-1}$. Pick up the associated MSE
 \begin{align*}
-\E[(x_t - \hat x_{t|t-1})^2] = V_{t|t-1} + \sigma^2_m.
+\E[(x_t - \hat x_{t|t-1})^2] = V_{t|t-1} + \sigma^2_m \equiv V^x_{t|t-1}
 \end{align*}
 \item \textit{Update forecast of $y_t$:} the updated forecast of $y_t$ given observed data $x_t$ is
 \begin{align*}
 \hat y_{t|t} = \hat y_{t|t-1} + V_{t|t-1}[V_{t|t-1} + \sigma^2_m]^{-1}(x_t - \hat y_{t|t-1})
 \end{align*}
+with updated MSE
+\begin{align*}
+V_{t|t} = V_{t|t-1} -\frac{V_{t|t-1}^2}{V^x_{t|t-1}}
+\end{align*}
 \item \textit{Compute forecast of $y_{t+1}$ given $x_t$}:
 \begin{align*}
 \hat y_{t+1|t} = \rho \hat y_{t|t} = \rho \hat y_{t|t-1} + \rho V_{t|t-1}[V_{t|t-1} + \sigma^2_m]^{-1}(x_t - \hat y_{t|t-1})
 \end{align*}
+and pick up the associated MSE
+\begin{align*}
+V_{t+1|t} = \rho^2 V_{t|t} + \sigma^2_e
+\end{align*}
 \item \textit{Iterate.}
 \end{enumerate}
+To get the log-likelihood of the observed data we exploit the Gaussian nature of the system. In particular, set $\hat x_{t|t-1} = \hat y_{t|t-1}$, then
+\begin{align*}
+f(x_t | X_{t-1}) = \phi(\hat x_{t|t-1}, V^x_{t|t-1})
+\end{align*}
+The log likelihood is simply
+\begin{align*}
+\ell(\rho) = \sum_{t=1}^T \ln \phi(\hat x_{t|t-1}, V^x_{t|t-1})
+\end{align*}
+With $\rho = 0.8$ I get
+\begin{align*}
+\ell(0.8) = -872.2657.
+\end{align*}
+
+\subsection{}
+I present the log-likelihood values for different values of $\rho$ below. This is how I know my recursion must be wrong: $\ell(p)$ is monotonically decreasing in $\rho$, which doesn't make sense.
+
+\begin{table}[t!]
+\centering
+\begin{tabular}{l*{1}{r}}
+\hline
+       $\rho$     & $\ell(\rho)$\\
+\hline
+         0.75    &  -810.38 \\
+         0.76     &  -822.3\\
+         0.77      &-834.45\\
+         0.78      &-846.83\\
+         0.79      &-859.43\\
+          0.8      &-872.27\\
+         0.81     & -885.33\\
+         0.82     & -898.64\\
+         0.83     & -912.18\\
+         0.84     & -925.96\\
+         0.85     & -939.99\\
+         0.86     & -954.26\\
+         0.87      &-968.78\\
+         0.88     & -983.54\\
+         0.89    &  -998.56\\
+          0.9     & -1013.8\\
+         0.91    &  -1029.4\\
+         0.92     & -1045.2\\
+         0.93     & -1061.2\\
+         0.94     & -1077.5\\
+         0.95     & -1094.1\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{} I plot the smoothed series $\{\hat y_t\}$ on the next page. Again, the results don't make sense: $\hat y_t$ is more volatile than the observed data!
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.6\textwidth]{smooth.eps}
+        \caption{Observed Noisy Data and Estimate of the State}
+\end{figure}
+
+\newpage
 
 \end{document}

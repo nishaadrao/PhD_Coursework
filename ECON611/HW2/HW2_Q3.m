@@ -1,6 +1,6 @@
 %% ====================================================================== %
 % HW2_Q3.m
-% The Kalman Filter
+% The Kalman Filter, Likelihoods, Smoother
 %
 % A. Yadav 10/15/2018
 % ======================================================================= %
@@ -38,6 +38,35 @@ for p = 1:length(rho_vec)
     
     L_vec(p) = L;
 end
+
+% ======================================================================= %
+% (C) Kalman smoother
+% ======================================================================= %
+
+% Run Kalman recursion for rho=0.75
+[L,y_o,y_n, V_o, V_n,V_x] = mykalman(0.99,0,v0,XDAT,sigma_m,sigma_e);
+
+% Create J matrix
+J = zeros(length(XDAT)-1,1);
+
+for j=1:length(J)
+
+    J(j) = rho*V_n(j)/V_o(j+1);
+    
+end
+
+% Create smoothed series
+y_smooth      = zeros(length(XDAT),1);
+y_smooth(200) = y_n(200);
+
+for j=1:length(J)
+
+    y_smooth(j) = y_n(j) + J(j)*(y_n(j+1)-y_o(j));
+    
+end
+
+plot(1:200,XDAT,1:200,y_smooth)
+legend('x_t','\hat{y}_{t|T}')
 
 
 
@@ -86,8 +115,5 @@ function [L,y_o,y_n, V_o, V_n,V_x] = mykalman(rho,y0,v0,X,sigma_m,sigma_e)
 
 end
 
-% ======================================================================= %
-% (C) Kalman smoother
-% ======================================================================= %
 
 
