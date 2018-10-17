@@ -7,6 +7,10 @@
 \contentsline {subsection}{\numberline {3.1}}{5}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}}{6}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}}{7}{subsection.3.3}
-\contentsline {section}{\numberline {4}Key implications of EK's Ricardian model}{7}{section.4}
-\contentsline {subsection}{\numberline {4.1}}{7}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}}{7}{subsection.4.2}
+\contentsline {section}{\numberline {4}Key implications of EK's Ricardian model}{8}{section.4}
+\contentsline {subsection}{\numberline {4.1}}{8}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}}{8}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}}{9}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}}{10}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}}{10}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}}{11}{subsection.4.6}

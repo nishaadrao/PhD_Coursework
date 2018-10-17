@@ -210,6 +210,8 @@ With no trade costs goods prices are identical in $H$ and $F$. Thus, $\omega$ me
 \end{align*}
 So, if $\theta > 1$, then the effect of an increase in $T^*$ is decreasing in $L^*/L$, which is observable in the data.
 
+\newpage
+
 \section{Key implications of EK's Ricardian model}
 
 \subsection{}
@@ -269,5 +271,64 @@ Substituting (\ref{eq:EK22}) and (\ref{eq:EK24}) into (\ref{eq:EK23}) gives
 \end{align*}
 since the integral in the second last line evaluates to 1, because it is a pdf of a probability distribution of the form (\ref{eq:EK22}).
 
+\subsection{} Next we want to compute the probability distribution of goods prices actually bought in market $n$. Call this price $P_n$ and recall that $n$ buys the lowest cost good
+\begin{align*}
+P_n = \min_{i=1,..,N}\{C_{ni}\}
+\end{align*}
+Thus
+\begin{align*}
+\Pr[P_n \leq p ] &= \Pr[ \min_{i=1,..,N}\{C_{ni}\} \leq p]\\
+&= 1-\Pr[C_{ni} > p \text{ for all } i]\\
+&= 1- \prod_{i=1}^N[1-G_{ni}(p)]\\
+&= 1-  \prod_{i=1}^N \exp(-T_i(c_id_{ni})^{-\theta}p^\theta) \text{ using (\ref{eq:EK22}),}\\
+&= 1- \exp(-\Phi_n p^\theta).
+\end{align*}
+Denote this distribution as $G_n(p)$, so that 
+\begin{align}
+G_n(p) \equiv \Pr[P_n \leq p ] = 1- \exp(-\Phi_n p^\theta) \label{eq:EK25}
+\end{align}
+
+\subsection{} Next, we want to compute the probability distribution of goods prices that $n$ \textit{actually buys} from country $i$. That is, we want to compute the conditional probability distribution:
+\begin{align*}
+\Pr[P_n \leq p | P_n = C_{ni}]
+\end{align*}
+Now,
+\begin{align*}
+Pr[P_n \leq p | P_n = C_{ni}]&=\Pr[P_n \leq p |C_{ni} = \min\{C_{ns}; s\neq i\}]\\
+&=\Pr[C_{ni}  \leq p |C_{ni} = \min\{C_{ns}; s\neq i\}]\\
+&=\frac{1}{\pi_{ni}} \int_0^p \prod_{s \neq i}  [1-G_{ns}(q)] dG_{ni}(q)\\
+&=\frac{1}{\pi_{ni}} \pi_{ni}\int_0^p \exp(-\Phi_nq^\theta) \Phi_n\theta q^{\theta-1}dq,
+\end{align*}
+using our previous derivations. Thus,
+\begin{align*}
+\Pr[P_n \leq p | P_n = C_{ni}]&= \int_0^p \exp(-\Phi_nq^\theta) \Phi_n\theta q^{\theta-1}dq \\
+&= \int_0^p dG_n(q)\\
+&= G_n(p).
+\end{align*}
+So, for goods that are purchased in $n$, conditioning on the source does not affect the distribution of the good's price. This result seems at odds with reality, as we discussed in class. One would think that German cars bought in the US would have a different price distribution compared to Japanese cars bought in the US.
+
+
+\subsection{}
+I'm not exactly sure how to do this problem, but here's my best shot.\\
+
+\textbf{(a)} Given CES preferences over the unit mass of goods, $n$'s demand for good $j$ is given by
+\begin{align*}
+X_n(j) &= \left(\frac{P_n(j)}{P_n}\right)^{1-\sigma}X_n\\
+&=  \left(\frac{\min_{i=1,..,N}\{C_{ni}(j)\}}{P_n}\right)^{1-\sigma}X_n
+\end{align*}
+
+\textbf{(b)} Then, $n$'s expected expenditure on good $j$, sourced from $i$ is
+\begin{align*}
+X_{ni}(j) &= \E[X_n(j)  | i*(j) = i] \Pr[i^*(j) = i]\\
+&=\E \left[\left(\frac{\min_{i=1,..,N}\{C_{ni}(j)\}}{P_n}\right)^{1-\sigma}X_n|  i^*(j) = i\right] \pi_{ni}\\
+&= \E \left[\left(\frac{C_{ni}(j)}{P_n}\right)^{1-\sigma}X_n|  i^*(j) = i\right] \pi_{ni}\\
+&= \E \left[\left(\frac{P_n}{P_n}\right)^{1-\sigma}X_n|  i^*(j) = i\right] \pi_{ni}\\
+&= \pi_{ni} X_n.
+\end{align*}
+
+
+
+
+\subsection{} We've shown that $\pi_{ni}$ is the probability that country $n$ purchases good any good $j$ from $i$. Since there is a unit measure of goods, it follows that $\pi_{ni}$ is the total fraction of the $j \in [0,1]$ goods that are sourced from from $i$ in country $n$. Then, we can split the the total unit measure $j\in [0,1]$ of goods purchased in $n$ into the share supplied by each source country. Recall that conditioning on the source of a good does not affect the distribution of the good's price in $n$. Accordingly, the fraction of $n$'s total expenditure that goes to country $i$ is the same as the fraction of goods that $n$ purchases from country $i$; namely, $\pi_{ni}$.
 
 \end{document}
