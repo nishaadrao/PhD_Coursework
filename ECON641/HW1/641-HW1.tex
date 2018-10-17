@@ -210,4 +210,64 @@ With no trade costs goods prices are identical in $H$ and $F$. Thus, $\omega$ me
 \end{align*}
 So, if $\theta > 1$, then the effect of an increase in $T^*$ is decreasing in $L^*/L$, which is observable in the data.
 
+\section{Key implications of EK's Ricardian model}
+
+\subsection{}
+The unit cost of sending good $j$ from $i$ to $n$ is given by
+\begin{align}
+C_{ni}(j) = \frac{c_i}{Z_i(j)}d_{ni} \label{eq:EK21}
+\end{align}
+
+\subsection{}
+We want to compute the probability that $i$ will sell good $j$ to $n$. Since the derivation below is the same for all goods, I suppress the index $j$. \\
+
+\textbf{(a)} From (\ref{eq:EK21}) note that 
+\begin{align*}
+Z_i = \frac{c_id_{ni}}{C_{ni}}
+\end{align*}
+Now,
+\begin{align*}
+\Pr[Z_i \leq p] &= \Pr[{c_id_{ni}}/{C_{ni}} \leq p]
+\end{align*}
+Thus,
+\begin{align*}
+\Pr[Z_i \leq {c_id_{ni}}/{p} ] &=  \Pr[{c_id_{ni}}/{C_{ni}} \leq {c_id_{ni}}/{p}]\\
+&= \Pr[p \leq C_{ni}]\\
+&= \Pr[C_{ni} \geq p]\\
+&= 1- \Pr[C_{ni} \leq p]\\
+\therefore \Pr[C_{ni} \leq p] &= 1-\Pr[Z_i \leq {c_id_{ni}}/{p} ]\\
+&= 1- F_i(c_id_{ni}/{p})\\
+&= 1- \exp(-T_i(c_id_{ni})^{-\theta}p^\theta),
+\end{align*}
+which is the probability distribution of $C_{ni}$. Denote this distribution as $G_{ni}$ so that
+\begin{align}
+G_{ni}(p) = 1- \exp(-T_i(c_id_{ni})^{-\theta}p^\theta) \label{eq:EK22}
+\end{align}
+
+\textbf{(b)} Next we want to compute the probability that $i$ is the cheapest supplier for $n$. Denote this probability as $\pi_{ni}$. We have
+\begin{align}
+\pi_{ni} \equiv \Pr[ C_{ni} &= \min\{C_{ns}; s\neq i\}] \nonumber \\
+&= \Pr[C_{ns} \geq C_{ni} \text{ for all } s \neq i]\nonumber \\ 
+&= \int_0^\infty \prod_{s\neq i}[1-G_{ns}(C_{ni})] dG_{ni}(C_{ni})\nonumber \\
+&=  \int_0^\infty \prod_{s\neq i}[1-G_{ns}(p)] dG_{ni}(p), \label{eq:EK23}
+\end{align}
+where I just re-denote the integration dummy as $p$ to ease notation.\\
+
+\textbf{(c)} Now,
+\begin{align}
+dG_{ni}(p) = \frac{d}{dp} G_{ni}(p) &= \exp(-T_i(c_id_{ni})^{-\theta}p^\theta) T_i(c_id_{ni})^{-\theta} \theta p^{\theta-1} \label{eq:EK24}
+\end{align}
+Substituting (\ref{eq:EK22}) and (\ref{eq:EK24}) into (\ref{eq:EK23}) gives
+\begin{align*}
+\pi_{ni} &= \int_0^\infty\left[ \prod_{s\neq i} \exp(-T_s(c_sd_{ns})^{-\theta}p^\theta) \right] \exp(-T_i(c_id_{ni})^{-\theta}p^\theta) T_i(c_id_{ni})^{-\theta} \theta p^{\theta-1}dp\\
+&=  \int_0^\infty\exp(-\sum_{s \neq i} T_s(c_sd_{ns})^{-\theta}p^\theta)  \exp(-T_i(c_id_{ni})^{-\theta}p^\theta) T_i(c_id_{ni})^{-\theta} \theta p^{\theta-1}dp\\
+&= \int_0^\infty\exp(-\sum_{i=1}^N T_i(c_{ni}d_{ni})^{-\theta}p^\theta)T_i(c_id_{ni})^{-\theta} \theta p^{\theta-1}dp\\
+&=\int_0^\infty\exp(-\Phi_np^\theta) T_i(c_id_{ni}) \theta p^{\theta-1}dp\\
+&=T_i(c_id_{ni})^{-\theta} \int_0^\infty\exp(-\Phi_np^\theta) \theta p^{\theta-1}dp\\
+&= \frac{T_i(c_id_{ni})^{-\theta} }{\Phi_n} \int_0^\infty\exp(-\Phi_np^\theta) \Phi_n\theta p^{\theta-1}dp\\
+&=\frac{T_i(c_id_{ni})^{-\theta} }{\Phi_n},
+\end{align*}
+since the integral in the second last line evaluates to 1, because it is a pdf of a probability distribution of the form (\ref{eq:EK22}).
+
+
 \end{document}
