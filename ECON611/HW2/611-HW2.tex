@@ -99,37 +99,27 @@ Now, a competitive equilibrium is a sequence of allocations $\{c^i_t, s^i_t\}_{t
 Neither agent will react to this news in period 0. The only plausible reaction to the news would be for agents to borrow against potentially higher income next period (there is no way that this news could induce a savings response). But both agents want to make the same trade, since they are identical before the shock. Obviously, both agents cannot increase their borrowing simultaneously in period zero because this would contradict bond market clearing. Thus, in equilibrium, neither agent reacts to the news in period zero.
 
 \subsection{}
-This problem is essentially the same as the 2 country IRBC example we looked at in class.\\ 
+I didn't submit this, but having seen other people's solutions here we go.\\
 
-I'm not sure exactly how to solve for the time paths by hand, but here's the intuition. Consider agent $A$, who gets the positive income shock. She wants to amortize this shock over her lifetime like a good PIH agent would do. To do so, she needs to save in period 1, which must mean that agent $B$ has to borrow in equilibrium. Thus, consumption of both agents increase in period 1. Next, note that if agent $B$ does nothing (i.e. just consumes her endowment every period), her lifetime utility is zero. Thus, agent $A$ chooses her savings in period 1 such that taking the other side of the bond trade gives $B$ a lifetime utility of exactly zero (I think this explains why $A$'s consumption isn't perfectly smooth). Thus, we get the pattern we saw in class: both agents have higher consumption in period 1; for $t\geq 2$, $A$'s consumption remains above 1 forever, and $B$'s is slightly below 1 forever. 
+Solve backwards. Start from period 2. We must have:
+\begin{align*}
+\frac{1}{c^i_2} &= (1+r_2)\beta \frac{1}{c^i_{3}} \\
+c^i_3 &= (1+r_2)\beta c^i_2
+\end{align*}
+Summing over $i$:
+\begin{align*}
+c^A_3 + c^B_3 &=(1+r_2)\beta (c^A_2+c^B_2)\\
+2 &=(1+r_2)\beta 2\\
+\therefore (1+r_2)\beta &= 1.
+\end{align*}
+Thus, for $t\geq 2$, $(1+r_t)$ returns to its steady state value. And then the Euler equations imply that $c^A_t$ and $c^B_t$ are constant for $t\geq 2$. Following this logic:
+\begin{align*}
+c^A_2 + c^B_2 &=(1+r_1)\beta (c^A_1+c^B_1)\\
+2 &= 3(1+r_1)\beta\\
+\therefore 1+r_1 &= \frac{2}{3} \frac{1}{\beta} < 1+ \bar r = 1/\beta
+\end{align*}
+Thus, the interest rate falls in period 1. Now, we need the time paths for consumption...
 
-\iffalse
-The present value of agent $A$'s endowment at $t=1$ is
-\begin{align*}
-\sum_{j=0}^\infty \beta^jy^A_{t+j} &= 2 + \beta(1) + \beta^2(1) + \beta^3(1)+...\\
-&= 1 + \frac{1}{1-\beta}
-\end{align*}
-The annuity value $\bar c^A$ that has the same value as this endowment stream is 
-\begin{align*}
-\frac{\bar c^A}{1-\beta} &= 1 + \frac{1}{1-\beta}\\
-\implies \bar c^A &=1 + (1-\beta) = 2-\beta.
-\end{align*}
-I shall guess and verify that in equilibrium $c_t^A =\bar c^A$ for all $t$. First note that the associated savings scheme comes from the budget constraint. Under the proposed allocation, $A$'s period 2 budget constraint is
-\begin{align*}
-c_2^A + s^A_2 = y^A_2 + (1+r_1)s^A_1
-\end{align*}
-And since $c_1^A = c_2^A =\bar c^A  =2-\beta$ we must have $s_1 = \beta$. Thus, 
-\begin{align*}
-\bar c^A + s^A_2  &=1 + 1 \text{ with } 1+r_1 = 1/\beta\\
-\implies s^A_2 &= \beta.
-\end{align*}
-Following this logic, it is pretty easy to see that $s_t^A = \beta$ for all $t \geq 1$. Bond market clearing then implies that $s_t^B = -\beta$ for all $t$. So we have the following allocations
-\begin{align*}
-c_t^A &= 2-\beta, s_t^A = \beta\\
-c_t^B &= 1+\beta, s_t^B = -\beta
-\end{align*}
-for all $t$, with $(1+r_t) = 1/\beta$ for all $t$. Clearly, these allocations satisfy the agents' optimality condition (\ref{eq:1}) (since no agent is borrowing constrained), budget constraints, and bond market clearing; so it is an equilibrium.
-\fi
 
 
 \subsection{}
