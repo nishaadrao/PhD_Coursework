@@ -41,7 +41,7 @@ data  <- cbind(country.names,data)
 
 # Add column names
   colnames(data) <- c("country",country.names)
-  dt    <- as.data.table(data)
+  dt             <- as.data.table(data)
   
   # Make vector of industry indicies
   ind <- c(paste0("c", c(1:35)))
@@ -53,10 +53,18 @@ data  <- cbind(country.names,data)
 # Sum columns by country
 col.sum <- dt[, lapply(.SD, sum), by = "country"]
 
-# Sum rows - NEED TO WRITE A LOOP OVER COUNTRY NAMES
-col.sum[, AUS := rowSums(.SD), .SDcols = grep("AUS_", colnames(col.sum))]
-col.sum[, AUT := rowSums(.SD), .SDcols = grep("AUT_", colnames(col.sum))]
+# Sum rows, by country
+# NOTES:
+for (i in 1:length(country.unique)){
+    col.sum[, temp := rowSums(.SD), .SDcols = grep(paste0(country.unique[i],"_"), colnames(col.sum))]
+    setnames(col.sum, "temp", country.unique[i])
+}
+
 
 # subset the data table
 intermediate.trade = col.sum[,country.unique,with=FALSE]
+intermediate.trade[,supplier:=country.unique]
+
+# Remove large data
+rm(data,dt,col.sum)
 
