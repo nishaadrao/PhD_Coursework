@@ -137,4 +137,10 @@ rm(data,dt,col.sum)
 
 
 
+######################################################################
+# Construct ratio of intermediate imports to total imports, by country
+######################################################################
+
+ans <- intermediate.trade[supplier!="AUS",sum(get("AUS"))]
+
 
