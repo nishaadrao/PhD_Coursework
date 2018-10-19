@@ -32,7 +32,7 @@ country.unique <- unique(country.names)
 data  <- data[-1,]
 
 # Remove commas, convert to numbers
-data  <- apply(data[,-1], 1, function(y) as.numeric(gsub(",", "", y)))
+data  <- apply(data[,-1], 2, function(y) as.numeric(gsub(",", "", y)))
 data  <- as.data.frame(data)
 
 # Add country as a variable
