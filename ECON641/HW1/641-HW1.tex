@@ -331,4 +331,156 @@ X_{ni}(j) &= \E[X_n(j)  | i*(j) = i] \Pr[i^*(j) = i]\\
 
 \subsection{} We've shown that $\pi_{ni}$ is the probability that country $n$ purchases good any good $j$ from $i$. Since there is a unit measure of goods, it follows that $\pi_{ni}$ is the total fraction of the $j \in [0,1]$ goods that are sourced from from $i$ in country $n$. Then, we can split the the total unit measure $j\in [0,1]$ of goods purchased in $n$ into the share supplied by each source country. Recall that conditioning on the source of a good does not affect the distribution of the good's price in $n$. Accordingly, the fraction of $n$'s total expenditure that goes to country $i$ is the same as the fraction of goods that $n$ purchases from country $i$; namely, $\pi_{ni}$.
 
+
+\section{Quantitative analysis in the EK model}
+
+\subsection{A peek at the data}
+See attached \verb|R| code for the aggregation of the WIO data.\\
+
+Table 1 (overleaf) shows the ratio of imports of intermediate goods to total imports for each country in the WIOD. For each country in the sample, imports of intermediate goods accounts for more than half of total imports; the mean intermediate import share is 0.64. These results imply that it is extremely important to incorporate and intermediate goods sector when modelling aggregate trade flows.\\
+
+Table 2 presents the ratio of each country's trade deficit (imports minus exports) to total expenditure. For most countries, the trade deficit is tiny compared to total expenditure; the mean trade deficit to expenditure ratio is 0.002. These results suggest that the usual balanced trade assumption is fairly realistic.
+
+\begin{table}[!htbp]
+\caption{\textbf{Intermediate Goods Share of Total Imports by Country}}
+\centering
+\begin{tabular}{rlr}
+  \hline
+ & Country & Intermediate trade share \\ 
+  \hline
+1 & AUS & 0.55 \\ 
+  2 & AUT & 0.60 \\ 
+  3 & BEL & 0.67 \\ 
+  4 & BGR & 0.67 \\ 
+  5 & BRA & 0.68 \\ 
+  6 & CAN & 0.60 \\ 
+  7 & CHN & 0.75 \\ 
+  8 & CYP & 0.46 \\ 
+  9 & CZE & 0.69 \\ 
+  10 & DEU & 0.57 \\ 
+  11 & DNK & 0.61 \\ 
+  12 & ESP & 0.62 \\ 
+  13 & EST & 0.63 \\ 
+  14 & FIN & 0.71 \\ 
+  15 & FRA & 0.61 \\ 
+  16 & GBR & 0.56 \\ 
+  17 & GRC & 0.59 \\ 
+  18 & HUN & 0.76 \\ 
+  19 & IDN & 0.78 \\ 
+  20 & IND & 0.81 \\ 
+  21 & IRL & 0.76 \\ 
+  22 & ITA & 0.63 \\ 
+  23 & JPN & 0.61 \\ 
+  24 & KOR & 0.76 \\ 
+  25 & LTU & 0.58 \\ 
+  26 & LUX & 0.78 \\ 
+  27 & LVA & 0.48 \\ 
+  28 & MEX & 0.70 \\ 
+  29 & MLT & 0.64 \\ 
+  30 & NLD & 0.68 \\ 
+  31 & POL & 0.64 \\ 
+  32 & PRT & 0.56 \\ 
+  33 & ROM & 0.65 \\ 
+  34 & RUS & 0.53 \\ 
+  35 & SVK & 0.67 \\ 
+  36 & SVN & 0.58 \\ 
+  37 & SWE & 0.67 \\ 
+  38 & TUR & 0.64 \\ 
+  39 & TWN & 0.66 \\ 
+  40 & USA & 0.53 \\ 
+  41 & RoW & 0.70 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\caption{\textbf{Ratio of Trade Deficit to Total Expenditure by Country}}
+\centering
+\begin{tabular}{rlrrrrr}
+  \hline
+ & Country & Total Imports & Total Exports & Total Expenditure & Deficit Ratio* & Trade deficit \\ 
+  & & (\$ b) & (\$ b) & (\$ b) &  & (\$ b) \\ 
+  \hline
+1 & AUS & 82183 & 89119 & 773044 & -0.009 & -6936 \\ 
+  2 & AUT & 74129 & 76573 & 326787 & -0.007 & -2444 \\ 
+  3 & BEL & 145488 & 159808 & 476141 & -0.030 & -14320 \\ 
+  4 & BGR & 5687 & 5496 & 25011 & 0.008 & 191 \\ 
+  5 & BRA & 70230 & 63215 & 1102372 & 0.006 & 7015 \\ 
+  6 & CAN & 262124 & 318038 & 1274587 & -0.044 & -55914 \\ 
+  7 & CHN & 233466 & 278005 & 3079150 & -0.014 & -44539 \\ 
+  8 & CYP & 3720 & 1846 & 15698 & 0.119 & 1874 \\ 
+  9 & CZE & 34011 & 31977 & 140246 & 0.015 & 2034 \\ 
+  10 & DEU & 546757 & 612622 & 3331636 & -0.020 & -65865 \\ 
+  11 & DNK & 54834 & 66476 & 256046 & -0.045 & -11642 \\ 
+  12 & ESP & 174061 & 139171 & 1136802 & 0.031 & 34890 \\ 
+  13 & EST & 3395 & 3174 & 12286 & 0.018 & 221 \\ 
+  14 & FIN & 37210 & 50286 & 221058 & -0.059 & -13076 \\ 
+  15 & FRA & 327210 & 348182 & 2392238 & -0.009 & -20972 \\ 
+  16 & GBR & 371112 & 376887 & 2679956 & -0.002 & -5775 \\ 
+  17 & GRC & 39250 & 16839 & 223624 & 0.100 & 22411 \\ 
+  18 & HUN & 31956 & 28746 & 106129 & 0.030 & 3210 \\ 
+  19 & IDN & 46340 & 64460 & 322243 & -0.056 & -18120 \\ 
+  20 & IND & 65785 & 66604 & 900499 & -0.001 & -819 \\ 
+  21 & IRL & 71357 & 87495 & 188948 & -0.085 & -16138 \\ 
+  22 & ITA & 263034 & 269745 & 2128874 & -0.003 & -6711 \\ 
+  23 & JPN & 392472 & 511342 & 8569322 & -0.014 & -118870 \\ 
+  24 & KOR & 171804 & 197894 & 1127198 & -0.023 & -26090 \\ 
+  25 & LTU & 4512 & 3723 & 19312 & 0.041 & 789 \\ 
+  26 & LUX & 22195 & 25249 & 44725 & -0.068 & -3054 \\ 
+  27 & LVA & 2702 & 2540 & 14573 & 0.011 & 162 \\ 
+  28 & MEX & 172069 & 169818 & 1088325 & 0.002 & 2251 \\ 
+  29 & MLT & 3216 & 2494 & 7928 & 0.091 & 722 \\ 
+  30 & NLD & 181619 & 212380 & 710528 & -0.043 & -30761 \\ 
+  31 & POL & 53523 & 44796 & 341961 & 0.026 & 8727 \\ 
+  32 & PRT & 42004 & 28517 & 225600 & 0.060 & 13487 \\ 
+  33 & ROM & 12402 & 10830 & 73977 & 0.021 & 1572 \\ 
+  34 & RUS & 48576 & 97684 & 396030 & -0.124 & -49108 \\ 
+  35 & SVK & 12680 & 12514 & 48242 & 0.003 & 166 \\ 
+  36 & SVN & 9557 & 8933 & 39114 & 0.016 & 624 \\ 
+  37 & SWE & 88073 & 108985 & 443365 & -0.047 & -20912 \\ 
+  38 & TUR & 57821 & 41445 & 518382 & 0.032 & 16376 \\ 
+  39 & TWN & 154033 & 170777 & 650183 & -0.026 & -16744 \\ 
+  40 & USA & 1314500 & 981035 & 18636780 & 0.018 & 333465 \\ 
+  41 & RoW & 1178338 & 1079715 & 6694889 & 0.015 & 98623 \\ 
+   \hline
+\multicolumn{7}{ p{18cm} }{\footnotesize \textit{Note}$^*$: the deficit ratio is trade deficit divided by total expenditure. }\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{Gravity} 
+
+SHOULD I USE AvW instead?
+
+\subsection{} I use the EK (2002) gravity specification. Start with the expression for the bilateral trade share
+\begin{align}
+\pi_{ni} = \frac{X_{ni}}{X_n}= \frac{T_i (c_i d_{ni})^{-\theta}}{\Phi_n} \label{eq:grav1}
+\end{align}
+Next, note that $i$'s total sales, denoted by $Q_i$, are given by
+\begin{align*}
+Q_i = \sum_{m=1}^N X_{mi} = \sum_{m=1}^N  \pi_{mi}X_m &=   \sum_{m=1}^N\frac{T_i (c_i d_{mi})^{-\theta}}{\Phi_m} X_m\\
+&= T_ic_i^{-\theta} \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m\\
+\implies  T_ic_i^{-\theta} &= \frac{Q_i}{ \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m}
+\end{align*}
+Substituting this expression into (\ref{eq:grav1}) and rearranging gives
+\begin{align*}
+X_{ni} = \frac{\frac{d_{ni}^{-\theta}}{\Phi_n}X_n}{ \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m}Q_i
+\end{align*}
+Note that, from equation (9) in EK (2002), the exact price index in country $n$ is given by
+\begin{align*}
+p_n = \gamma \Phi_n ^{-1/\theta} \implies \Phi_n = (p_n/\gamma)^{-\theta}
+\end{align*}
+Plugging this into the above expression gives EK's gravity specification
+\begin{align}
+X_{ni} =\frac{\left(\frac{d_{ni}}{p_n}\right)^{-\theta}X_n}{ \sum_{m=1}^N\left(\frac{d_{mi}}{p_m}\right)^{-\theta} X_m}Q_i \label{eq:grav2}.
+\end{align}
+
+\subsection{}
+\textbf{(a)} SEE SST (2006)\\
+
+\textbf{(b)} SEE SST \\
+
+
+
 \end{document}

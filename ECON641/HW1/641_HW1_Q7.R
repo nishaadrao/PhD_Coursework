@@ -10,6 +10,7 @@ rm(list = ls())             #clear workspace
 library(foreach)            #for looping
 library(data.table)         #for data manipulation
 library(Matrix)             #fast matrix calcs
+library(xtable)
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 
@@ -179,10 +180,10 @@ total.imp = sapply(1:N, function(i) total.imp.f(i))
 total.sp  = total.trade[,total.sp]
 
 trade.deficits = as.data.table(cbind(total.exp,total.imp,total.sp))
-trade.deficits[,deficit:=total.exp-total.imp]
+trade.deficits[,deficit:=total.imp-total.exp]
 trade.deficits[,ratio:=round(deficit/total.sp,3)]
 trade.deficits[,country:=country.unique]
-setcolorder(trade.deficits,c("country","total.exp","total.imp","total.sp","ratio"))
+setcolorder(trade.deficits,c("country","total.imp","total.exp","total.sp","ratio"))
 
 mean.def.ratio = trade.deficits[,mean(ratio)]
 
