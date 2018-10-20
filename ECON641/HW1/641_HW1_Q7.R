@@ -8,9 +8,7 @@
 ######################################################################
 rm(list = ls())             #clear workspace
 library(foreach)            #for looping
-library(dplyr)              #for data manipulation
 library(data.table)         #for data manipulation
-library(ggplot2)            #for pretty plots
 library(Matrix)             #fast matrix calcs
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
@@ -135,12 +133,77 @@ setcolorder(final.trade,c("supplier",country.unique))
 # Remove large data
 rm(data,dt,col.sum)
 
-
+######################################################################
+# Construct total trade flows by country pair
+######################################################################
+total.trade = intermediate.trade[,-1]+final.trade[,-1]
+total.trade[,supplier:=country.unique]
+setcolorder(total.trade,c("supplier",country.unique))
+total.trade[,total.sp:=colSums(.SD),.SDcols = country.unique]
 
 ######################################################################
 # Construct ratio of intermediate imports to total imports, by country
 ######################################################################
 
-ans <- intermediate.trade[supplier!="AUS",sum(get("AUS"))]
+N = length(country.unique)
+
+int.share <- function(i){
+  out = intermediate.trade[supplier!=country.unique[i],sum(get(country.unique[i]))]/+
+    (total.trade[supplier!=country.unique[i],sum(get(country.unique[i]))])
+}
+
+intermediate.share = sapply(1:N,function(i) int.share(i))
+
+mean.int.share = mean(intermediate.share)
+
+intermediate.share = as.data.table(round(intermediate.share,2))
+intermediate.share[,country:=country.unique]
+colnames(intermediate.share)=c("intermediate.share",colnames(intermediate.share)[2])
+setcolorder(intermediate.share,c("country","intermediate.share"))
 
 
+######################################################################
+# Construct ratio of trade deficit to total expenditure, by country
+######################################################################
+
+total.exp.f <- function(i){
+  out = total.trade[supplier==country.unique[i],rowSums(.SD),.SDcols=country.unique[-i]]
+}
+
+total.imp.f <- function(i){
+  out = total.trade[supplier!=country.unique[i],sum(get(country.unique[i]))]
+}
+
+total.exp = sapply(1:N, function(i) total.exp.f(i))
+total.imp = sapply(1:N, function(i) total.imp.f(i))
+total.sp  = total.trade[,total.sp]
+
+trade.deficits = as.data.table(cbind(total.exp,total.imp,total.sp))
+trade.deficits[,deficit:=total.exp-total.imp]
+trade.deficits[,ratio:=round(deficit/total.sp,3)]
+trade.deficits[,country:=country.unique]
+setcolorder(trade.deficits,c("country","total.exp","total.imp","total.sp","ratio"))
+
+mean.def.ratio = trade.deficits[,mean(ratio)]
+
+######################################################################
+# Construct bilateral trade shares
+######################################################################
+
+# Make matrix of total spending by country
+m1=t(matrix(rep(total.trade[,total.sp],2),41,41))
+
+# Get total bilateral trade values as a matrix
+m2=as.matrix(total.trade[,country.unique,with=FALSE])
+
+# Get bilateral trade shares
+bilateral.shares = as.data.table(m2/m1)
+
+# Round shares to 3 decimal places
+bilateral.shares.r = round(bilateral.shares,3)
+
+bilateral.shares.r[,supplier:=country.unique]
+setcolorder(bilateral.shares.r,c("supplier",country.unique))
+
+# Remove intermediate matricies
+rm(m1,m2)
