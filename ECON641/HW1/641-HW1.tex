@@ -451,35 +451,33 @@ Table 2 presents the ratio of each country's trade deficit (imports minus export
 
 \section{Gravity} 
 
-SHOULD I USE AvW instead?
 
-\subsection{} I use the EK (2002) gravity specification. Start with the expression for the bilateral trade share
+\subsection{} The gravity specification from AvW's (2003) Armington model (with symmetric trade costs) is given by
 \begin{align}
-\pi_{ni} = \frac{X_{ni}}{X_n}= \frac{T_i (c_i d_{ni})^{-\theta}}{\Phi_n} \label{eq:grav1}
+X_{ni} = \frac{Y_nY_i}{Y_w}\left(\frac{d_{ni}}{P_n P_i}\right)^{1-\sigma}  \label{eq:grav1}
 \end{align}
-Next, note that $i$'s total sales, denoted by $Q_i$, are given by
+Taking logs
 \begin{align*}
-Q_i = \sum_{m=1}^N X_{mi} = \sum_{m=1}^N  \pi_{mi}X_m &=   \sum_{m=1}^N\frac{T_i (c_i d_{mi})^{-\theta}}{\Phi_m} X_m\\
-&= T_ic_i^{-\theta} \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m\\
-\implies  T_ic_i^{-\theta} &= \frac{Q_i}{ \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m}
+\log X_{ni} &= - \log Y_w + \log Y_n + \log Y_i + (1-\sigma)\log d_{ni} - (1-\sigma)P_n - (1-\sigma)P_i 
 \end{align*}
-Substituting this expression into (\ref{eq:grav1}) and rearranging gives
-\begin{align*}
-X_{ni} = \frac{\frac{d_{ni}^{-\theta}}{\Phi_n}X_n}{ \sum_{m=1}^N\frac{ d_{mi}^{-\theta}}{\Phi_m} X_m}Q_i
-\end{align*}
-Note that, from equation (9) in EK (2002), the exact price index in country $n$ is given by
-\begin{align*}
-p_n = \gamma \Phi_n ^{-1/\theta} \implies \Phi_n = (p_n/\gamma)^{-\theta}
-\end{align*}
-Plugging this into the above expression gives EK's gravity specification
+Given the parametric form for trade costs, the estimating equation becomes
 \begin{align}
-X_{ni} =\frac{\left(\frac{d_{ni}}{p_n}\right)^{-\theta}X_n}{ \sum_{m=1}^N\left(\frac{d_{mi}}{p_m}\right)^{-\theta} X_m}Q_i \label{eq:grav2}.
+\log \left(\frac{X_{ni}}{Y_n Y_i}\right) =& \alpha_0 + \alpha_1 (1-\sigma) \text{log distance}_{ni} +  \alpha_2 (1-\sigma) \text{no contiguity}_{ni} \nonumber\\
+&+ \alpha_3 (1-\sigma) \text{no common language}_{ni} + \alpha_4 (1-\sigma) \text{no colonial ties}_{ni} \nonumber\\
+&- (1-\sigma)m_n - (1-\sigma)m_i + \nu_{ni}, \label{eq:grav3}
 \end{align}
+where $m_n$ and $m_i$ are importer and exporter fixed effects, respectively. Note that AvW impose unit income elasticities by using $\log \left(\frac{X_{ni}}{Y_n Y_i}\right)$ as the dependent variable. Santos-Silva and Tenreyro (SST) (2006) note that this is probably not the best approach (see fn 29), but I'll stick with it anyway. \textcolor{blue}{For simplicity, I estimate (\ref{eq:grav3}) only for the subsample of observations where $X_{ni} >0$. HM say this is not a good idea.}
 
 \subsection{}
-\textbf{(a)} SEE SST (2006)\\
+\textbf{(a)} Clearly a zero trade flow for a country-pair observation poses a problem for the estimation of (\ref{eq:grav3}) because the dependent variable would be equal to $- \infty$. As SST (2006) note, most studies simply drop the zero observations when estimating gravity equations of the form (\ref{eq:grav3}), but Head and Meyer (HM) show that this results in selection bias (because zeros account for a large share of total country-pair observations). Another approach is to estimate the model using $X_{ni}+1$ instead of $X_{ni}$, but SST and HM note that this procedure is bad: it yields inconsistent estimators of the gravity parameters and the results depend on the units of measurement of $X_{ni}$. Another approach is to assume that the observed $X_{ni}$ is truncated at its lowest observed value and estimate (\ref{eq:grav3}) using Tobit regression. SST's proposed PPML method allows for zeros.\\
 
-\textbf{(b)} SEE SST \\
+\textbf{(b)} As SST (2006) mention, for parameters in (\ref{eq:grav3}) to be unbiased, $\nu_{ni}$ must be statistically independent of the regressors.  \\
+
+\textbf{(c)} The estimated coefficient on log distance is $\widehat{\alpha_1(1-\sigma)}$. That is, we cannot separately identify $\alpha_1$ and $(1-\sigma)$.\\
+
+\textbf{(d)}\\
+
+\textbf{(e)}
 
 
 
