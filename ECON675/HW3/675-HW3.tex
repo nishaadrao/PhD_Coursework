@@ -85,8 +85,8 @@ H_0 &= \E[\frac{\partial^2}{\partial \beta \partial \beta'} m(\mtx{x}_i; \beta_0
 by LIE. And, the variance of the score is
 \begin{align*}
 \Sigma_0 &= \V[\frac{\partial}{\partial \beta} m(\mtx{x}_i; \beta_0)] \\
-&=\E\left[(y_i-\mu(\mtx{x}_i'\mtx{\beta}))^2\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i'\right]\\
-&=\E[\sigma^2(\mtx{x}_i)\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i']
+&=\E\left[(y_i-\mu(\mtx{x}_i'\mtx{\beta}_0))^2\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i'\right]\\
+&=\E[\sigma^2(\mtx{x}_i)\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']
 \end{align*}
 again by LIE. Then we have the asymptotic variance
 \begin{align*}
@@ -94,6 +94,29 @@ again by LIE. Then we have the asymptotic variance
 \end{align*}
 
 \subsection{Variance estimator under heteroskedasticity}
+Under heteroskedasticity we can use the sandwich variance estimator
+\begin{align*}
+\widehat{\mtx{V}}_{HC} &= \hat{H}^{-1}\hat \Sigma \hat{H}^{-1},
+\end{align*}
+where
+\begin{align*}
+\hat{H} &= \frac{1}{n} \sum_{i=1}^n \dot{\mu}(\mtx{x}_i'\hat{\mtx{\beta}}))^2\mtx{x}_i\mtx{x}_i'\\
+\hat \Sigma &= \frac{1}{n} \sum_{i=1}^n \hat{e}^2_i\dot{\mu}(\mtx{x}_i'\hat{\mtx{\beta}}))^2\mtx{x}_i\mtx{x}_i'\\
+\end{align*}
+Now, to get an asymptotically valid CI for $|| \mtx{\beta}_0 ||^2$ we need to use the Delta Method. First, note that:
+\begin{align*}
+|| \mtx{\beta}_0 ||^2 &= \mtx{\beta}_0 ' \mtx{\beta}_0 \\
+\implies \frac{\partial}{\partial \beta}|| \mtx{\beta}_0 ||^2 & = 2\mtx{\beta}_0
+\end{align*}
+Then, using the Delta Method
+\begin{align*}
+\sqrt{n}(||\hat{\mtx{\beta}}||^2-||\mtx{\beta}_0||^2) &\to_d 2\mtx{\beta}_0 \N(0,\mtx{V}_0)\\ 
+&= \N(0,4 \mtx{\beta}_0'\mtx{V}_0 \mtx{\beta}_0)
+\end{align*}
+Thus, an asymptotically valid 95\% CI for $|| \mtx{\beta}_0 ||^2$ is
+\begin{align*}
+CI_{95} = \left[\hat{\mtx{\beta}} - 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HC}\hat{\mtx{\beta}}}{n}},\hat{\mtx{\beta}} + 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HC}\hat{\mtx{\beta}}}{n}}\right]
+\end{align*}
 
 \subsection{Variance estimator under homoskedasticity}
 Using the above results, under homoskedasticity, the asymptotic variance collapses to
@@ -101,6 +124,19 @@ Using the above results, under homoskedasticity, the asymptotic variance collaps
 \mtx{V}_0 &= \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1} \sigma^2 \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i'] \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1}\\
 &=\sigma^2\E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1}
 \end{align*}
+The variance estimator is now takes a simpler form
+\begin{align*}
+\widehat{\mtx{V}}_{HO} &= \hat{\sigma}^2 \hat{H}^{-1}
+\end{align*}
+where $\hat{H}$ is the same as above and
+\begin{align*}
+\hat{\sigma}^2 &= \frac{1}{n-d} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\hat{\mtx{\beta}}))^2
+\end{align*}
+Then, as above, the asymptotically valid 95\% CI for $|| \mtx{\beta}_0 ||^2$ is
+\begin{align*}
+CI_{95} = \left[\hat{\mtx{\beta}} - 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HO}\hat{\mtx{\beta}}}{n}},\hat{\mtx{\beta}} + 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HO}\hat{\mtx{\beta}}}{n}}\right].
+\end{align*}
+
 
 
 
