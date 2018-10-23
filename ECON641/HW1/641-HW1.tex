@@ -466,18 +466,51 @@ Given the parametric form for trade costs, the estimating equation becomes
 &+ \alpha_3 (1-\sigma) \text{no common language}_{ni} + \alpha_4 (1-\sigma) \text{no colonial ties}_{ni} \nonumber\\
 &- (1-\sigma)m_n - (1-\sigma)m_i + \nu_{ni}, \label{eq:grav3}
 \end{align}
-where $m_n$ and $m_i$ are importer and exporter fixed effects, respectively. Note that AvW impose unit income elasticities by using $\log \left(\frac{X_{ni}}{Y_n Y_i}\right)$ as the dependent variable. Santos-Silva and Tenreyro (SST) (2006) note that this is probably not the best approach (see fn 29), but I'll stick with it anyway. \textcolor{blue}{For simplicity, I estimate (\ref{eq:grav3}) only for the subsample of observations where $X_{ni} >0$. HM say this is not a good idea.}
+where $m_n$ and $m_i$ are importer and exporter fixed effects, respectively. Note that AvW impose unit income elasticities by using $\log \left(\frac{X_{ni}}{Y_n Y_i}\right)$ as the dependent variable. Santos-Silva and Tenreyro (SST) (2006) note that this is probably not the best approach (see fn 29), but I'll stick with it anyway. For simplicity, I estimate (\ref{eq:grav3}) only for the subsample of observations where $X_{ni} >0$ (I discuss the implications of this below). Table 1 (column (1)) presents the OLS estimates of (\ref{eq:grav3}).
+
+\begin{table}[!htbp]
+\centering
+\caption{\textbf{Estimated Gravity Parameters Using Different Estimators}}
+\begin{tabular}{l*{3}{c}}
+\hline
+Estimator                    &OLS& PPML &PPML\\
+Dependent variable                    & $\ln(X_{ni}/Y_nY_i)$ &$X_{ni}/Y_nY_i>0$&$X_{ni}/Y_nY_i$\\
+\hline
+log distance              &      -1.607&      -1.115&      -1.409\\
+                    &    (0.0235)&    (0.0448)&    (0.0412)\\
+
+no contigity            &      -0.918&      -0.596&      -0.398\\
+                    &     (0.103)&     (0.110)&     (0.111)\\
+
+no common language             &      -0.733&      -0.805&      -0.810\\
+                    &    (0.0515)&     (0.103)&     (0.116)\\
+
+no colonial ties               &      -1.055&      -0.894&      -0.854\\
+                    &    (0.0960)&     (0.160)&     (0.169)\\
+Fixed effects & Yes & Yes & Yes\\
+\hline
+Observations        &       19997&       19997&       26967\\
+\hline
+\multicolumn{4}{l}{\textit{Notes:} Eiker-White standard errors in parentheses}\\
+\end{tabular}
+\end{table}
+
 
 \subsection{}
-\textbf{(a)} Clearly a zero trade flow for a country-pair observation poses a problem for the estimation of (\ref{eq:grav3}) because the dependent variable would be equal to $- \infty$. As SST (2006) note, most studies simply drop the zero observations when estimating gravity equations of the form (\ref{eq:grav3}), but Head and Meyer (HM) show that this results in selection bias (because zeros account for a large share of total country-pair observations). Another approach is to estimate the model using $X_{ni}+1$ instead of $X_{ni}$, but SST and HM note that this procedure is bad: it yields inconsistent estimators of the gravity parameters and the results depend on the units of measurement of $X_{ni}$. Another approach is to assume that the observed $X_{ni}$ is truncated at its lowest observed value and estimate (\ref{eq:grav3}) using Tobit regression. SST's proposed PPML method allows for zeros.\\
+\textbf{(a)} Clearly a zero trade flow for a country-pair observation poses a problem for the estimation of (\ref{eq:grav3}) because the dependent variable would be equal to $- \infty$. As SST (2006) note, most studies simply drop the zero observations when estimating gravity equations of the form (\ref{eq:grav3}), but Head and Meyer (HM) show that this results in selection bias (because zeros account for a large share of total country-pair observations). Another approach is to estimate the model using $X_{ni}+1$ instead of $X_{ni}$, but SST and HM note that this procedure is bad: it yields inconsistent estimators of the gravity parameters and the results depend on the units of measurement of $X_{ni}$. Another approach is to assume that the observed $X_{ni}$ is truncated at its lowest observed value and estimate (\ref{eq:grav3}) using Tobit regression. SST's proposed PPML method (discussed below) allows for zeros.\\
 
-\textbf{(b)} As SST (2006) mention, for parameters in (\ref{eq:grav3}) to be unbiased, $\nu_{ni}$ must be statistically independent of the regressors.  \\
+\textbf{(b)} As SST (2006) mention, for the estimated parameters in (\ref{eq:grav3}) to be unbiased, $\nu_{ni}$ must be statistically independent of the regressors.  \\
 
 \textbf{(c)} The estimated coefficient on log distance is $\widehat{\alpha_1(1-\sigma)}$. That is, we cannot separately identify $\alpha_1$ and $(1-\sigma)$.\\
 
-\textbf{(d)}\\
+\textbf{(d)} Comparing (\ref{eq:grav3}) and the equation just above it we can see that the fixed effects parameters are given by:
+\begin{align*}
+m_i &= (1-\sigma)P_i\\
+m_n &= (1-\sigma)P_n
+\end{align*}
+$P_i$ and $P_n$ are the ideal price indicies in country $i$ and $n$, respectively. With $\sigma>1$ the Armington model predicts that bilateral trade flows should be increasing in $P_i$ and $P_n$. The idea is simple: if $P_n$ is high, then goods are relatively expensive in the destination country, which makes it easier for $i$'s imports to penetrate the market. Similarly, if $P_i$ is high, then it's hard for $i$ to export its good to all destinations, so it's relatively easier for $i$ to sell in $n$ (I'm not sure about this).\\
 
-\textbf{(e)}
+\textbf{(e)} Table 3 also presents the PPML estimates of the gravity equation, following SST  (column (2) presents results for the positive trade sample and (3) presents results for the full sample). Consistent with SST, the PPML estimates of the coefficient on log distance are lower than the corresponding OLS estimate.
 
 
 
