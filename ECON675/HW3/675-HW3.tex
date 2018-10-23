@@ -62,6 +62,45 @@ where $M(\mtx{\beta}) = \E[(y_i - \mu(\mtx{x}_i'\mtx{\beta}))^2]$. Of course $\m
 \end{align*}
 
 \subsection{Asymptotic normality}
+The M-estimator is asymptotically normal if:
+\begin{enumerate}
+\item $\hat{\mtx{\beta}} \to_p \mtx{\beta}_0$
+\item $\mtx{\beta}_0 \in int(B)$ and $m(\mtx{x}_i,\mtx{\beta}) \equiv (y_i - \mu(\mtx{x}_i'\mtx{\beta}))^2$ is 3 times continuously differentiable.
+\item $\Sigma_0 = \V[\frac{\partial}{\partial \beta} m(\mtx{x}_i; \beta_0)] < \infty$ and $H_0 = \E[\frac{\partial^2}{\partial \beta \partial \beta'} m(\mtx{x}_i; \beta_0)]$ is full rank (and therefore invertible).
+\end{enumerate}
+Now, the FOC for the M-estimation problem is
+\begin{align*}
+0 &= \frac{1}{n} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\mtx{\beta}))\dot{\mu}(\mtx{x}_i'\mtx{\beta}))\mtx{x}_i
+\end{align*}
+where $\dot \mu = \frac{\partial}{\partial \beta}  \mu (\mtx{x}_i'\mtx{\beta})$. So, we've converted the M-estimation problem into a Z-estimation problem. Then we can use the standard asymptotic normality result to arrive at a precise form of the asymptotic variance:
+\begin{align*}
+\sqrt{n}(\hat{\mtx{\beta}}-\mtx{\beta}_0) \to_d \N(0, H_0^{-1}\Sigma_0 H_0^{-1}).
+\end{align*}
+Now, taking the second derivative gives the Hessian
+\begin{align*}
+H_0 &= \E[\frac{\partial^2}{\partial \beta \partial \beta'} m(\mtx{x}_i; \beta_0)]\\
+&=\E\left[-\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))\mtx{x}_i\mtx{x}_i' + (y_i-\mu(\mtx{x}_i'\mtx{\beta}_0))\ddot{\mu}(\mtx{x}_i'\mtx{\beta}_0))\mtx{x}_i\mtx{x}_i'\right]\\
+&=-\E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']
+\end{align*}
+by LIE. And, the variance of the score is
+\begin{align*}
+\Sigma_0 &= \V[\frac{\partial}{\partial \beta} m(\mtx{x}_i; \beta_0)] \\
+&=\E\left[(y_i-\mu(\mtx{x}_i'\mtx{\beta}))^2\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i'\right]\\
+&=\E[\sigma^2(\mtx{x}_i)\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i']
+\end{align*}
+again by LIE. Then we have the asymptotic variance
+\begin{align*}
+\mtx{V}_0 = H_0^{-1}\Sigma_0 H_0^{-1}.
+\end{align*}
+
+\subsection{Variance estimator under heteroskedasticity}
+
+\subsection{Variance estimator under homoskedasticity}
+Using the above results, under homoskedasticity, the asymptotic variance collapses to
+\begin{align*}
+\mtx{V}_0 &= \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1} \sigma^2 \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}))^2\mtx{x}_i\mtx{x}_i'] \E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1}\\
+&=\sigma^2\E[\dot{\mu}(\mtx{x}_i'\mtx{\beta}_0))^2\mtx{x}_i\mtx{x}_i']^{-1}
+\end{align*}
 
 
 
