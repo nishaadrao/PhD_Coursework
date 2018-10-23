@@ -1,0 +1,70 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{ECON675 -- Assignment 3}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\section{Non-linear least squares}
+
+\subsection{Identifiability}
+This is a standard M-estimation problem. The parameter vector $\mtx{\beta}_0$ is assumed to solve the population problem
+\begin{align*}
+\mtx{\beta}_0 = \arg \min_{\beta \in \R^d} \E[(y_i - \mu(\mtx{x}_i'\mtx{\beta}))^2].
+\end{align*}
+For $\mtx{\beta}_0$ to be identified, it must be the \textit{unique} solution to the above population problem (i.e. the unique minimizer). In math, this means for all $\e>0$ and for some $\delta >0$:
+\begin{align*}
+\sup_{|| \beta - \beta_0 || > \e} M(\mtx{\beta}) \geq M(\mtx{\beta}_0) + \delta
+\end{align*}
+where $M(\mtx{\beta}) = \E[(y_i - \mu(\mtx{x}_i'\mtx{\beta}))^2]$. Of course $\mtx{\beta}_0$ can be written in closed form if $\mu(\cdot)$ is linear. In this case, we know that 
+\begin{align*}
+\mtx{\beta}_0= \E[\mtx{x}_i\mtx{x}_i']^{-1}\E[\mtx{x}_iy_i].
+\end{align*}
+
+\subsection{Asymptotic normality}
+
+
+
+
+
+\end{document}
