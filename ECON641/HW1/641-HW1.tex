@@ -117,6 +117,76 @@ Clearly the Leontief production function exhibits NFIR. Suppose both industries 
 
 \section{$2 \times 2 \times 2$ HO Model}
 
+\subsection{Integrated equilibrium}
+Integrated equilibrium is the competitive equilibrium that would prevail if both factors and goods were freely traded across countries. Thus, to solve for integrated equilibrium quantities and prices I simply assume that there is a representative consumer that maximizes utility subject to their (world) income, both firms maximize profits, and markets clear. I want to get expressions for equilibrium quantities $\{C_A,C_B,X_A,X_B,K_A,K_B,L_A,L_B\}$ and prices $\{p_A,p_B,w,r\}$, so I need to derive 12 equations that represent the equilibrium, make a suitable normalization and then do a lot of algebra. \\
+
+Denote world endowments of labor and capital as $\bar L$ and $\bar K$, respectively. Start with the consumer's problem because it is easy. The consumer solves
+\begin{align*}
+\max_{C_A,C_B} U(C_A, C_B) \text{ s.t. } p_AC_A + p_BC_B = w\bar L + r\bar K.
+\end{align*}
+Given Cobb-Douglas preferences, it is easy to arrive at the demand functions:
+\begin{align}
+C_A &= \frac{1}{p_A} \alpha (w\bar L + r\bar K) \label{eq:HO1}\\
+C_B &= \frac{1}{p_B} (1-\alpha) (w\bar L + r\bar K). \label{eq:HO2}
+\end{align}
+Next, consider the firms' profit maximization problems. I can skip a few steps here by using the results form Question 1 [1]. Combining the FOCs from the firms' maximization problems with the zero profit conditions gives expressions for goods prices in terms of factor prices:
+\begin{align}
+p_A &= \lambda_A r^{\beta_A}w^{1-\beta_A} \label{eq:HO3}\\
+p_B &= \lambda_B r^{\beta_B}w^{1-\beta_B} \label{eq:HO4}
+\end{align}
+where $\lambda_i =  \frac{1}{(1-\beta_i)}\left(\frac{1-\beta_i}{\beta_i}\right)^{\beta_i}$ for $i = A,B$.\\
+
+Next, I derive the unit factor requirements for both goods, which I'll use later in the market clearing conditions. To do so, I solve the firms' cost minimization problems. Firm $i$ solves
+\begin{align*}
+\min_{K_i,L_i} rK_i + wL_i \text{ s.t } K_i^{\beta_i}L_i^{1-\beta_i} \geq 1
+\end{align*}
+Again, I can skip a lot of the math because it is almost identical to that in Question 1 [1]. Each firm chooses its capital/labor ratio such that
+\begin{align*}
+\frac{K_i}{L_i} = \frac{\beta_i}{1-\beta_i}\left(\frac{w}{r}\right).
+\end{align*}
+Plugging this expression into the production function gives unit factor requirements for each sector. For labor:
+\begin{align}
+\left[ \frac{\beta_i}{1-\beta_i}\left(\frac{w}{r}\right)\right]^{\beta_i} L_i &= 1 \nonumber \\
+\implies L_i \equiv a_{L,i}(w,r) =  \left[ \frac{\beta_i}{1-\beta_i}\left(\frac{w}{r}\right)\right]^{-\beta_i} \label{eq:HO5}
+\end{align}
+Similarly, the unit capital requirement for sector $i$ is
+\begin{align}
+a_{K,i} =  \left[ \frac{\beta_i}{1-\beta_i}\left(\frac{w}{r}\right)\right]^{1-\beta_i} \label{eq:HO6}
+\end{align}
+Then, factor demands are given by
+\begin{align}
+L_i &= a_{L,i}(w,r) X_i \label{eq:HO7}\\
+K_i &= a_{K,i}(w,r) X_i \label{eq:HO8}
+\end{align}
+for $i = A,B$. Finally the market clearing conditions are:
+\begin{align}
+X_i &= C_i, \text{ for } i = A,B  \label{eq:HO9}\\
+L_A + L_B &= \bar L \label{eq:HO10}\\
+K_A + K_B &= \bar K. \label{eq:HO11}
+\end{align}
+Equations (\ref{eq:HO1})--(\ref{eq:HO11}) fully characterize the integrated equilibrium. Next, I need to do a lot of algebra to get expressions for equilibrium quantities and prices. Start with the labor market clearing condition
+\begin{align*}
+a_{L,A}(w,r) X_A+ a_{L,B}(w,r) X_B =\bar L
+\end{align*}
+Then, use the goods market clearing conditions, and plug in the demand functions (\ref{eq:HO1}) and (\ref{eq:HO2}) to get
+\begin{align*}
+ \bar L&=a_{L,A}(w,r) \frac{\alpha}{p_A}(w\bar L + r\bar K) + a_{L,B}(w,r)\frac{1-\alpha}{p_B}(w\bar L + r\bar K) \\
+ &=(w\bar L + r\bar K)\left[a_{L,A}(w,r) \frac{\alpha}{p_A} + a_{L,B}(w,r)\frac{1-\alpha}{p_B}\right].
+\end{align*}
+Next, plug in the unit labor requirements (\ref{eq:HO5}) and goods prices (\ref{eq:HO3}) and (\ref{eq:HO4}):
+\begin{align*}
+ \bar L&= (w\bar L + r\bar K)\left[\left[ \frac{\beta_A}{1-\beta_A}\left(\frac{w}{r}\right)\right]^{-\beta_A} \frac{\alpha}{\lambda_A r^{\beta_A}w^{1-\beta_A} } + \left[ \frac{\beta_B}{1-\beta_B}\left(\frac{w}{r}\right)\right]^{-\beta_B}  \frac{1-\alpha}{\lambda_B r^{\beta_B}w^{1-\beta_B} }\right].
+\end{align*}
+This is an ugly expression, so it seems like the appropriate time to make the normalization $w = 1$. Plugging in the constants, $\lambda_A$ and $\lambda_B$ also helps to simplify the above expression; I get:
+\begin{align*}
+ \bar L&= (\bar L + r\bar K)\left[\alpha(1-\beta_A) + (1-\alpha)(1-\beta_B)\right],
+\end{align*}
+which looks much better (phew!). Now, solving for $r$ gives
+\begin{align}
+r^* = \left[\frac{\alpha\beta_A + (1-\alpha)\beta_B}{\alpha(1-\beta_A) + (1-\alpha)(1-\beta_B)}\right] \frac{\bar L}{\bar K} \label{eq:12}
+\end{align}
+and I'm essentially done. To get equilibrium goods prices,$p^*_A$ and $p^*_B$, plug $r^*$ into (\ref{eq:HO3}) and (\ref{eq:HO4}). Then plug these equilibrium prices into (\ref{eq:HO1}) and (\ref{eq:HO2}) to get equilibrium consumption $C_A^*$ and $C_B^*$, which in turn give $X_A^*$ and $X_B^*$ via goods market clearing. Finally, plug in $r^*$ and $X_i^*$ into (\ref{eq:HO7}) and (\ref{eq:HO8}) to get the equilibrium quantities of labor and capital used in each sector.
+
 \newpage
 
 \section{Technology growth in a parameterized version of DFS}
