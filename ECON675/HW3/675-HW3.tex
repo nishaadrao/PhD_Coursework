@@ -69,9 +69,9 @@ The M-estimator is asymptotically normal if:
 \item $\Sigma_0 = \V[\frac{\partial}{\partial \beta} m(\mtx{x}_i; \beta_0)] < \infty$ and $H_0 = \E[\frac{\partial^2}{\partial \beta \partial \beta'} m(\mtx{x}_i; \beta_0)]$ is full rank (and therefore invertible).
 \end{enumerate}
 Now, the FOC for the M-estimation problem is
-\begin{align*}
-0 &= \frac{1}{n} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\mtx{\beta}))\dot{\mu}(\mtx{x}_i'\mtx{\beta}))\mtx{x}_i
-\end{align*}
+\begin{align}
+0 &= \frac{1}{n} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\mtx{\beta}))\dot{\mu}(\mtx{x}_i'\mtx{\beta}))\mtx{x}_i \label{eq:M1}
+\end{align}
 where $\dot \mu = \frac{\partial}{\partial \beta}  \mu (\mtx{x}_i'\mtx{\beta})$. So, we've converted the M-estimation problem into a Z-estimation problem. Then we can use the standard asymptotic normality result to arrive at a precise form of the asymptotic variance:
 \begin{align*}
 \sqrt{n}(\hat{\mtx{\beta}}-\mtx{\beta}_0) \to_d \N(0, H_0^{-1}\Sigma_0 H_0^{-1}).
@@ -137,9 +137,74 @@ Then, as above, the asymptotically valid 95\% CI for $|| \mtx{\beta}_0 ||^2$ is
 CI_{95} = \left[\hat{\mtx{\beta}} - 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HO}\hat{\mtx{\beta}}}{n}},\hat{\mtx{\beta}} + 1.96 \sqrt{\frac{4\hat{\mtx{\beta}}'\widehat{\mtx{V}}_{HO}\hat{\mtx{\beta}}}{n}}\right].
 \end{align*}
 
+\subsection{MLE}
+Given the assumption of a normal DGP we have the conditional density
+\begin{align*}
+f(y_i|\mtx{x}_i) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\Big(-\frac{1}{2\sigma^2}(y_i - \mu(\mtx{x}'_i\mtx{\beta}_0))^2\Big).
+\end{align*}
+Then, the sample log-likelihood function is
+\begin{align*}
+\ell(\mtx{\beta}, \sigma^2; \mtx{X}) &= n \log\Big(\frac{1}{\sqrt{2\pi\sigma^2}}\Big) -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i - \mu(\mtx{x}'_i\mtx{\beta}))^2
+\end{align*}
+Dividing by $n$ gives
+\begin{align*}
+\ell(\mtx{\beta},\sigma^2; \mtx{X}) &= \log\Big(\frac{1}{\sqrt{2\pi\sigma^2}}\Big) -\frac{1}{n2\sigma^2}\sum_{i=1}^n(y_i - \mu(\mtx{x}'_i\mtx{\beta}))^2
+\end{align*}
+The FOC wrt $\mtx{\beta}$ is
+\begin{align*}
+0 &= \frac{1}{n\sigma^2} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\mtx{\beta}))\dot{\mu}(\mtx{x}_i'\mtx{\beta}))\mtx{x}_i,
+\end{align*}
+which is equivalent to the FOC for the M-estimation problem (\ref{eq:M1}) (since $\sigma^2$ just scales the FOC, it does not affect the solution). Thus,
+\begin{align*}
+\hat{\mtx{\beta}}_{MLE} =\hat{\mtx{\beta}}_{M.est}.
+\end{align*}
+Now, the FOC of the log-likelihood wrt $\sigma^2$ is
+\begin{align*}
+0 = -\frac{1}{2}(2\pi\sigma^2)^{-1}2\pi + \frac{1}{2n}(\sigma^2)^{-2} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\hat{\mtx{\beta}}))^2
+\end{align*}
+Solving for $\sigma^2$ gives the MLE:
+\begin{align*}
+\hat \sigma^2_{ML} = \frac{1}{n} \sum_{i=1}^n (y_i-\mu(\mtx{x}_i'\hat{\mtx{\beta}}))^2,
+\end{align*}
+which is not the same as the estimator proposed in [4], since it does not adjust for the number of regressors.
 
+\subsection{When the link function is unknown}
+Suppose the link function is unknown, and consider two pairs of true parameters, $(\mu_1,{\mtx{\beta}}_1)$ and $(\mu_2,{\mtx{\beta}}_2)$ where $\mu_2(u)$ = $\mu_1(u/c)$ and ${\mtx{\beta}}_2= c{\mtx{\beta}}_1$ for some $c\neq 0$. Then the parameters are clearly different, but $\mu_1(\mtx{x}'_i\mtx{\beta}_1)=\mu_2(\mtx{x}'_i\mtx{\beta}_2)$. 
 
+\subsection{Logistic link function}
+The link function is
+\begin{align*}
+\mu(\mtx{x}'_i\mtx{\beta}_0) &=\E[y_i|\mtx{x}_i]\\
+&= \E[\bm{1}(\mtx{x}'_i\mtx{\beta}_0 \geq \e_i) |\mtx{x}_i ]\\
+&=\Pr[\mtx{x}'_i\mtx{\beta}_0 \geq \e_i |\mtx{x}_i ]\\
+&= F(\mtx{x}'_i\mtx{\beta}_0)\\
+&= \frac{1}{1+ \exp(-\mtx{x}'_i\mtx{\beta}_0)}, \text{ if } s_0 = 1.
+\end{align*}
+The conditional variance of $y_i$ is
+\begin{align*}
+\sigma^2(\mtx{x}_i) &= \V[y_i | \mtx{x}_i]\\
+&= \V[\e_i | \mtx{x}_i]\\
+&= \pi^2/3, \text{ if } s_0 = 1.
+\end{align*}
+To derive an expression for the asymptotic variance, first note that for the logistic cdf: $\dot \mu(u) = (1-\mu(u))\mu(u)$. Then, the asymptotic variance is 
+\begin{align*}
+\mtx{V}_0 &= H_0^{-1}\Sigma_0 H_0^{-1}.
+\end{align*}
+where
+\begin{align*}
+H_0 = \E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{x}_i\mtx{x}_i']
+\end{align*}
+and
+\begin{align*}
+\Sigma_0 = \frac{\pi^2}{3} \E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{x}_i\mtx{x}_i']
+\end{align*}
+Thus, the asymptotic variance collapses to
+\begin{align*}
+\mtx{V}_0 = \frac{\pi^2}{3}\E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{x}_i\mtx{x}_i']^{-1}.
+\end{align*}
 
+\subsection{Logistic link function, MLE}
+Yes, MLE gives the same results as above (this must be the case because MLE is asymptotically efficient).
 
 
 \end{document}
