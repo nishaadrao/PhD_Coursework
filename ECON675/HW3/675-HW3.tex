@@ -182,10 +182,14 @@ The link function is
 \end{align*}
 The conditional variance of $y_i$ is
 \begin{align*}
-\sigma^2(\mtx{x}_i) &= \V[y_i | \mtx{x}_i]\\
-&= \V[\e_i | \mtx{x}_i]\\
-&= \pi^2/3, \text{ if } s_0 = 1.
+\sigma^2(\mtx{x}_i)  \V[y_i | \mtx{x}_i]\\
 \end{align*}
+Now, note that $y_i|\mtx{x}_i$ is a Bernoulli random variable, with $\Pr[y_i=1 |\mtx{x}_i] = F(\mtx{x}'_i\mtx{\beta}_0)$. Then
+\begin{align*}
+\sigma^2(\mtx{x}_i)  &= F(\mtx{x}'_i\mtx{\beta}_0)(1-F(\mtx{x}'_i\mtx{\beta}_0))\\
+&= \mu(\mtx{x}'_i\mtx{\beta}_0)(1-\mu(\mtx{x}'_i\mtx{\beta}_0))
+\end{align*}
+
 To derive an expression for the asymptotic variance, first note that for the logistic cdf: $\dot \mu(u) = (1-\mu(u))\mu(u)$. Then, the asymptotic variance is 
 \begin{align*}
 \mtx{V}_0 &= H_0^{-1}\Sigma_0 H_0^{-1}.
@@ -196,15 +200,10 @@ H_0 = \E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{
 \end{align*}
 and
 \begin{align*}
-\Sigma_0 = \frac{\pi^2}{3} \E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{x}_i\mtx{x}_i']
-\end{align*}
-Thus, the asymptotic variance collapses to
-\begin{align*}
-\mtx{V}_0 = \frac{\pi^2}{3}\E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^2 \mu(\mtx{x}'_i\mtx{\beta}_0)^2 \mtx{x}_i\mtx{x}_i']^{-1}.
+\Sigma_0 =  \E[(1-\mu(\mtx{x}'_i\mtx{\beta}_0))^3 \mu(\mtx{x}'_i\mtx{\beta}_0)^3 \mtx{x}_i\mtx{x}_i']
 \end{align*}
 
 \subsection{Logistic link function, MLE}
-Yes, MLE gives the same results as above (this must be the case because MLE is asymptotically efficient).
-
+MLE gives the same point estimator as NLS, but is asymptotically efficient, so $\mtx{V}_0^{ML} \leq \mtx{V}_0^{NLS}$.
 
 \end{document}
