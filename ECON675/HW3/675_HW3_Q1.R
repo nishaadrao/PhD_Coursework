@@ -12,6 +12,7 @@ library(data.table)         #for data manipulation
 library(Matrix)             #fast matrix calcs
 library(sandwich)           #for variance-covariance estimation 
 library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 
@@ -60,5 +61,27 @@ rownames(results) = c("Const.", "S_age","S_HHpeople","log_inc")
 
 # Get latex table output
 xtable(results,digits=3)
+
+
+######################################################################
+# Q9(b): Bootstrap statistics
+######################################################################
+
+# Define function for bootstrap statistic
+boot.logit <- function(data, i){
+  logit <- glm(s ~ S_age + S_HHpeople + log_inc,
+             data = data[i, ], family = "binomial")
+  return(logit$coefficients)
+}
+
+# Run bootstrap replications
+set.seed(123)
+boot.results <- boot(data = data, R = 1999, statistic = boot.logit)
+
+# Get 95% confidence intervals
+boot.CI      <- sapply(1:4, function (i) quantile(boot.results$t[,i], c(0.025, 0.975)))
+
+# Get p-val -- LOOK AT HW1 
+boot.p
 
 

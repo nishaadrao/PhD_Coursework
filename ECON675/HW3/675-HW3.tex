@@ -204,6 +204,25 @@ and
 \end{align*}
 
 \subsection{Logistic link function, MLE}
-MLE gives the same point estimator as NLS, but is asymptotically efficient, so $\mtx{V}_0^{ML} \leq \mtx{V}_0^{NLS}$.
+MLE gives the same point estimator as NLS (we did this in 672), but is asymptotically efficient, so $\mtx{V}_0^{ML} \leq \mtx{V}_0^{NLS}$.
+
+\subsection{Some data work}
+
+\textbf{(a)} I estimated the logistic model with robust standard errors in both \verb|R| and \verb|Stata|. The results from \verb|R| are presented in Table 1. The standard errors from \verb|Stata| are sliiiightly different, but I'm not sure why.
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Logistic Regression Estimates for \texttt{dmissing}}}
+\begin{tabular}{rrrrrrr}
+  \hline
+ & Coef. & Std. Err. & t-stat & p-val & CI.lower & CI.upper \\ 
+  \hline
+Const. & 1.755 & 0.335 & 5.245 & 0.000 & 1.099 & 2.411 \\ 
+  S\_age & 1.333 & 0.123 & 10.826 & 0.000 & 1.092 & 1.575 \\ 
+  S\_HHpeople & -0.067 & 0.023 & -2.871 & 0.004 & -0.112 & -0.021 \\ 
+  log\_inc & -0.119 & 0.044 & -2.707 & 0.007 & -0.205 & -0.033 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \end{document}

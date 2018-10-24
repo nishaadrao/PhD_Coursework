@@ -7,3 +7,4 @@
 \contentsline {subsection}{\numberline {1.6}When the link function is unknown}{4}{subsection.1.6}
 \contentsline {subsection}{\numberline {1.7}Logistic link function}{4}{subsection.1.7}
 \contentsline {subsection}{\numberline {1.8}Logistic link function, MLE}{5}{subsection.1.8}
+\contentsline {subsection}{\numberline {1.9}Some data work}{5}{subsection.1.9}
