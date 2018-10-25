@@ -10,6 +10,7 @@ rm(list = ls())             #clear workspace
 library(foreach)            #for looping
 library(data.table)         #for data manipulation
 library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
 library(sandwich)           #for variance-covariance estimation 
 library(xtable)             #for latex tables
 library(boot)               #for bootstrapping
@@ -69,19 +70,62 @@ xtable(results,digits=3)
 
 # Define function for bootstrap statistic
 boot.logit <- function(data, i){
-  logit <- glm(s ~ S_age + S_HHpeople + log_inc,
+  logit  <- glm(s ~ S_age + S_HHpeople + log_inc,
              data = data[i, ], family = "binomial")
-  return(logit$coefficients)
+  V      <- vcovHC(logit, type = "HC1")
+  se     <- sqrt(diag(V.hat))
+  t.boot <- (coef(logit)-coef(mylogit))/se
+  
+  return(t.boot)
 }
 
 # Run bootstrap replications
 set.seed(123)
-boot.results <- boot(data = data, R = 1999, statistic = boot.logit)
+boot.results <- boot(data = data, R = 999, statistic = boot.logit)
 
-# Get 95% confidence intervals
-boot.CI      <- sapply(1:4, function (i) quantile(boot.results$t[,i], c(0.025, 0.975)))
+# Get 0.025/0.975 quantiles from the boot t-distribution
+boot.q      <- sapply(1:4, function (i) quantile(boot.results$t[,i], c(0.025, 0.975)))
 
-# Get p-val -- LOOK AT HW1 
-boot.p
+# Construct 95% CIs using bootstrapped quantiles
+boot.ci.lower = b.hat + t(boot.q)[,1]*se.hat
+boot.ci.upper = b.hat + t(boot.q)[,2]*se.hat
+
+# Get p-val -- I'm not sure if this is right!!!
+boot.p = sapply(1:4,function(i) 1/999*sum(boot.results$t[,i]>=t.stats[i])) 
+
+# Tabulate bootstrap results
+results.b  = as.data.frame(cbind(b.hat,boot.ci.lower,boot.ci.upper,boot.p))
+colnames(results.b) = c("Coef.","CI.lower","CI.upper","p-val")
+rownames(results.b) = c("Const.", "S_age","S_HHpeople","log_inc")
+
+# Get latex table output
+xtable(results.b,digits=3)
+
+
+######################################################################
+# Q9(c): Predicted probabilities
+######################################################################
+
+b.hat = coef(mylogit)
+
+# Subset data
+X     = data[,.(S_age,S_HHpeople,log_inc)]
+X[,const:= 1]
+setcolorder(X,c("const","S_age","S_HHpeople","log_inc"))
+
+# Define logistic cdf (i.e. mu function)
+mu = function(u){(1+exp(-u))^(-1)}
+
+# Construct vector of x_i'*beta.hats
+XB = as.matrix(X)%*%b.hat
+
+# Compute predicted probabilities
+mu.hat = mu(XB)
+
+X[,mu.hat:=mu.hat]
+
+#Make plot
+plot(density(mu.hat,kernel="e",bw="ucv",na.rm=TRUE),main="Kernel Density Plot of Predicted Probabilities")
+
 
 
