@@ -187,6 +187,27 @@ r^* = \left[\frac{\alpha\beta_A + (1-\alpha)\beta_B}{\alpha(1-\beta_A) + (1-\alp
 \end{align}
 and I'm essentially done. By Walras' law the capital market also clears. To get equilibrium goods prices, $p^*_A$ and $p^*_B$, plug $r^*$ into (\ref{eq:HO3}) and (\ref{eq:HO4}). Then plug these equilibrium prices into (\ref{eq:HO1}) and (\ref{eq:HO2}) to get equilibrium consumption $C_A^*$ and $C_B^*$, which in turn give $X_A^*$ and $X_B^*$ via goods market clearing. Finally, plug in $r^*$ and $X_i^*$ into (\ref{eq:HO7}) and (\ref{eq:HO8}) to get the equilibrium quantities of labor and capital used in each sector.
 
+\subsection{FPE set}
+The FPE set is the set of country factor endowment pairs $((L_H,K_H),(L_F,K_F))$ such that every country can fully employ its factors and $w_H=w_F, r_H=r_F$. The idea is that factor prices will be equalized under free trade of goods (not factors) if the countries' endowments are not too dissimilar.\\
+
+The integrated equilibrium factor demands for each sector are
+\begin{align*}
+L^*_A &= \left[\frac{\alpha(1-\beta_A) }{\alpha(1-\beta_A) + (1-\alpha)(1-\beta_B)}\right] \bar L\\
+L^*_B &= \bar L - L^*_A\\
+K^*_A &=  \left[\frac{\alpha\beta_A}{\alpha\beta_A + (1-\alpha)\beta_B}\right] \bar K\\
+K^*_B &= \bar K - K^*_A
+\end{align*}
+
+I plot the FPE set for the given parameters below; Home's `origin' is at the lower left corner. The endowment vector is represented by the red dot; clearly, it is not in the FPE set.
+
+\begin{figure}[!htpb]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{fpeset.pdf}
+
+\end{figure}
+
 \newpage
 
 \section{Technology growth in a parameterized version of DFS}
