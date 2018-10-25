@@ -208,21 +208,58 @@ MLE gives the same point estimator as NLS (we did this in 672), but is asymptoti
 
 \subsection{Some data work}
 
-\textbf{(a)} I estimated the logistic model with robust standard errors in both \verb|R| and \verb|Stata|. The results from \verb|R| are presented in Table 1. The standard errors from \verb|Stata| are sliiiightly different, but I'm not sure why.
+\textbf{(a)} I estimated the logistic model with robust standard errors in both \verb|R| and \verb|Stata|. The results from \verb|R| are presented in Table 1. The standard errors from \verb|Stata| are very slightly different, but I'm not sure why.
 
 \begin{table}[!htpb]
 \centering
-\caption{\textbf{Logistic Regression Estimates for \texttt{dmissing}}}
-\begin{tabular}{rrrrrrr}
+\caption{\textbf{Logistic Regression Estimates for $s=1-$\texttt{dmissing}}}
+\begin{tabular}{lrrrrrr}
   \hline
  & Coef. & Std. Err. & t-stat & p-val & CI.lower & CI.upper \\ 
   \hline
 Const. & 1.755 & 0.335 & 5.245 & 0.000 & 1.099 & 2.411 \\ 
   S\_age & 1.333 & 0.123 & 10.826 & 0.000 & 1.092 & 1.575 \\ 
   S\_HHpeople & -0.067 & 0.023 & -2.871 & 0.004 & -0.112 & -0.021 \\ 
-  log\_inc & -0.119 & 0.044 & -2.707 & 0.007 & -0.205 & -0.033 \\ 
+  $\log(\text{inc}+1)$ & -0.119 & 0.044 & -2.707 & 0.007 & -0.205 & -0.033 \\ 
    \hline
 \end{tabular}
 \end{table}
+
+\textbf{(b)} Table 2 presents the 95\% confidence interval and p-values for each coefficient derived from 999 bootstrap replications of the t-statistic: $t^*=({\beta^*}-\hat{\beta}_{obs})/se^*$. The statistics are very similar to those in Table 1, which rely on large sample approximations. \\
+
+The idea for computing bootstrapped CIs is simple: for each bootstrap replication, compute $t^*$ for each coefficient; this gives an empirical distribution for $t^*$; then extract the desired quantiles from the empirical distribution, and compute the confidence intervals as
+\begin{align*}
+CI^{boot}_{95}(\beta) = \left[ \hat{\beta}_{obs} +q^*_{0.025}\times \hat{se}_{obs},\text{ } \hat{\beta}_{obs} +q^*_{0.975}\times \hat{se}_{obs} \right]
+\end{align*}
+I computed the bootstrapped p-values as 
+\begin{align*}
+p^{boot} = \frac{1}{M}\sum_{i=1}^M \bm{1}[t^* \geq t_{obs}]
+\end{align*}
+where $M$ is the number of bootstrap replications.
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Bootstrap Statistics for the Logistic Model of $s=1-$\texttt{dmissing}}}
+\begin{tabular}{lrrrr}
+  \hline
+ & Coef. & CI.lower & CI.upper & p-val \\ 
+  \hline
+Const. & 1.755 & 1.157 & 2.471 & 0.000 \\ 
+  S\_age & 1.333 & 1.142 & 1.609 & 0.000 \\ 
+  S\_HHpeople & -0.067 & -0.112 & -0.020 & 0.001 \\ 
+  $\log(\text{inc}+1)$  & -0.119 & -0.216 & -0.042 & 0.001 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\textbf{(c)} I plot the kernel density estimate of the predicted probabilities of reporting data, $\hat{\mu}(\mtx{x}'_i\hat{\mtx{\beta}})$, using an Epanechnikov kernel with \verb|R|'s unbiased cross-validation bandwidth.
+
+\begin{figure}[!htpb]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{kdens.pdf}
+
+\end{figure}
 
 \end{document}
