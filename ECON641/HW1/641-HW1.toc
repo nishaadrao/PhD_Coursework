@@ -5,6 +5,7 @@
 \contentsline {section}{\numberline {2}$2 \times 2 \times 2$ HO Model}{4}{section.2}
 \contentsline {subsection}{\numberline {2.1}Integrated equilibrium}{4}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}FPE set}{6}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Autarky}{6}{subsection.2.3}
 \contentsline {section}{\numberline {3}Technology growth in a parameterized version of DFS}{7}{section.3}
 \contentsline {subsection}{\numberline {3.1}}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}}{8}{subsection.3.2}
