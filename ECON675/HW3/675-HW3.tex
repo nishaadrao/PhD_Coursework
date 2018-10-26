@@ -273,6 +273,29 @@ Const. & 1.755 & 1.157 & 2.471 & 0.000 \\
 
 \section{When bootstrap fails}
 
+\subsection{}
+I plot the empirical distribution of the bootstrap statistic, $n(\max\{x_i\} - \max\{x_i^*\})$, below. Clearly, the empirical distribution does not coincide with the theoretical Exponential (1) distribution.
+
+\begin{figure}[!htpb]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{freq.pdf}
+
+\end{figure}
+
+\subsection{}
+Now, consider the parametric bootstrap statistic, $t^*_{\texttt{P}}= n(\max\{x_i\} - \max\{x_i^*\})$, where $$x_i^* \sim_{iid} \texttt{Uniform}[0,\max\{x_i\}].$$ I plot the empirical distribution of $t^*_{\texttt{P}}$ below. Now, the empirical distribution \textit{does} seem to coincide with the theoretical Exponential (1) distribution.
+
+\begin{figure}[!htpb]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{freq2.pdf}
+
+\end{figure}
+
+\subsection{} In the nonparametric case, the bootstrap statistic has a mass point at zero since $\Pr[\max\{x_i\} = \max\{x_i^*\}]$ converges to 1. However, the parametric bootstrap corrects for this ``bias'': in this case $\Pr[\max\{x_i\} = \max\{x_i^*\}] = 0$, since $x_i^* \sim_{iid} \texttt{Uniform}[0,\max\{x_i\}].$
 
 \newpage
 
