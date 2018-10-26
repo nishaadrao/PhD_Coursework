@@ -269,11 +269,126 @@ Const. & 1.755 & 1.157 & 2.471 & 0.000 \\
 
 \section{Semiparametric GMM with missing data}
 
+\subsection{An optimal instrument}
+We have the conditional moment condition:
+\begin{align*}
+\E[m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)|t_i,\mtx{x}_i] =0
+\end{align*}
+By LIE
+\begin{align*}
+\E\big[\mtx{g}(t_i,\mtx{x}_i)\E[m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)|t_i,\mtx{x}_i]\big] =0
+\end{align*}
+for any $\mtx{g}(\cdot)$. Thus,
+\begin{align*}
+\E\big[\E[\mtx{g}(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)|t_i,\mtx{x}_i]\big] &=0\\
+\implies \E[\mtx{g}(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)] &=0
+\end{align*}
+Now, we want to find the optimal $\mtx{g}$ that minimizes $\text{AsyVar}(\hat{\mtx{\beta}})$; call it $\mtx{g}_0$. Let $\mtx{z}_i=(t_i,\mtx{x}_i)$, $\mtx{w}_i = (y_i^*,t_i,\mtx{x}_i)$. The GMM estimator is
+\begin{align*}
+\hat{\mtx{\beta}} &= \arg \min_{\beta \in \R^d}\left(\frac{1}{n}\sum_{i=1}^n \mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta})\right)'\mtx{W} \left(\frac{1}{n}\sum_{i=1}^n \mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta})\right)
+\end{align*}
+The FOC wrt $\mtx{\beta}$ is
+\begin{align*}
+0 &= \left(\frac{1}{n}\sum_{i=1}^n \frac{\partial}{\partial \beta}\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta})\right)'\mtx{W}\left(\frac{1}{n}\sum_{i=1}^n \mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta})\right)
+\end{align*}
+We can write the FOC plugging in $\hat{\mtx{\beta}}$:
+\begin{align*}
+0 &= \left(\frac{1}{n}\sum_{i=1}^n \frac{\partial}{\partial \beta}\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\hat{\mtx{\beta}})\right)'\mtx{W}\left(\frac{1}{n}\sum_{i=1}^n \mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\hat{\mtx{\beta}})\right).
+\end{align*}
+Then, if we take a mean value Taylor expansion of the last term in parentheses around the true parameter $\mtx{\beta}_0$ and rearrange in the usual way, we get
+\begin{align*}
+\sqrt{n}(\hat{\mtx{\beta}} - \mtx{\beta}_0) = -\left[\mtx{G}_n(\hat{\mtx{\beta}})'\mtx{W}\mtx{G}_n(\tilde{\mtx{\beta}})\right]^{-1}\mtx{G}_n(\hat{\mtx{\beta}})'\mtx{W}\left( \frac{1}{\sqrt{n}} \sum_{i=1}^n \mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta}_0)\right)
+\end{align*}
+where
+\begin{align*}
+\mtx{G}_n({\mtx{\beta}}) = \frac{1}{n}\sum_{i=1}^n \frac{\partial}{\partial \beta}\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta})
+\end{align*}
+Now we just need to let things converge via LLN and CLT to get
+\begin{align*}
+\sqrt{n}(\hat{\mtx{\beta}} - \mtx{\beta}_0)  \to_d \N\left(0, \left[\mtx{G}({\mtx{\beta}_0})'\mtx{W}\mtx{G}({\mtx{\beta}_0})\right]^{-1}\mtx{G}({\mtx{\beta}_0})'\mtx{W}\V[\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta}_0)] \mtx{W}\mtx{G}({\mtx{\beta}_0} \left[\mtx{G}({\mtx{\beta}_0})'\mtx{W}\mtx{G}({\mtx{\beta}_0})\right]^{-1}\right)
+\end{align*}
+Then with the optimal weight matrix $\mtx{W} = \V[\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta}_0)]^{-1}$ the asymptotic variance collapses to
+\begin{align*}
+\mtx{V}_0 = \left[\mtx{G}({\mtx{\beta}_0})'\V[\mtx{g}(\mtx{z}_i)m(\mtx{w}_i,\mtx{\beta}_0)]^{-1}\mtx{G}({\mtx{\beta}_0})\right]^{-1}
+\end{align*}
+And, as shown in class, this leads to the optimal instrument
+\begin{align*}
+\mtx{g}_0(\mtx{z}_i) =\E\left[\frac{\partial}{\partial \beta}m(\mtx{w}_i,\mtx{\beta})| \mtx{z}_i\right] \V[m(\mtx{w}_i,\mtx{\beta}_0)|\mtx{z}_i]^{-1}
+\end{align*}
+Now, in the given case, since $y_i$ is Bernoulli we know that
+\begin{align*}
+\V[m(\mtx{w}_i,\mtx{\beta}_0)|\mtx{z}_i] = F(t_i\theta_0 +\mtx{x}_i'\mtx{\gamma}_0)[1-F(t_i\theta_0 +\mtx{x}_i'\mtx{\gamma}_0)]
+\end{align*}
+And
+\begin{align*}
+\E\left[\frac{\partial}{\partial \beta}m(\mtx{w}_i,\mtx{\beta})| \mtx{z}_i\right] = f(t_i\theta_0 +\mtx{x}_i'\mtx{\gamma}_0)[t_i , \mtx{x}_i]',
+\end{align*}
+which gives the desired result. When $F(\cdot)$ is the logistic cdf we know that
+\begin{align*}
+f(u) = F(u)[1-F(u)],
+\end{align*}
+so that
+\begin{align*}
+\mtx{g}_0(t_i,\mtx{x}_i) = [t_i , \mtx{x}_i]'.
+\end{align*}
+
+\subsection{Missing completely at random}
+\textbf{(a)}The optimal unconditional moment condition is:
+\begin{align*}
+\E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)] &=0
+\end{align*}
+Now, $y_i = s_iy_i^*$. Thus,
+\begin{align*}
+\E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i, t_i, \mtx{x}_i; \mtx{\beta}_0)|s_i = 1] &=\E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)|s_i = 1] 
+\end{align*}
+And, with the MCAR assumption, the above moment condition is identical to the optimal one. Accordingly, a feasible estimator is simply
+\begin{align*}
+\hat{\mtx{\beta}}_{\texttt{MCAR,feasible}}= \arg \min_{\theta, \gamma} \frac{1}{n} \sum_{i=1}^n [s_i \mtx{g}_0(t_i,\mtx{x}_i)(y_i-F(t_i \theta+\mtx{x}_i'\mtx{\gamma}))].
+\end{align*}
+
+\textbf{(b)}
+I report the the results from using the feasible estimator below.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrr}
+  \hline
+ & Estimate & Std.Error & t & p-value & CI.lower & CI.upper \\ 
+  \hline
+dpisofirme & -0.325 & 0.105 & -3.106 & 0.032 & -0.518 & -0.167 \\ 
+  S\_age & -0.226 & 0.024 & -9.326 & 0.000 & -0.275 & -0.177 \\ 
+  S\_HHpeople & 0.027 & 0.018 & 1.563 & 0.140 & -0.006 & 0.061 \\ 
+  log\_inc & 0.023 & 0.017 & 1.341 & 0.184 & -0.010 & 0.060 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Missing at random}
+Start with the optimal moment condition
+\begin{align*}
+\E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)] &=0.
+\end{align*}
+Since $y_i=s_i*y_i^*$ and $s_i \perp y_i^*|(t_i,x_i)$,
+\begin{align*}
+\E[s_i m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)|t_i,x_i]&=\E[\mtx{g}(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)]
+\end{align*}
+Thus, $\E[s_i m(y_i^*,t_i,x_i; \beta_0)|t_i,x_i]=0$ is equivalent to the optimal unconditional moment restriction.\\
+
+\textbf{(b)}\\
+
+\textbf{(c)}\\
+
+\textbf{(d)}
+
+
+
+
 \newpage
 
 \section{When bootstrap fails}
 
-\subsection{}
+\subsection{Nonparametric bootstrap fail}
 I plot the empirical distribution of the bootstrap statistic, $n(\max\{x_i\} - \max\{x_i^*\})$, below. Clearly, the empirical distribution does not coincide with the theoretical Exponential (1) distribution.
 
 \begin{figure}[!htpb]
@@ -284,7 +399,7 @@ I plot the empirical distribution of the bootstrap statistic, $n(\max\{x_i\} - \
 
 \end{figure}
 
-\subsection{}
+\subsection{Parametric bootstrap to the rescue}
 Now, consider the parametric bootstrap statistic, $t^*_{\texttt{P}}= n(\max\{x_i\} - \max\{x_i^*\})$, where $$x_i^* \sim_{iid} \texttt{Uniform}[0,\max\{x_i\}].$$ I plot the empirical distribution of $t^*_{\texttt{P}}$ below. Now, the empirical distribution \textit{does} seem to coincide with the theoretical Exponential (1) distribution.
 
 \begin{figure}[!htpb]
@@ -295,7 +410,7 @@ Now, consider the parametric bootstrap statistic, $t^*_{\texttt{P}}= n(\max\{x_i
 
 \end{figure}
 
-\subsection{} In the nonparametric case, the bootstrap statistic has a mass point at zero since $\Pr[\max\{x_i\} = \max\{x_i^*\}]$ converges to 1. However, the parametric bootstrap corrects for this ``bias'': in this case $\Pr[\max\{x_i\} = \max\{x_i^*\}] = 0$, since $x_i^* \sim_{iid} \texttt{Uniform}[0,\max\{x_i\}].$
+\subsection{Intuition} In the nonparametric case, the bootstrap statistic has a mass point at zero since $\Pr[\max\{x_i\} = \max\{x_i^*\}]$ converges to 1. However, the parametric bootstrap corrects for this ``bias'': in this case $\Pr[\max\{x_i\} = \max\{x_i^*\}] = 0$, since $x_i^* \sim_{iid} \texttt{Uniform}[0,\max\{x_i\}].$
 
 \newpage
 

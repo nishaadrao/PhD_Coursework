@@ -61,7 +61,7 @@ t.boot     = N*(x.max.obs-x.max.boot)
 # Make frequency plot
 h2         = hist(t.boot,plot=FALSE)
 h2$density = h2$counts/sum(h2$counts)
-plot(h2,freq=FALSE,main="Distribution of Parametric Bootstrap Statistic",xlab="Parametric bootstrap statistic",ylim=c(0,0.4))
+plot(h2,freq=FALSE,main="Distribution of Parametric Bootstrap Statistic",xlab="Parametric bootstrap statistic",ylim=c(0,0.4),xlim=c(0,8))
 
 
 

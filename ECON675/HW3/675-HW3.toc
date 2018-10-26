@@ -9,10 +9,13 @@
 \contentsline {subsection}{\numberline {1.8}Logistic link function, MLE}{6}{subsection.1.8}
 \contentsline {subsection}{\numberline {1.9}Some data work}{6}{subsection.1.9}
 \contentsline {section}{\numberline {2}Semiparametric GMM with missing data}{7}{section.2}
-\contentsline {section}{\numberline {3}When bootstrap fails}{8}{section.3}
-\contentsline {subsection}{\numberline {3.1}}{8}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}}{8}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}}{8}{subsection.3.3}
-\contentsline {section}{\numberline {4}Appendix}{9}{section.4}
-\contentsline {subsection}{\numberline {4.1}\texttt {R} code}{9}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}\texttt {STATA} code}{9}{subsection.4.2}
+\contentsline {subsection}{\numberline {2.1}An optimal instrument}{7}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Missing completely at random}{9}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Missing at random}{9}{subsection.2.3}
+\contentsline {section}{\numberline {3}When bootstrap fails}{10}{section.3}
+\contentsline {subsection}{\numberline {3.1}Nonparametric bootstrap fail}{10}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Parametric bootstrap to the rescue}{10}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Intuition}{10}{subsection.3.3}
+\contentsline {section}{\numberline {4}Appendix}{11}{section.4}
+\contentsline {subsection}{\numberline {4.1}\texttt {R} code}{11}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}\texttt {STATA} code}{11}{subsection.4.2}
