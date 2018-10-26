@@ -66,7 +66,10 @@ for (i in 1:4) {
   table3[i, 5] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.975)
   table3[i, 6] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.025)
 }
-filename <- paste("logistic_boot_MCAR.txt")
+
+rownames(table3)=c("dpisofirme", "S_age","S_HHpeople","log_inc")
+colnames(table3)=c("Estimate", "Std.Error", "t", "p-value", "CI.lower","CI.upper")
+
 
 
 
