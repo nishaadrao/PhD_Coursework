@@ -206,11 +206,11 @@ and
 \end{align*}
 
 \subsection{Logistic link function, MLE}
-MLE gives the same point estimator as NLS (we did this in 672), but is asymptotically efficient, so $\mtx{V}_0^{ML} \leq \mtx{V}_0^{NLS}$.
+MLE gives the same point estimator as NLS (i.e. they have the same FOC; we did this in 672), but MLE is asymptotically efficient, so $\mtx{V}_0^{ML} \leq \mtx{V}_0^{NLS}$.
 
 \subsection{Some data work}
 
-\textbf{(a)} I estimated the logistic model with robust standard errors in both \verb|R| and \verb|Stata|. The results from \verb|R| are presented in Table 1. The standard errors from \verb|Stata| are very slightly different, but I'm not sure why.
+\textbf{(a)} I estimated the logistic model with robust (HC1) standard errors in both \verb|R| and \verb|Stata|. The results from \verb|R| are presented in Table 1. The standard errors from \verb|Stata| are very slightly different, but I'm not sure why.
 
 \begin{table}[!htpb]
 \centering
@@ -269,6 +269,17 @@ Const. & 1.755 & 1.157 & 2.471 & 0.000 \\
 
 \section{Semiparametric GMM with missing data}
 
+\newpage
+
+\section{When bootstrap fails}
+
+
+\newpage
+
+\section{Appendix}
+
+\subsection{\texttt{R} code}
+\subsection{\texttt{STATA} code}
 
 
 \end{document}
