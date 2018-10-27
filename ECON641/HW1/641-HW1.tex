@@ -214,6 +214,88 @@ The autarkic equilibrium in both countries looks very similar to the integrated 
 
 \newpage
 
+\section{Monopolistic competition with variable markups}
+
+\subsection{Consumer's problem}
+The consumer's problem is 
+\begin{align*}
+&\max_{q_i} \int_0^N (1-\exp(-\alpha q_i) )di\\
+&\text{s.t.} \int_0^N p_i q_i di = E.
+\end{align*}
+The Lagrangian is
+\begin{align*}
+\mathcal{L} &=  \int_0^N (1-\exp(-\alpha q_i)) di + \lambda \left[ E -\int_0^N p_i q_i di \right].
+\end{align*}
+The FOC wrt variety $i$ is
+\begin{align*}
+\alpha \exp(-\alpha q_i) = \lambda p_i
+\end{align*}
+Since this FOC holds for all varieties, for any pair of varieties $i, j$ we have
+\begin{align*}
+\frac{\alpha \exp(-\alpha q_i)}{\alpha \exp(-\alpha q_j)} & = \frac{\lambda p_i}{\lambda p_j}
+\end{align*}
+Rearranging this expression gives demand for good $i$ as a function of demand for good $j$ and their respective prices:
+\begin{align}
+q_i = q_j - \frac{1}{\alpha} \log\left(\frac{p_i}{p_j}\right). \label{eq:mpc1}
+\end{align}
+To derive the demand for good $i$ as a function of $E$ and goods prices only, multiply both sides of the above expression by $p_j$ and then integrate over $j$:
+\begin{align}
+\int_0^N q_i p_j dj &= E - \frac{1}{\alpha}\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj \nonumber\\
+\therefore q_i &=  \frac{E - \frac{1}{\alpha}\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj}{\int_0^Np_j dj} \label{eq:mpc2a}
+\end{align}
+
+
+\subsection{Firm's problem}
+\textbf{[1] }Firm $i$'s profit maximization problem is
+\begin{align*}
+&\max_{p_i,q_i} Lq_i(p_i - mw)\\
+& \text{s.t. (\ref{eq:mpc2a})}
+\end{align*}
+Plugging the firm's demand constraint into it's profit function allows me to rewrite the objective as
+\begin{align*}
+\max_{p_i} L \left[ \frac{E - \frac{1}{\alpha}\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj}{\int_0^Np_j dj}\right](p_i - mw).
+\end{align*}
+The FOC is
+\begin{align*}
+\frac{E}{\int_0^Np_j dj} - \frac{1}{\alpha \int_0^Np_j dj} \frac{\partial}{\partial p_i}\left\{(p_i - mw)\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj \right\} &=0\\
+\implies \frac{\partial}{\partial p_i}\left\{(p_i - mw)\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj \right\} &=\alpha E
+\end{align*}
+Now,
+\begin{align*}
+\frac{\partial}{\partial p_i}\left\{(p_i - mw)\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj \right\} &=\frac{\partial}{\partial p_i}\left\{(p_i - mw)\int_0^N \log(p_i) p_j -\log (p_j)p_j dj \right\}\\
+&= 1\cdot \log(p_i) \int_0^N  p_j dj + \frac{p_i - mw}{p_i}\int_0^N  p_j dj -\int_0^N \log (p_j)p_j dj\\
+&=\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj + \frac{p_i - mw}{p_i}\int_0^N  p_j dj
+\end{align*}
+Thus, the FOC for the firm's problem is
+\begin{align}
+\int_0^N \log\left(\frac{p_i}{p_j}\right)p_j dj + \frac{p_i - mw}{p_i}\int_0^N  p_j dj = \alpha E \label{eq:mpc3}
+\end{align}
+
+\textbf{[2]} Now, under symmetric equilibrium, $p_i = p_j \equiv p$ for all $i,j$. Thus, the FOC (\ref{eq:mpc3}) simplifies to
+\begin{align}
+\int_0^N \log\left(\frac{p}{p}\right)p dj + \frac{p - mw}{p}\int_0^N  p dj &= \alpha E \nonumber\\
+\implies \frac{p - mw}{p} Np &= \alpha E\nonumber\\
+\therefore p = mw + \frac{\alpha E}{N} \label{eq:mpc4}.
+\end{align}
+Thus, the optimal price features a markup over the marginal cost, and it is decreasing in the number of firms. This differs from the CES case, in which the optimal price features a constant markup over marginal costs (and does not depend on the number of firms).\\
+
+\textbf{[3]} To get the equilibrium quantity of each good sold, plug the optimal price (\ref{eq:mpc4}) into the consumer's demand function (\ref{eq:mpc2a}):
+\begin{align*}
+q = \frac{E}{Np} &= \frac{E}{N}\left[  mw + \frac{\alpha E}{N}\right]^{-1}\\
+&=\frac{E}{N} \frac{N}{mwN + \alpha E}\\
+&= \frac{E}{mwN + \alpha E}
+\end{align*}
+And then, each firm's variable profit is
+\begin{align}
+\Pi &= Lq(p-mw) \nonumber\\
+&= L\frac{E}{mwN + \alpha E}  \frac{\alpha E}{N} \nonumber\\
+&=\frac{L}{N} \frac{\alpha E^2}{ mwN + \alpha E} \label{eq:mpc5}
+\end{align}
+
+
+
+\newpage
+
 \section{Technology growth in a parameterized version of DFS}
 
 \subsection{}
@@ -541,6 +623,54 @@ Table 2 presents the ratio of each country's trade deficit (imports minus export
 \multicolumn{7}{ p{18cm} }{\footnotesize \textit{Note}$^*$: the deficit ratio is trade deficit divided by total expenditure. }\\
 \end{tabular}
 \end{table}
+
+\newpage
+
+\subsection{Counterfactuals in the EK model}
+We are interested in how endogenous variables (such as trade shares and prices) respond to changes in exogenous variables (such as trade costs). To determine these responses we DEK's exact hat algebra approach. Denote the counterfactual value of an exogenous variable $x$ as $x'$. We can represent the change in $x$ as the ratio $\hat x = x'/x$. Then, the counterfactual value of $x$ is simply $x' = \hat x x$.
+
+\subsubsection{Counterfactual trade shares}
+In the baseline version of the EK model, the counterfactual trade share is
+\begin{align*}
+\pi_{ni}' &= \frac{T'_i(c'_id'_{ni})^{-\theta} }{\sum_{k=1}^N T'_k(c'_kd'_{nk})^{-\theta}}\\
+&=\frac{\hat T_i T_i(\hat c_i c_i \hat d_{ni} d_{ni})^{-\theta} }{\sum_{k=1}^N \hat T_k T_k(\hat c_k c_k \hat d_{nk} d_{nk})^{-\theta}}\\
+&=\frac{T_i(c_id_{ni})^{-\theta}\hat T_i(\hat c_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N T_k(c_kd_{nk})^{-\theta}\hat T_k(\hat c_k \hat d_{nk})^{-\theta}}\\
+&=\frac{\frac{1}{\Phi_n}T_i(c_id_{ni})^{-\theta}\hat T_i(\hat c_i\hat d_{ni})^{-\theta}  }{\frac{1}{\Phi_n}\sum_{k=1}^N T_k(c_kd_{nk})^{-\theta}\hat T_k(\hat c_k \hat d_{nk})^{-\theta}}\\
+&=\frac{\pi_{ni}\hat T_i(\hat c_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N\pi_{nk}\hat T_k(\hat c_k \hat d_{nk})^{-\theta}},
+\end{align*}
+which is now a function of observable trade shares, changes in input costs, and changes in exogenous variables. Now, since labor is the only input $c_i = w_i$, so that 
+\begin{align}
+\pi_{ni}' = \frac{\pi_{ni}\hat T_i(\hat w_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N\pi_{nk}\hat T_k(\hat w_k \hat d_{nk})^{-\theta}} \label{eq:EKcf1}
+\end{align}
+
+\subsubsection{Changes in wages}
+The labor market clearing condition for country $i$ in the counterfactual scenario is
+\begin{align*}
+w'_i L'_i &= \sum_{n=1}^N \pi'_{ni}X'_n\\
+\end{align*}
+Note that in competitive equilibrium we also must have $w_i L_i = X_i$. Thus, developing the above expression:
+\begin{align}
+ \hat w_i w_i \hat L_i L_i &= \sum_{n=1}^N \pi_{ni}' w'_n L'_n \nonumber \\
+ \implies \hat w_i  X_i\hat L_i &= \sum_{n=1}^N\pi_{ni}' \hat w_n w_n \hat L_n L_n \nonumber\\
+ &=\sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n \nonumber\\
+ \therefore \hat w_i &= \frac{1}{X_i\hat L_i} \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n \label{eq:EKcf2}
+\end{align}
+
+\subsubsection{Normalization}
+Note that our goal is to solve (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) for counterfactual trade shares $\{\pi'_{ni}\}$ and changes in wages $\{\hat w_i\}$ for some given changes in exogenous variables $\{\hat T_i, \hat L_i, \hat d_{ni}\}$.
+To do so, I follow Alvarez and Lucas (2006) and make the normalization $\sum_{i=1}^N w_iL_i = 1$.
+
+\subsubsection{System of excess demands for labor}
+To solve the system of equations (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) we need to define some iterative procedure that hones in on the solution. From the counterfactual labor market clearing condition, the ``excess wage bill'' for country $i$ is 
+\begin{align*}
+Z_i(\hat w_i) &= w'_i L'_i - \sum_{n=1}^N \pi'_{ni}X'_n
+\end{align*}
+Using the same algebra as above and plugging in (\ref{eq:EKcf1}) for counterfactual trade shares gives
+\begin{align*}
+Z_i(\hat w_i) &= \hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n\\
+&=\hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \left(\frac{\pi_{ni}\hat T_i(\hat w_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N\pi_{nk}\hat T_k(\hat w_k \hat d_{nk})^{-\theta}}\hat w_n \hat L_n X_n \right)
+\end{align*}
+
 
 \newpage
 

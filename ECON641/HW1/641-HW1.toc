@@ -6,19 +6,27 @@
 \contentsline {subsection}{\numberline {2.1}Integrated equilibrium}{4}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}FPE set}{6}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Autarky}{6}{subsection.2.3}
-\contentsline {section}{\numberline {3}Technology growth in a parameterized version of DFS}{7}{section.3}
-\contentsline {subsection}{\numberline {3.1}}{7}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}}{8}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}}{9}{subsection.3.3}
-\contentsline {section}{\numberline {4}Key implications of EK's Ricardian model}{10}{section.4}
+\contentsline {section}{\numberline {3}Monopolistic competition with variable markups}{7}{section.3}
+\contentsline {subsection}{\numberline {3.1}Consumer's problem}{7}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Firm's problem}{7}{subsection.3.2}
+\contentsline {section}{\numberline {4}Technology growth in a parameterized version of DFS}{10}{section.4}
 \contentsline {subsection}{\numberline {4.1}}{10}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}}{10}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}}{11}{subsection.4.3}
-\contentsline {subsection}{\numberline {4.4}}{12}{subsection.4.4}
-\contentsline {subsection}{\numberline {4.5}}{12}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}}{13}{subsection.4.6}
-\contentsline {section}{\numberline {5}Quantitative analysis in the EK model}{13}{section.5}
-\contentsline {subsection}{\numberline {5.1}A peek at the data}{13}{subsection.5.1}
-\contentsline {section}{\numberline {6}Gravity}{16}{section.6}
-\contentsline {subsection}{\numberline {6.1}}{16}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}}{16}{subsection.6.2}
+\contentsline {subsection}{\numberline {4.2}}{11}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}}{12}{subsection.4.3}
+\contentsline {section}{\numberline {5}Key implications of EK's Ricardian model}{13}{section.5}
+\contentsline {subsection}{\numberline {5.1}}{13}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}}{13}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}}{14}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}}{15}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.5}}{15}{subsection.5.5}
+\contentsline {subsection}{\numberline {5.6}}{16}{subsection.5.6}
+\contentsline {section}{\numberline {6}Quantitative analysis in the EK model}{16}{section.6}
+\contentsline {subsection}{\numberline {6.1}A peek at the data}{16}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Counterfactuals in the EK model}{19}{subsection.6.2}
+\contentsline {subsubsection}{\numberline {6.2.1}Counterfactual trade shares}{19}{subsubsection.6.2.1}
+\contentsline {subsubsection}{\numberline {6.2.2}Changes in wages}{19}{subsubsection.6.2.2}
+\contentsline {subsubsection}{\numberline {6.2.3}Normalization}{20}{subsubsection.6.2.3}
+\contentsline {subsubsection}{\numberline {6.2.4}System of excess demands for labor}{20}{subsubsection.6.2.4}
+\contentsline {section}{\numberline {7}Gravity}{21}{section.7}
+\contentsline {subsection}{\numberline {7.1}}{21}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}}{21}{subsection.7.2}
