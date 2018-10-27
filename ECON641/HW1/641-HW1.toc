@@ -9,6 +9,7 @@
 \contentsline {section}{\numberline {3}Monopolistic competition with variable markups}{7}{section.3}
 \contentsline {subsection}{\numberline {3.1}Consumer's problem}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Firm's problem}{7}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Equilibrium number of firms}{9}{subsection.3.3}
 \contentsline {section}{\numberline {4}Technology growth in a parameterized version of DFS}{10}{section.4}
 \contentsline {subsection}{\numberline {4.1}}{10}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}}{11}{subsection.4.2}

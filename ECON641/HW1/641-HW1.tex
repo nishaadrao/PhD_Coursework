@@ -277,7 +277,7 @@ Thus, the FOC for the firm's problem is
 \implies \frac{p - mw}{p} Np &= \alpha E\nonumber\\
 \therefore p = mw + \frac{\alpha E}{N} \label{eq:mpc4}.
 \end{align}
-Thus, the optimal price features a markup over the marginal cost, and it is decreasing in the number of firms. This differs from the CES case, in which the optimal price features a constant markup over marginal costs (and does not depend on the number of firms).\\
+Thus, the optimal price features a markup over the marginal cost, which is decreasing in the number of firms. This result differs from the CES case, in which the optimal price features a constant markup over marginal costs (and does not depend on the number of firms).\\
 
 \textbf{[3]} To get the equilibrium quantity of each good sold, plug the optimal price (\ref{eq:mpc4}) into the consumer's demand function (\ref{eq:mpc2a}):
 \begin{align*}
@@ -287,13 +287,35 @@ q = \frac{E}{Np} &= \frac{E}{N}\left[  mw + \frac{\alpha E}{N}\right]^{-1}\\
 \end{align*}
 And then, each firm's variable profit is
 \begin{align}
-\Pi &= Lq(p-mw) \nonumber\\
+\Pi_v &= Lq(p-mw) \nonumber\\
 &= L\frac{E}{mwN + \alpha E}  \frac{\alpha E}{N} \nonumber\\
 &=\frac{L}{N} \frac{\alpha E^2}{ mwN + \alpha E} \label{eq:mpc5}
 \end{align}
 
+\subsection{Equilibrium number of firms}
+\textbf{[1]} The free entry condition implies
+\begin{align*}
+\Pi = \frac{L}{N} \frac{\alpha E^2}{ mwN + \alpha E}  - wF = 0
+\end{align*}
+Plugging in $E=w$ implies that in equilibrium 
+\begin{align*}
+w \left[ \frac{\alpha L}{N(mN+ \alpha)} - F\right] &= 0
+\end{align*}
+Solving for $N$ using the quadratic formula gives
+\begin{align*}
+N = \frac{-\alpha F + \sqrt{\alpha^2F^2 + 4(mF)(\alpha L)}}{2mF}.
+\end{align*}
 
-
+\textbf{[2]} Now, we can solve for welfare $w/p$ by using (\ref{eq:mpc4}) and plugging in $E=w$:
+\begin{align*}
+p &= mw + \frac{\alpha w}{N}\\
+\implies \frac{w}{p} &=\frac{N}{\alpha + mN}
+\end{align*}
+Then
+\begin{align*}
+\frac{\partial}{\partial N} \frac{w}{p}  = \frac{\alpha}{(\alpha + mN)^2} >0 ,
+\end{align*}
+so welfare is increasing in the number of firms (for $\alpha > 0 $).
 \newpage
 
 \section{Technology growth in a parameterized version of DFS}
