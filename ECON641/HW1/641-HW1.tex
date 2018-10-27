@@ -230,7 +230,7 @@ The FOC wrt variety $i$ is
 \begin{align*}
 \alpha \exp(-\alpha q_i) = \lambda p_i
 \end{align*}
-Since this FOC holds for all varieties, for any pair of varieties $i, j$ we have
+Since this FOC holds for all varieties, for any pair of varieties $i, j$ I can take the ratio
 \begin{align*}
 \frac{\alpha \exp(-\alpha q_i)}{\alpha \exp(-\alpha q_j)} & = \frac{\lambda p_i}{\lambda p_j}
 \end{align*}
@@ -306,7 +306,7 @@ Solving for $N$ using the quadratic formula gives
 N = \frac{-\alpha F + \sqrt{\alpha^2F^2 + 4(mF)(\alpha L)}}{2mF}.
 \end{align*}
 
-\textbf{[2]} Now, we can solve for welfare $w/p$ by using (\ref{eq:mpc4}) and plugging in $E=w$:
+\textbf{[2]} Now, I can solve for welfare $w/p$ by using (\ref{eq:mpc4}) and plugging in $E=w$:
 \begin{align*}
 p &= mw + \frac{\alpha w}{N}\\
 \implies \frac{w}{p} &=\frac{N}{\alpha + mN}
@@ -316,7 +316,13 @@ Then
 \frac{\partial}{\partial N} \frac{w}{p}  = \frac{\alpha}{(\alpha + mN)^2} >0 ,
 \end{align*}
 so welfare is increasing in the number of firms (for $\alpha > 0 $).
+
 \newpage
+
+\section{A simple model of institutional comparative advantage}
+
+\newpage
+
 
 \section{Technology growth in a parameterized version of DFS}
 
@@ -680,7 +686,11 @@ Note that in competitive equilibrium we also must have $w_i L_i = X_i$. Thus, de
 
 \subsubsection{Normalization}
 Note that our goal is to solve (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) for counterfactual trade shares $\{\pi'_{ni}\}$ and changes in wages $\{\hat w_i\}$ for some given changes in exogenous variables $\{\hat T_i, \hat L_i, \hat d_{ni}\}$.
-To do so, I follow Alvarez and Lucas (2006) and make the normalization $\sum_{i=1}^N w_iL_i = 1$.
+To do so, I follow Alvarez and Lucas (2006) and make the normalization $\sum_{i=1}^N w_iL_i = 1$. To see how this will help solve the problem, note that this normalization implies
+\begin{align*}
+\sum_{i=1}^N w_iL_i = 1 \implies \sum_{i=1}^N w'_iL_i = 1 \implies \sum_{i=1}^N \hat w_i w_i L_i = 1 \implies \sum_{i=1}^N \hat w_i X_i = 1.
+\end{align*}
+The last equality makes sense: if $\hat w_i =1$ for all $i$, then counterfactual world GDP doesn't change, and is equal to $ \sum_{i=1}^N X_i$, which I normalize to be 1.
 
 \subsubsection{System of excess demands for labor}
 To solve the system of equations (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) we need to define some iterative procedure that hones in on the solution. From the counterfactual labor market clearing condition, the ``excess wage bill'' for country $i$ is 
@@ -692,6 +702,28 @@ Using the same algebra as above and plugging in (\ref{eq:EKcf1}) for counterfact
 Z_i(\hat w_i) &= \hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n\\
 &=\hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \left(\frac{\pi_{ni}\hat T_i(\hat w_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N\pi_{nk}\hat T_k(\hat w_k \hat d_{nk})^{-\theta}}\hat w_n \hat L_n X_n \right)
 \end{align*}
+
+\textcolor{red}{Here's my preliminary idea of how to do this question:}
+\begin{enumerate}
+\item Make an initial guess for changes in wages $\hat w^{0}_i = 1$ for all $i$; that is, guess that wages do not change in the counterfactual.
+\item Plug the guess into (\ref{eq:EKcf1}) to get the counterfactual trade shares
+\item Plug the counterfactual trade shares along with the initial guess for $\{\hat w_i\}$ into the RHS of (\ref{eq:EKcf2}); this gives an updated guess of $\{\hat w_i\}$.
+\item Next, you need to renormalize the new guesses. To do so, compute:
+\begin{align*}
+T(\hat w_iX_i) = \frac{\hat w_i X_i}{\sum_{k=1}^N \hat w_k X_k}
+\end{align*}
+Why do we do this? It ensures that with the new guesses
+\begin{align*}
+\sum_{i=1}^N T(\hat w_iX_i) = 1
+\end{align*}
+Then, the new guess is
+\begin{align*}
+\hat w^{1}_i = T(\hat w_iX_i)/X_i
+\end{align*}
+\item Repeat the process with the updated guess until: $w^t_i = w^{t-1}_i$ for all $i$.
+\end{enumerate}
+Try to implement this in R using vectors, etc.
+
 
 
 \newpage

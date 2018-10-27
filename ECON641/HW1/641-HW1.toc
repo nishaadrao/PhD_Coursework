@@ -10,24 +10,25 @@
 \contentsline {subsection}{\numberline {3.1}Consumer's problem}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Firm's problem}{7}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}Equilibrium number of firms}{9}{subsection.3.3}
-\contentsline {section}{\numberline {4}Technology growth in a parameterized version of DFS}{10}{section.4}
-\contentsline {subsection}{\numberline {4.1}}{10}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}}{11}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}}{12}{subsection.4.3}
-\contentsline {section}{\numberline {5}Key implications of EK's Ricardian model}{13}{section.5}
-\contentsline {subsection}{\numberline {5.1}}{13}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}}{13}{subsection.5.2}
-\contentsline {subsection}{\numberline {5.3}}{14}{subsection.5.3}
-\contentsline {subsection}{\numberline {5.4}}{15}{subsection.5.4}
-\contentsline {subsection}{\numberline {5.5}}{15}{subsection.5.5}
-\contentsline {subsection}{\numberline {5.6}}{16}{subsection.5.6}
-\contentsline {section}{\numberline {6}Quantitative analysis in the EK model}{16}{section.6}
-\contentsline {subsection}{\numberline {6.1}A peek at the data}{16}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Counterfactuals in the EK model}{19}{subsection.6.2}
-\contentsline {subsubsection}{\numberline {6.2.1}Counterfactual trade shares}{19}{subsubsection.6.2.1}
-\contentsline {subsubsection}{\numberline {6.2.2}Changes in wages}{19}{subsubsection.6.2.2}
-\contentsline {subsubsection}{\numberline {6.2.3}Normalization}{20}{subsubsection.6.2.3}
-\contentsline {subsubsection}{\numberline {6.2.4}System of excess demands for labor}{20}{subsubsection.6.2.4}
-\contentsline {section}{\numberline {7}Gravity}{21}{section.7}
-\contentsline {subsection}{\numberline {7.1}}{21}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}}{21}{subsection.7.2}
+\contentsline {section}{\numberline {4}A simple model of institutional comparative advantage}{10}{section.4}
+\contentsline {section}{\numberline {5}Technology growth in a parameterized version of DFS}{11}{section.5}
+\contentsline {subsection}{\numberline {5.1}}{11}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}}{12}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}}{13}{subsection.5.3}
+\contentsline {section}{\numberline {6}Key implications of EK's Ricardian model}{14}{section.6}
+\contentsline {subsection}{\numberline {6.1}}{14}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}}{14}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}}{15}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}}{16}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}}{16}{subsection.6.5}
+\contentsline {subsection}{\numberline {6.6}}{17}{subsection.6.6}
+\contentsline {section}{\numberline {7}Quantitative analysis in the EK model}{17}{section.7}
+\contentsline {subsection}{\numberline {7.1}A peek at the data}{17}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Counterfactuals in the EK model}{20}{subsection.7.2}
+\contentsline {subsubsection}{\numberline {7.2.1}Counterfactual trade shares}{20}{subsubsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2}Changes in wages}{20}{subsubsection.7.2.2}
+\contentsline {subsubsection}{\numberline {7.2.3}Normalization}{21}{subsubsection.7.2.3}
+\contentsline {subsubsection}{\numberline {7.2.4}System of excess demands for labor}{21}{subsubsection.7.2.4}
+\contentsline {section}{\numberline {8}Gravity}{23}{section.8}
+\contentsline {subsection}{\numberline {8.1}}{23}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}}{23}{subsection.8.2}
