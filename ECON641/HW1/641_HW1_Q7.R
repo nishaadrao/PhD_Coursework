@@ -207,23 +207,52 @@ bilateral.shares.r[,supplier:=country.unique]
 setcolorder(bilateral.shares.r,c("supplier",country.unique))
 
 # Remove intermediate matricies
-rm(m1,m2)
+rm(m2)
 
 
 ######################################################################
 # 7.2 Counterfactuals
 ######################################################################
-
 theta       = 8.28
-w.hat0      = rep(1,N)
-w.hat0.mat  = matrix(w.hat0,41,41)
 T.hat       = 1
 d.hat       = 1
 
+# Initial guess of no change
+w.hat0      = rep(1,N)
 
+# Enforce initial world GDP normalization
+X              = total.trade[,total.sp]/sum(total.trade[,total.sp])
 
-pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat)^(-theta)
-pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat)^(-theta)),41,41))
-pi.dash        = pi.numerator/pi.denominator
+# Write function to update guess of w.hat given an initial guess
+update.guess   = function(w.hat0,T.hat=1,d.hat=1){
+    
+    # Create matrix of initial guesses
+    w.hat0.mat  = t(matrix(w.hat0,41,41))
+    
+    # Compute counterfactual trade shares
+    pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat)^(-theta)
+    pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat)^(-theta)),41,41))
+    pi.dash        = pi.numerator/pi.denominator
+    
+    # Compute new guess of w.hat
+    w.hat.vec         = rowSums(pi.dash*t(w.hat0.mat)*m1)
+    
+    # Renormalize the new guess
+    T.w.x             = w.hat.vec/sum(w.hat.vec)
+    
+    # Compute updated guess
+    w.hat1            = T.w.x/X
+
+    return(w.hat1)
+}   
+
+for (t in 1:10){
+  
+  w.hat1 = update.guess(w.hat0)
+  
+  w.hat0 = w.hat1
+  
+  t = t+1
+}
 
 

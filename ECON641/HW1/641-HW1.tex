@@ -705,20 +705,20 @@ Z_i(\hat w_i) &= \hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \pi'_{ni} \hat w_
 
 \textcolor{red}{Here's my preliminary idea of how to do this question:}
 \begin{enumerate}
-\item Make an initial guess for changes in wages $\hat w^{0}_i = 1$ for all $i$; that is, guess that wages do not change in the counterfactual.
-\item Plug the guess into (\ref{eq:EKcf1}) to get the counterfactual trade shares
-\item Plug the counterfactual trade shares along with the initial guess for $\{\hat w_i\}$ into the RHS of (\ref{eq:EKcf2}); this gives an updated guess of $\{\hat w_i\}$.
+\item Make an initial guess for changes in wages $\hat w^{0}_i = 1$ for all $i$; that is, guess that wages do not change in the counterfactual. Enforce the world GDP normalization by setting $\tilde X_i = X_i/\sum_{n=1}^N X_n$.
+\item Plug the initial guess into (\ref{eq:EKcf1}) to get the counterfactual trade shares.
+\item Plug the counterfactual trade shares along with the initial guess for $\{\hat w_i\}$ into the RHS of (\ref{eq:EKcf2}); this gives an updated guess of $\{\hat w_i\}$. \textcolor{Blue}{This is where I'm currently getting tripped up since in my data $X_i \neq \sum_{n=1}^N \pi_{ni} X_n$. I think this may have something to do with value added and SS's warning to be careful how we map the model to the data???}
 \item Next, you need to renormalize the new guesses. To do so, compute:
 \begin{align*}
-T(\hat w_iX_i) = \frac{\hat w_i X_i}{\sum_{k=1}^N \hat w_k X_k}
+T(\hat w_i \tilde X_i) = \frac{\hat w_i \tilde X_i}{\sum_{k=1}^N \hat w_k \tilde X_k}
 \end{align*}
 Why do we do this? It ensures that with the new guesses
 \begin{align*}
-\sum_{i=1}^N T(\hat w_iX_i) = 1
+\sum_{i=1}^N T(\hat w_i\tilde X_i) = 1
 \end{align*}
 Then, the new guess is
 \begin{align*}
-\hat w^{1}_i = T(\hat w_iX_i)/X_i
+\hat w^{1}_i = T(\hat w_i\tilde X_i)/\tilde X_i
 \end{align*}
 \item Repeat the process with the updated guess until: $w^t_i = w^{t-1}_i$ for all $i$.
 \end{enumerate}
