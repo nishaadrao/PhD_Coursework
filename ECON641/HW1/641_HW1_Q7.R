@@ -208,3 +208,22 @@ setcolorder(bilateral.shares.r,c("supplier",country.unique))
 
 # Remove intermediate matricies
 rm(m1,m2)
+
+
+######################################################################
+# 7.2 Counterfactuals
+######################################################################
+
+theta       = 8.28
+w.hat0      = rep(1,N)
+w.hat0.mat  = matrix(w.hat0,41,41)
+T.hat       = 1
+d.hat       = 1
+
+
+
+pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat)^(-theta)
+pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat)^(-theta)),41,41))
+pi.dash        = pi.numerator/pi.denominator
+
+
