@@ -66,7 +66,7 @@ p_1(1-\alpha) AK_1^{\alpha}L_1^{-\alpha} &= w.
 \end{align}
 Dividing (2) by (1) gives
 \begin{align}
-\frac{1-\alpha}{\alpha} k_1 = \frac{w}{r} \implies k_1 = \frac{\alpha}{1-\alpha}\frac{w}{r}, \text{ where } k_1 = K_1/L_1
+\frac{1-\alpha}{\alpha} k_1 = \frac{w}{r} \implies k_1 = \frac{\alpha}{1-\alpha}\frac{w}{r}, \text{ where } k_1 = K_1/L_1 \label{eq:cd1}
 \end{align}
 Now, the zero profit condition in industry 1 is
 \begin{align}
@@ -209,7 +209,44 @@ I plot the FPE set for the given parameters below; Home's `origin' is at the low
 \end{figure}
 
 \subsection{Autarky}
-The autarkic equilibrium in both countries looks very similar to the integrated equilibrium, except with different factor endowments. 
+Autarkic equilibrium prices and quanties in both countries look very similar to their integrated equilibrium counterparts, except with different factor endowments. With the normalization $w^j = 1$ for $j = H,F$, the same algebra as in the integrated equilibrium case gives the autarkic rental rates:
+\begin{align*}
+r^j = \left[\frac{\alpha\beta_A + (1-\alpha)\beta_B}{\alpha(1-\beta_A) + (1-\alpha)(1-\beta_B)}\right] \frac{L^j}{K^j}.
+\end{align*}
+Again, for brevity, I won't derive expressions for autarkic goods prices and quantities; but to do so, I would simply use the same procedure as noted in integrated equilibrium case.  \\
+
+Now, consider the case where trade in goods is not allowed but labor is fully mobile across countries (i.e. free immigration). In this case, there is a single `world' labor market clearing condition:
+\begin{align}
+a_{L,A}(w^H,r^H) X^H_A+ a_{L,B}(w^H,r^H) X^H_B + a_{L,A}(w^F,r^F) X^F_A+ a_{L,B}(w^F,r^F) X^F_B=\bar L \label{eq:aut1}
+\end{align}
+Now, autarky equilibrium is a set of quantities $\{C^j_A,C^j_B,X^j_A,X^j_B,K^j_A,K^j_B,L^j_A,L^j_B\}_j$ and prices $\{p^j_A,p^j_B,w^j,r^j\}_j$ that solve the following system of equations along with the labor market clearing condition (\ref{eq:aut1})
+\begin{align*}
+\alpha  &= {\frac{p_A^jX_A^j}{p^j_AX_A^j + p_B^jX_B^j}}\\
+p^j_A &= \lambda_A r_j^{\beta_A}w_j^{1-\beta_A} \\
+p^j_B &= \lambda_B r_j^{\beta_B}w_j^{1-\beta_B} \\
+K^j_i &= a_{K,i}(w^j,r^j) X^j_i  \text{ for } i = A,B \\
+X^j_i &= C^j_i, \text{ for } i = A,B \\
+K^j_A + K^j_B &= K^j\\
+L_i^j &= a_{L,i}(w^j,r^j) X^j_i+ a_{L,i}(w^j,r^j) X^j_i \text{ for } i = A,B
+\end{align*}
+for $j = H,F$ (note that this is a system of 21 equations in 21 endogenous variables). This looks like a tough problem to solve, but note that with free immigration, in equilibrium the real wage will be equalized across both countries; that is
+\begin{align}
+\frac{w^H}{P^H} = \frac{w^F}{P^F} \label{eq:aut2}
+\end{align}
+where $P^j$ is the ideal aggregate price index
+\begin{align*}
+P^j = \frac{(p_A^j)^\alpha(p_B^j)^{1-\alpha}}{\alpha (1-\alpha)} \text{ for } j = H,F.
+\end{align*}
+Next, I use the fact that in equilibrium, goods prices equal the unit cost of production. Plugging these expressions for goods prices into (\ref{eq:aut2}) with the given parameters gives
+\begin{align*}
+\left(\frac{w^H}{r^H}\right)^{1/2} = \left(\frac{w^F}{r^F}\right)^{1/2},
+\end{align*}
+which says that factor prices are equalized with free immigration. Then, using equation (\ref{eq:cd1}) from Question 1, I know that factor intensities for each industry are also equalized across countries in equilibrium. Now, I'm done. Since factor intensities are equalized in equilibrium, I can easily back out the required level of immigration from Foreign to Home:
+\begin{align*}
+\frac{K^H}{L^H + L^{\texttt{migrate}}} = \frac{K^F}{L^F - L^{\texttt{migrate}}} \implies L^{\texttt{migrate}}=40.
+\end{align*}
+
+\subsection{Free trade}
 
 
 \newpage
@@ -695,36 +732,91 @@ The last equality makes sense: if $\hat w_i =1$ for all $i$, then counterfactual
 \subsubsection{System of excess demands for labor}
 To solve the system of equations (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) we need to define some iterative procedure that hones in on the solution. From the counterfactual labor market clearing condition, the ``excess wage bill'' for country $i$ is 
 \begin{align*}
-Z_i(\hat w_i) &= w'_i L'_i - \sum_{n=1}^N \pi'_{ni}X'_n
+Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni}X'_n - w'_i L'_i
 \end{align*}
-Using the same algebra as above and plugging in (\ref{eq:EKcf1}) for counterfactual trade shares gives
-\begin{align*}
-Z_i(\hat w_i) &= \hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n\\
-&=\hat w_i - \frac{1}{X_i\hat L_i} \sum_{n=1}^N \left(\frac{\pi_{ni}\hat T_i(\hat w_i\hat d_{ni})^{-\theta}  }{\sum_{k=1}^N\pi_{nk}\hat T_k(\hat w_k \hat d_{nk})^{-\theta}}\hat w_n \hat L_n X_n \right)
-\end{align*}
+Using the same algebra as above gives the excess demand function
+\begin{align}
+Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n - \hat w_i X_i\hat L_i  \label{eq:EKcf3}
+\end{align}
+We're looking for a vector of wage changes such that $Z(\hat w_i) = 0$ for all $i$.
 
-\textcolor{red}{Here's my preliminary idea of how to do this question:}
+\subsubsection{An iterative solution algorithm}
+The solution algorithm proceeds as follows for a given set of changes in exogenous parameters:
 \begin{enumerate}
-\item Make an initial guess for changes in wages $\hat w^{0}_i = 1$ for all $i$; that is, guess that wages do not change in the counterfactual. Enforce the world GDP normalization by setting $\tilde X_i = X_i/\sum_{n=1}^N X_n$.
-\item Plug the initial guess into (\ref{eq:EKcf1}) to get the counterfactual trade shares.
-\item Plug the counterfactual trade shares along with the initial guess for $\{\hat w_i\}$ into the RHS of (\ref{eq:EKcf2}); this gives an updated guess of $\{\hat w_i\}$. \textcolor{Blue}{This is where I'm currently getting tripped up since in my data $X_i \neq \sum_{n=1}^N \pi_{ni} X_n$. I think this may have something to do with value added and SS's warning to be careful how we map the model to the data???}
-\item Next, you need to renormalize the new guesses. To do so, compute:
+\item Pick an initial guess for wage changes $\hat{\mtx{w}}^0 = 1$.
+\item Compute counterfactual trade shares $\mtx{\pi}'$ using (\ref{eq:EKcf1}).
+\item Compute the excess demand vector $\mtx{Z}(\hat{\mtx{w}}^0)$ using  (\ref{eq:EKcf3}).
+\item Update the predicted wage change according to:
 \begin{align*}
-T(\hat w_i \tilde X_i) = \frac{\hat w_i \tilde X_i}{\sum_{k=1}^N \hat w_k \tilde X_k}
+\hat{w}^0_{\texttt{update},i} = \hat w^0_i(1+ \nu Z(\hat{{w}}_i^0)/X_i), \text{ with } \nu \in(0,1].
 \end{align*}
-Why do we do this? It ensures that with the new guesses
+\item Renormalize the wage changes by computing
 \begin{align*}
-\sum_{i=1}^N T(\hat w_i\tilde X_i) = 1
+\hat{{w}}_i^1 = \frac{1}{X_i}\frac{\hat{w}^0_{\texttt{update},i} X_i}{\sum_{k=1}^N \hat{w}^0_{\texttt{update},k} X_k}
 \end{align*}
-Then, the new guess is
-\begin{align*}
-\hat w^{1}_i = T(\hat w_i\tilde X_i)/\tilde X_i
-\end{align*}
-\item Repeat the process with the updated guess until: $w^t_i = w^{t-1}_i$ for all $i$.
+\item Iterate until convergence, $\hat{\mtx{w}}^t \approx \hat{\mtx{w}}^{t-1}$ (according to some tolerance level).
 \end{enumerate}
-Try to implement this in R using vectors, etc.
+Step 4 ensures that wage changes adjust in the correct direction, and step 5 ensures that world GDP sums to 1 at each iteration.
 
 
+\subsection{Simulation results}
+The table overleaf presents the simulation results for a 10\% drop in bilateral trade costs: $\hat d_{ni} = 0.9$ for all $n\neq i$. The wage changes are all suspiciously close to 1 which makes me question my implementation of the solution algorithm. Nonetheless, these results show that wages fall in some countries and rise in others. Using the formula for the change in welfare from the slides:
+\begin{align*}
+W'/W = (\pi_{ii}/\pi'_{ii})^{1/\theta}
+\end{align*}
+shows that all countries benefit from the reduction in trade costs, which thankfully makes sense.
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Simulation Results for a 10\% Reduction in Trade Costs in the EK Model}}
+\begin{tabular}{rlrr}
+  \hline
+ & Country & $\hat w_i$ & $\Delta$Welfare $=(\pi_{ii}/\pi'_{ii})^{1/\theta}$\\ 
+  \hline
+1 & AUS & 1.005 & 1.017 \\ 
+  2 & AUT & 1.012 & 1.034 \\ 
+  3 & BEL & 1.020 & 1.044 \\ 
+  4 & BGR & 1.009 & 1.034 \\ 
+  5 & BRA & 0.993 & 1.010 \\ 
+  6 & CAN & 1.011 & 1.031 \\ 
+  7 & CHN & 1.005 & 1.012 \\ 
+  8 & CYP & 0.985 & 1.035 \\ 
+  9 & CZE & 1.011 & 1.036 \\ 
+  10 & DEU & 1.009 & 1.025 \\ 
+  11 & DNK & 1.017 & 1.032 \\ 
+  12 & ESP & 0.997 & 1.024 \\ 
+  13 & EST & 1.016 & 1.040 \\ 
+  14 & FIN & 1.017 & 1.026 \\ 
+  15 & FRA & 1.005 & 1.021 \\ 
+  16 & GBR & 1.003 & 1.022 \\ 
+  17 & GRC & 0.978 & 1.027 \\ 
+  18 & HUN & 1.013 & 1.043 \\ 
+  19 & IDN & 1.017 & 1.022 \\ 
+  20 & IND & 0.999 & 1.012 \\ 
+  21 & IRL & 1.029 & 1.052 \\ 
+  22 & ITA & 1.003 & 1.019 \\ 
+  23 & JPN & 1.004 & 1.007 \\ 
+  24 & KOR & 1.009 & 1.024 \\ 
+  25 & LTU & 1.007 & 1.035 \\ 
+  26 & LUX & 1.037 & 1.066 \\ 
+  27 & LVA & 1.007 & 1.028 \\ 
+  28 & MEX & 0.999 & 1.024 \\ 
+  29 & MLT & 1.015 & 1.056 \\ 
+  30 & NLD & 1.018 & 1.037 \\ 
+  31 & POL & 1.001 & 1.024 \\ 
+  32 & PRT & 0.993 & 1.028 \\ 
+  33 & ROM & 1.001 & 1.026 \\ 
+  34 & RUS & 1.024 & 1.019 \\ 
+  35 & SVK & 1.014 & 1.038 \\ 
+  36 & SVN & 1.010 & 1.036 \\ 
+  37 & SWE & 1.015 & 1.030 \\ 
+  38 & TUR & 0.991 & 1.018 \\ 
+  39 & TWN & 1.015 & 1.035 \\ 
+  40 & USA & 0.989 & 1.011 \\ 
+  41 & RoW & 1.003 & 1.027 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \newpage
 

@@ -215,10 +215,15 @@ rm(m2)
 ######################################################################
 theta       = 8.28
 T.hat       = 1
-d.hat       = 1
+d.hat       = 0.9
+d.hat.mat   = matrix(d.hat,41,41)+diag(rep(1-d.hat,41))
+nu          = 0.2
 
 # Initial guess of no change
 w.hat0      = rep(1,N)
+
+# Get vector of data discrepencies (probably due to value added)
+D   =     rowSums(total.trade[,-c(1,43)])-total.trade[,total.sp]
 
 # Enforce initial world GDP normalization
 X              = total.trade[,total.sp]/sum(total.trade[,total.sp])
@@ -227,18 +232,21 @@ X              = total.trade[,total.sp]/sum(total.trade[,total.sp])
 update.guess   = function(w.hat0,T.hat=1,d.hat=1){
     
     # Create matrix of initial guesses
-    w.hat0.mat  = t(matrix(w.hat0,41,41))
+    w.hat0.mat  = matrix(w.hat0,41,41)
     
     # Compute counterfactual trade shares
-    pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat)^(-theta)
-    pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat)^(-theta)),41,41))
+    pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat.mat)^(-theta)
+    pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat.mat)^(-theta)),41,41))
     pi.dash        = pi.numerator/pi.denominator
     
-    # Compute new guess of w.hat
-    w.hat.vec         = rowSums(pi.dash*t(w.hat0.mat)*m1)
+    # COMPUTE EXCESS DEMAND VECTOR
+    Z                 = rowSums(pi.dash*t(w.hat0.mat)*m1) - w.hat0*total.trade[,total.sp] - D
+    
+    # UPDATE GUESS USING EXCESS DEMAND
+    w.hat.update      = w.hat0*(1+nu*Z/total.trade[,total.sp])
     
     # Renormalize the new guess
-    T.w.x             = w.hat.vec/sum(w.hat.vec)
+    T.w.x             = w.hat.update*X/sum(w.hat.update*X)
     
     # Compute updated guess
     w.hat1            = T.w.x/X
@@ -246,13 +254,34 @@ update.guess   = function(w.hat0,T.hat=1,d.hat=1){
     return(w.hat1)
 }   
 
-for (t in 1:10){
+# LOOOOOOOOOOOOOP until convergence
+tol        = 10^(-4) 
+maxiter    = 100
+converged  = FALSE 
+iter       = 0
+
+while (converged == FALSE & iter < maxiter){
   
   w.hat1 = update.guess(w.hat0)
   
+  diff   = w.hat1 - w.hat0
+  
+  converged = all(diff<tol)
+  
   w.hat0 = w.hat1
   
-  t = t+1
+  iter   = iter + 1
 }
 
+# COMPUTE WELFARE CHANGES
+w.hat.mat      = matrix(w.hat1,41,41)
+pi.numerator   = bilateral.shares*(w.hat0.mat*d.hat.mat)^(-theta)
+pi.denominator = t(matrix(colSums(bilateral.shares*(w.hat0.mat*d.hat.mat)^(-theta)),41,41))
+pi.dash        = pi.numerator/pi.denominator
 
+welfare        = (diag(as.matrix(bilateral.shares))/diag(as.matrix(pi.dash)))^(1/theta)
+
+# PUT RESULTS IN A TABLE FOR LATEX
+cf.results = as.data.table(cbind(w.hat1,welfare))
+cf.results[,Country:=country.unique]
+setcolorder(cf.results,c("Country","w.hat1","welfare"))
