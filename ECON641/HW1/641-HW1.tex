@@ -794,7 +794,7 @@ To do so, I follow Alvarez and Lucas (2006) and make the normalization $\sum_{i=
 \begin{align*}
 \sum_{i=1}^N w_iL_i = 1 \implies \sum_{i=1}^N w'_iL_i = 1 \implies \sum_{i=1}^N \hat w_i w_i L_i = 1 \implies \sum_{i=1}^N \hat w_i X_i = 1.
 \end{align*}
-The last equality makes sense: if $\hat w_i =1$ for all $i$, then counterfactual world GDP doesn't change, and is equal to $ \sum_{i=1}^N X_i$, which I normalize to be 1.
+The last equality makes sense: if $\hat w_i =1$ for all $i$, then counterfactual world GDP doesn't change, and is equal to $ \sum_{i=1}^N X_i$, which I will normalize to be 1 in the first step of the solution algorithm.
 
 \subsubsection{System of excess demands for labor}
 To solve the system of equations (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) we need to define some iterative procedure that hones in on the solution. From the counterfactual labor market clearing condition, the ``excess wage bill'' for country $i$ is 
@@ -802,24 +802,28 @@ To solve the system of equations (\ref{eq:EKcf1}) and (\ref{eq:EKcf2}) we need t
 Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni}X'_n - w'_i L'_i
 \end{align*}
 Using the same algebra as above gives the excess demand function
+\begin{align*}
+Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n - \hat w_i X_i\hat L_i  
+\end{align*}
+We're looking for a vector of wage changes such that $Z(\hat w_i) = 0$ for all $i$. Note that in my data it turns out that $X_i \neq \sum_{n=1}^N \pi_{ni}X_{n}$. I think this has something to do with not accounting for value added in the intermediate goods sector when I constructed my trade shares. Nonetheless, I can account for this discrepancy by redefining the excess demand equation as
 \begin{align}
-Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n - \hat w_i X_i\hat L_i  \label{eq:EKcf3}
+Z_i(\hat w_i) &= \sum_{n=1}^N \pi'_{ni} \hat w_n \hat L_n X_n - \hat w_i X_i\hat L_i - D_i \label{eq:EKcf3}
 \end{align}
-We're looking for a vector of wage changes such that $Z(\hat w_i) = 0$ for all $i$.
+where $D_i = X_i  - \sum_{n=1}^N \pi_{ni}X_{n}$.
 
 \subsubsection{An iterative solution algorithm}
 The solution algorithm proceeds as follows for a given set of changes in exogenous parameters:
 \begin{enumerate}
-\item Pick an initial guess for wage changes $\hat{\mtx{w}}^0 = 1$.
+\item Pick an initial guess for wage changes $\hat{\mtx{w}}^0 = 1$. Normalize each country's GDP's so that they sum to 1; that is compute $\tilde X_i = X_i /\sum_{k=1}^N X_k$.
 \item Compute counterfactual trade shares $\mtx{\pi}'$ using (\ref{eq:EKcf1}).
 \item Compute the excess demand vector $\mtx{Z}(\hat{\mtx{w}}^0)$ using  (\ref{eq:EKcf3}).
 \item Update the predicted wage change according to:
 \begin{align*}
-\hat{w}^0_{\texttt{update},i} = \hat w^0_i(1+ \nu Z(\hat{{w}}_i^0)/X_i), \text{ with } \nu \in(0,1].
+\hat{w}^0_{\texttt{update},i} = \hat w^0_i(1+ \nu Z(\hat{{w}}_i^0)/\tilde X_i), \text{ with } \nu \in(0,1].
 \end{align*}
 \item Renormalize the wage changes by computing
 \begin{align*}
-\hat{{w}}_i^1 = \frac{1}{X_i}\frac{\hat{w}^0_{\texttt{update},i} X_i}{\sum_{k=1}^N \hat{w}^0_{\texttt{update},k} X_k}
+\hat{{w}}_i^1 = \frac{1}{\tilde X_i}\frac{\hat{w}^0_{\texttt{update},i} \tilde X_i}{\sum_{k=1}^N \hat{w}^0_{\texttt{update},k} \tilde X_k}
 \end{align*}
 \item Iterate until convergence, $\hat{\mtx{w}}^t \approx \hat{\mtx{w}}^{t-1}$ (according to some tolerance level).
 \end{enumerate}
@@ -827,7 +831,7 @@ Step 4 ensures that wage changes adjust in the correct direction, and step 5 ens
 
 
 \subsection{Simulation results}
-The table overleaf presents the simulation results for a 10\% drop in bilateral trade costs: $\hat d_{ni} = 0.9$ for all $n\neq i$. The wage changes are all suspiciously close to 1 which makes me question my implementation of the solution algorithm. Nonetheless, these results show that wages fall in some countries and rise in others. Using the formula for the change in welfare from the slides:
+The table overleaf presents the simulation results for a 10\% drop in bilateral trade costs: $\hat d_{ni} = 0.9$ for all $n\neq i$. The wage changes are all suspiciously close to 1 which makes me question my implementation of the solution algorithm, but perhaps this has something to do with my normalization. Nonetheless, these results show that wages fall in some countries and rise in others. Using the formula for the change in welfare from the slides:
 \begin{align*}
 W'/W = (\pi_{ii}/\pi'_{ii})^{1/\theta}
 \end{align*}
@@ -838,7 +842,7 @@ shows that all countries benefit from the reduction in trade costs, which thankf
 \caption{\textbf{Simulation Results for a 10\% Reduction in Trade Costs in the EK Model}}
 \begin{tabular}{rlrr}
   \hline
- & Country & $\hat w_i$ & $\Delta$Welfare $=(\pi_{ii}/\pi'_{ii})^{1/\theta}$\\ 
+ & Country & $\hat w_i$ & $W'/W=(\pi_{ii}/\pi'_{ii})^{1/\theta}$\\ 
   \hline
 1 & AUS & 1.005 & 1.017 \\ 
   2 & AUT & 1.012 & 1.034 \\ 
@@ -950,6 +954,17 @@ $P_i$ and $P_n$ are the ideal price indicies in country $i$ and $n$, respectivel
 
 \textbf{(e)} Table 3 also presents the PPML estimates of the gravity equation, following SST  (column (2) presents results for the positive trade sample and (3) presents results for the full sample). Consistent with SST, the PPML estimates of the coefficient on log distance are lower than the corresponding OLS estimate.
 
+\newpage
+
+\section{Appendix}
+\scriptsize
+\subsection{\texttt{R} code for Q7}
+\begin{verbatim}
+\end{verbatim}
+
+\subsection{\texttt{STATA} code for Q8}
+\begin{verbatim}
+\end{verbatim}
 
 
 \end{document}

@@ -40,3 +40,6 @@
 \contentsline {section}{\numberline {8}Gravity}{26}{section.8}
 \contentsline {subsection}{\numberline {8.1}}{26}{subsection.8.1}
 \contentsline {subsection}{\numberline {8.2}}{26}{subsection.8.2}
+\contentsline {section}{\numberline {9}Appendix}{28}{section.9}
+\contentsline {subsection}{\numberline {9.1}\texttt {R} code for Q7}{28}{subsection.9.1}
+\contentsline {subsection}{\numberline {9.2}\texttt {STATA} code for Q8}{28}{subsection.9.2}
