@@ -333,7 +333,7 @@ so that
 \end{align*}
 
 \subsection{Missing completely at random}
-\textbf{(a)}The optimal unconditional moment condition is:
+\textbf{(a)} The optimal unconditional moment condition is:
 \begin{align*}
 \E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)] &=0
 \end{align*}
@@ -349,8 +349,9 @@ And, with the MCAR assumption, the above moment condition is identical to the op
 \textbf{(b)}
 I report the the results from using the feasible estimator below.
 
-\begin{table}[ht]
+\begin{table}[!htpb]
 \centering
+\caption{\textbf{Logit Results under MCAR Assumption}}
 \begin{tabular}{lrrrrrr}
   \hline
  & Estimate & Std.Error & t & p-value & CI.lower & CI.upper \\ 
@@ -365,7 +366,7 @@ dpisofirme & -0.325 & 0.105 & -3.106 & 0.032 & -0.518 & -0.167 \\
 
 
 \subsection{Missing at random}
-Start with the optimal moment condition
+\textbf{(a)} Start with the optimal moment condition
 \begin{align*}
 \E[\mtx{g}_0(t_i,\mtx{x}_i)m(y_i^*, t_i, \mtx{x}_i; \mtx{\beta}_0)] &=0.
 \end{align*}
@@ -375,11 +376,44 @@ Since $y_i=s_i*y_i^*$ and $s_i \perp y_i^*|(t_i,x_i)$,
 \end{align*}
 Thus, $\E[s_i m(y_i^*,t_i,x_i; \beta_0)|t_i,x_i]=0$ is equivalent to the optimal unconditional moment restriction.\\
 
-\textbf{(b)}\\
+\textbf{(b)} Here the problem is that we do not have a functional form for the propensity score $p(x_{i},t_{i})$. Accordingly, even if we have consistent estimator of $\beta$ it might not be efficient. We could provide a functional form for the probability of not missing data $p(x_{i},t_{i})$ as a probit or logit estimate. Therefore, it would be a two-step approach in with the first step we estimate  $p(x_{i},t_{i})$ and then plug it in our moment conditions. This are to be used to estimate ${\hat \beta}_{\text{MAR}}$ using GMM.  This estimator would be consistent but may not be efficient, so ${\hat \beta}_{\text{MAR}}$ and ${\tilde \beta}_{\text{MAR}}$. \\
 
-\textbf{(c)}\\
+\newpage
 
-\textbf{(d)}
+\textbf{(c)}
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Logit Results under MAR Assumption}}
+\begin{tabular}{lrrrrrr} 
+		\hline
+		& \text{Estimates} & \text{Std. Error} & \text{t} & \text{p-value} & \text{CI.lower} & \text{CI.upper}  \\ 
+		\hline
+		\text{dpisofirme} & -0.322 & 0.096 & -3.368 & 0.020 & -0.491 & -0.161 \\
+		S\_age & -0.224 & 0.024 & -9.248 & 0.000 & -0.270 & -0.174 \\
+		S\_HHpeople & 0.029 & 0.018 & 1.651 & 0.108 & -0.006 & 0.061 \\
+		log\_inc & 0.021 & 0.018 & 1.188 & 0.241 & -0.014 & 0.056 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+\textbf{(d)} Trimming does not change the results.
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Logit Results under MAR Assumption with Trimming}}
+\begin{tabular}{lrrrrrr} 
+		\hline 
+		 & \text{Estimates} & \text{Std. Error} & \text{t} & \text{p-value} & \text{CI.lower} & \text{CI.upper}  \\ 
+		\hline
+		\text{dpisofirme} & -0.322 & 0.096 & -3.368 & 0.020 & -0.491 & -0.161 \\
+		S\_age & -0.224 & 0.024 & -9.248 & 0.000 & -0.270 & -0.174 \\
+		\text{S\_HHpeople} & 0.029 & 0.018 & 1.651 & 0.108 & -0.006 & 0.061 \\
+		log\_inc& 0.021 & 0.018 & 1.188 & 0.241 & -0.014 & 0.056 \\
+		\hline 
+	\end{tabular}
+\end{table}
 
 
 
@@ -417,7 +451,553 @@ Now, consider the parametric bootstrap statistic, $t^*_{\texttt{P}}= n(\max\{x_i
 \section{Appendix}
 
 \subsection{\texttt{R} code}
+
+\subsubsection{Question 1}
+\scriptsize
+\begin{verbatim}
+## ECON675: ASSIGNMENT 3
+## Q1: NLS
+## Anirudh Yadav 
+## 10/24/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+
+######################################################################
+# Input data, create additional covariates
+######################################################################
+
+# Get Piso Firme data
+data <- as.data.table(read.csv('PhD_Coursework/ECON675/HW3/pisofirme.csv'))
+
+# Create dependent variable for logistic regression
+data[,s:= 1-dmissing]
+
+# Create income regressor
+data[,log_inc:= log(S_incomepc+1)]
+
+######################################################################
+# Q9(a): Estimate logistic regression
+######################################################################
+
+# Estimate model
+mylogit <- glm(s ~ S_age + S_HHpeople + log_inc, data = data, family = "binomial")
+
+b.hat   <- as.data.table(mylogit["coefficients"])
+
+# Get robust standard errors
+V.hat       <- vcovHC(mylogit, type = "HC1")
+se.hat      <- as.data.table(sqrt(diag(V.hat)))
+
+# Compute t-stats
+t.stats       <- b.hat/se.hat
+
+# Compute p-vals
+n = nrow(data)
+d = 4
+p = round(2*pt(abs(t.stats[[1]]),df=n-d,lower.tail=FALSE),3)
+
+# Compute CIs
+CI.lower = b.hat - qnorm(0.975)*se.hat
+CI.upper = b.hat + qnorm(0.975)*se.hat
+
+# Mash results together
+results  = as.data.frame(cbind(b.hat,se.hat,t.stats,p,CI.lower,CI.upper))
+colnames(results) = c("Coef.","Std. Err.","t-stat","p-val","CI.lower","CI.upper")
+rownames(results) = c("Const.", "S_age","S_HHpeople","log_inc")
+
+# Get latex table output
+xtable(results,digits=3)
+
+
+######################################################################
+# Q9(b): Bootstrap statistics
+######################################################################
+
+# Define function for bootstrap statistic
+boot.logit <- function(data, i){
+  logit  <- glm(s ~ S_age + S_HHpeople + log_inc,
+             data = data[i, ], family = "binomial")
+  V      <- vcovHC(logit, type = "HC1")
+  se     <- sqrt(diag(V.hat))
+  t.boot <- (coef(logit)-coef(mylogit))/se
+  
+  return(t.boot)
+}
+
+# Run bootstrap replications
+set.seed(123)
+boot.results <- boot(data = data, R = 999, statistic = boot.logit)
+
+# Get 0.025/0.975 quantiles from the boot t-distribution
+boot.q      <- sapply(1:4, function (i) quantile(boot.results$t[,i], c(0.025, 0.975)))
+
+# Construct 95% CIs using bootstrapped quantiles
+boot.ci.lower = b.hat + t(boot.q)[,1]*se.hat
+boot.ci.upper = b.hat + t(boot.q)[,2]*se.hat
+
+# Get p-val -- I'm not sure if this is right!!!
+boot.p = sapply(1:4,function(i) 1/999*sum(boot.results$t[,i]>=t.stats[i])) 
+
+# Tabulate bootstrap results
+results.b  = as.data.frame(cbind(b.hat,boot.ci.lower,boot.ci.upper,boot.p))
+colnames(results.b) = c("Coef.","CI.lower","CI.upper","p-val")
+rownames(results.b) = c("Const.", "S_age","S_HHpeople","log_inc")
+
+# Get latex table output
+xtable(results.b,digits=3)
+
+
+######################################################################
+# Q9(c): Predicted probabilities
+######################################################################
+
+b.hat = coef(mylogit)
+
+# Subset data
+X     = data[,.(S_age,S_HHpeople,log_inc)]
+X[,const:= 1]
+setcolorder(X,c("const","S_age","S_HHpeople","log_inc"))
+
+# Define logistic cdf (i.e. mu function)
+mu = function(u){(1+exp(-u))^(-1)}
+
+# Construct vector of x_i'*beta.hats
+XB = as.matrix(X)%*%b.hat
+
+# Compute predicted probabilities
+mu.hat = mu(XB)
+
+X[,mu.hat:=mu.hat]
+
+#Make plot
+plot(density(mu.hat,kernel="e",bw="ucv",na.rm=TRUE),main="Kernel Density Plot of Predicted Probabilities")
+
+
+
+
+\end{verbatim}
+
+
+\subsubsection{Question 2}
+\begin{verbatim}
+## ECON675: ASSIGNMENT 3
+## Q2: SEMIPARAMETRIC GMM W MISSING DATA
+## Anirudh Yadav 
+## 10/26/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(dplyr)              #melting for ggplot
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+library(gmm)
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+######################################################################
+# Input data, create additional covariates
+######################################################################
+
+# Get Piso Firme data
+pisofirme <- read.csv('PhD_Coursework/ECON675/HW3/pisofirme.csv')
+complete  <- complete.cases(pisofirme[, 5:27])
+pisofirme <- pisofirme[complete, ] 
+
+# s_i: non-missing indicator
+pisofirme$nmissing <- 1 - pisofirme$dmissing
+
+
+######################################################################
+# Q2: Missing completely at random
+######################################################################
+
+# GMM moment condition: logistic
+g_logistic <- function(theta, data) {
+  a <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$dpisofirme
+  b <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_age
+  c <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_HHpeople
+  d <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    log(1+data$S_incomepc)
+  cbind(a, b, c, d)
+}
+
+# logistic bootstrap
+boot.T_logistic <- function(boot.data, ind) {
+  gmm(g_logistic, boot.data[ind, ], t0=c(0,0,0,0), wmatrix="ident", vcov="iid")$coef
+}
+
+ptm <- proc.time()
+set.seed(123)
+temp <- boot(data=pisofirme[pisofirme$nmissing==1, ], R=499, statistic = boot.T_logistic, stype = "i")
+proc.time() - ptm
+table3 <- matrix(NA, ncol=6, nrow=4)
+for (i in 1:4) {
+  table3[i, 1] <- temp$t0[i]
+  table3[i, 2] <- sd(temp$t[, i])
+  table3[i, 3] <- table3[i, 1] / table3[i, 2]
+  table3[i, 4] <- 2 * max( mean(temp$t[, i]-temp$t0[i]>=abs(temp$t0[i])), mean(temp$t[, i]-temp$t0[i]<=-1*abs(temp$t0[i])) )
+  table3[i, 5] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.975)
+  table3[i, 6] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.025)
+}
+
+rownames(table3)=c("dpisofirme", "S_age","S_HHpeople","log_inc")
+colnames(table3)=c("Estimate", "Std.Error", "t", "p-value", "CI.lower","CI.upper")
+
+######################################################################
+# Q3(c): Missing at random
+######################################################################
+# GMM moment condition
+g_MAR <- function(theta, data) {
+  data <- data[data$nmissing==1, ]
+  a <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$dpisofirme * data$weights
+  b <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_age * data$weights
+  c <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_HHpeople * data$weights
+  d <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    log(1+data$S_incomepc) * data$weights
+  cbind(a, b, c, d)
+}
+
+# logistic bootstrap
+boot.T_MAR <- function(boot.data, ind) {
+  data.temp <- boot.data[ind, ]
+  fitted <- glm(nmissing ~ dpisofirme + S_age + S_HHpeople +I(log(S_incomepc+1)) - 1, 
+                data = data.temp, 
+                family = binomial(link = "logit"))$fitted
+  data.temp$weights <- 1 / fitted
+  gmm(g_MAR, data.temp, t0=c(0,0,0,0), wmatrix="ident", vcov="iid")$coef
+}
+
+ptm <- proc.time()
+set.seed(123)
+temp <- boot(data=pisofirme, R=499, statistic = boot.T_MAR, stype = "i")
+proc.time() - ptm
+table5 <- matrix(NA, ncol=6, nrow=4)
+for (i in 1:4) {
+  table5[i, 1] <- temp$t0[i]
+  table5[i, 2] <- sd(temp$t[, i])
+  table5[i, 3] <- table5[i, 1] / table5[i, 2]
+  table5[i, 4] <- 2 * max( mean(temp$t[, i]-temp$t0[i]>=abs(temp$t0[i])), mean(temp$t[, i]-temp$t0[i]<=-1*abs(temp$t0[i])) )
+  table5[i, 5] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.975)
+  table5[i, 6] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.025)
+}
+
+######################################################################
+# Q3(d): Trimming
+######################################################################
+g_MAR2 <- function(theta, data) {
+  data <- data[data$nmissing==1 & data$weights<=1/0.1, ]
+  a <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$dpisofirme * data$weights
+  b <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_age * data$weights
+  c <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    data$S_HHpeople * data$weights
+  d <- (data$danemia - plogis(theta[1]*data$dpisofirme + theta[2]*data$S_age + theta[3]*data$S_HHpeople + theta[4]*log(1+data$S_incomepc))) * 
+    log(1+data$S_incomepc) * data$weights
+  cbind(a, b, c, d)
+}
+
+# logistic bootstrap
+boot.T_MAR2 <- function(boot.data, ind) {
+  data.temp <- boot.data[ind, ]
+  fitted <- glm(nmissing ~ dpisofirme + S_age + S_HHpeople +I(log(S_incomepc+1)) - 1, 
+                data = data.temp, 
+                family = binomial(link = "logit"))$fitted
+  data.temp$weights <- 1 / fitted
+  gmm(g_MAR2, data.temp, t0=c(0,0,0,0), wmatrix="ident", vcov="iid")$coef
+}
+
+ptm <- proc.time()
+set.seed(123)
+temp <- boot(data=pisofirme, R=499, statistic = boot.T_MAR2, stype = "i")
+proc.time() - ptm
+table6 <- matrix(NA, ncol=6, nrow=4)
+for (i in 1:4) {
+  table6[i, 1] <- temp$t0[i]
+  table6[i, 2] <- sd(temp$t[, i])
+  table6[i, 3] <- table6[i, 1] / table6[i, 2]
+  table6[i, 4] <- 2 * max( mean(temp$t[, i]-temp$t0[i]>=abs(temp$t0[i])), mean(temp$t[, i]-temp$t0[i]<=-1*abs(temp$t0[i])) )
+  table6[i, 5] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.975)
+  table6[i, 6] <- 2 * temp$t0[i] - quantile(temp$t[, i], 0.025)
+}
+
+
+
+\end{verbatim}
+\subsubsection{Question 3}
+\begin{verbatim}
+## ECON675: ASSIGNMENT 3
+## Q3: WHEN BOOTSTRAP FAILS
+## Anirudh Yadav 
+## 10/26/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(dplyr)              #melting for ggplot
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+
+######################################################################
+# Q1: Nonparametric bootstrap fail
+######################################################################
+set.seed(123)
+
+N = 1000
+
+# Simulate runif data
+X = runif(N,0,1)
+
+# Get max
+x.max.obs = max(X)
+
+# Write function for bootrap statistic
+boot.stat = function(data, i){
+  N*(x.max.obs-max(data[i]))
+}
+
+# Run bootsrap with 599 replications
+boot.results = boot(data = X, R = 599, statistic = boot.stat)
+
+# Make frequency plot
+h         = hist(boot.results$t,plot=FALSE)
+h$density = h$counts/sum(h$counts)
+plot(h,freq=FALSE,main="Distribution of Bootstrap Statistic",xlab="Bootstrap statistic")
+
+
+######################################################################
+# Q2: Parametric bootstrap fail
+######################################################################
+
+# Generate parametric bootstrap samples
+X.boot = replicate(599,runif(N,0,x.max.obs))
+
+# Compute maximums for each replications
+x.max.boot = sapply(1:599,function(i) max(X.boot[,i]))
+
+# Compute bootstrap statistic
+t.boot     = N*(x.max.obs-x.max.boot)
+
+# Make frequency plot
+h2         = hist(t.boot,plot=FALSE)
+h2$density = h2$counts/sum(h2$counts)
+plot(h2,freq=FALSE,main="Distribution of Parametric Bootstrap Statistic",xlab="Parametric bootstrap statistic",ylim=c(0,0.4),xlim=c(0,8))
+
+\end{verbatim}
+
+\newpage
 \subsection{\texttt{STATA} code}
 
+\subsubsection{Question 1}
+\begin{verbatim}
+********************************************************************************
+* ECON675: ASSIGNMENT 3
+* Q1: NLS
+* Anirudh Yadav
+* 10/24/2018
+********************************************************************************
+
+********************************************************************************
+* Preliminaries
+********************************************************************************
+clear all
+set more off
+
+* Set working directory 
+global dir "/Users/Anirudh/Desktop/GitHub"
+
+
+********************************************************************************
+* Import data, create additional covariates
+********************************************************************************
+
+* Import LaLonde data
+import delimited using "$dir/PhD_Coursework/ECON675/HW3/pisofirme.csv"
+
+* Generate additional variables
+gen       s = 1-dmissing
+gen log_inc = log(s_incomepc+1)
+
+
+********************************************************************************
+* Q9(a): Estimate logistic regression
+********************************************************************************
+logit s s_age s_hhpeople log_inc, robust
+
+
+********************************************************************************
+* Q9(b): Bootstrap statistics
+********************************************************************************
+logit s s_age s_hhpeople log_inc, vce(bootstrap, reps(999))
+
+
+********************************************************************************
+* Q9(b): Predicted probabilities
+********************************************************************************
+logit s s_age s_hhpeople log_inc, vce(robust)
+
+* predict propensity score
+predict p
+
+* plot kernel density estimates
+twoway histogram p || kdensity p, k(gaussian) || ///
+ kdensity p, k(epanechnikov) || kdensity p, k(triangle) ///
+ leg(lab(1 "Propensity Score") lab(2 "Gaussian") ///
+	 lab(3 "Epanechnikov") lab(4 "Triangle"))
+
+\end{verbatim}
+\subsubsection{Question 2}
+\begin{verbatim}
+********************************************************************************
+* ECON675: ASSIGNMENT 3
+* Q1: SEMIPARAMETRIC GMM
+* Anirudh Yadav
+* 10/24/2018
+********************************************************************************
+
+********************************************************************************
+* Preliminaries
+********************************************************************************
+clear all
+set more off
+set matsize 10000
+
+* Set working directory 
+global dir "/Users/Anirudh/Desktop/GitHub"
+
+import delimited using "$dir/PhD_Coursework/ECON675/HW3/pisofirme.csv"
+
+* Part 2b
+gen x3=log(S_incomepc+1)
+gmm (dpisofirme*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))) (S_age*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))) (S_HHpeople*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))) (x3*(danemia-invlogit({t1}* dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))),  instruments(dpisofirme S_age S_HHpeople x3) vce(boot, reps(1000)) winit(i)
+
+* Part 3c
+gen s = 1-dmissing
+
+*Propensity Score Estimation
+logit s dpisofirme S_age S_HHpeople x3, nocons
+predict phat
+
+*Generating the Instrumental Varibles
+gen inst1=dpisofirme/(1-phat)
+gen inst2=S_age/(1-phat)
+gen inst3=S_HHpeople/(1-phat)
+gen inst4=x3/(1-phat)
+
+*GMM Estimation
+gmm (s*inst1*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))) (s*inst2*(danemia-invlogit({t1} *dpisofirme+{b1}*S_age +{b2}*S_HHpeople+{b3}*x3))) (s*inst3*(danemia-invlogit({t1} *dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))) (s*inst4*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))), instruments(inst1 inst2 inst3 inst4) 
+vce(boot, reps(1000)) winit(i) 
+
+*Part 3d
+*Trimming the data
+drop if (1-phat)<0.1
+gmm (s*inst1*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))) (s*inst2*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))) (s*inst3*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))) (s*inst4*(danemia-invlogit({t1}*dpisofirme+{b1}*S_age ///
++{b2}*S_HHpeople+{b3}*x3))), instruments(inst1 inst2 inst3 inst4) vce(boot, reps(1000)) winit(i)
+
+
+
+\end{verbatim}
+\subsubsection{Question 3}
+\begin{verbatim}
+* Q3.1 - nonparametric bootstrap
+clear all
+
+* generate sample
+set seed 123
+set obs 1000
+gen X = runiform()
+
+* save actual max
+sum X
+local maxX=r(max)
+
+* run nonparametric bootstrap of max
+bootstrap stat=r(max), reps(599) saving(nonpar_results, replace): summarize X
+
+* load results
+use nonpar_results, clear
+
+* generate statistic
+gen nonpar_stat = 1000*(`maxX'-stat)
+
+* plot
+hist nonpar_stat, ///
+ plot(function exponential = 1-exponential(1,x), range(0 5) color(red))
+graph export q3_1_S.png, replace
+
+
+* Q3.2 - parametric bootstrap
+clear all
+
+tempname memhold
+tempfile para_results
+
+* generate sample
+set seed 123
+set obs 1000
+gen X = runiform()
+
+* save actual max
+sum X
+local maxX=r(max)
+
+* parametric bootstrap
+postfile `memhold' max using `para_results'
+forvalues i = 1/599{
+	capture drop sample
+	gen sample = runiform(0,`maxX')
+	sum sample
+	post `memhold' (r(max))
+}
+postclose `memhold'
+
+* load results
+use `para_results', clear
+
+* generate statistic
+gen para_stat = 1000*(`maxX'-max)
+
+* plot
+hist para_stat, ///
+ plot(function exponential = 1-exponential(1,x), range(0 5) color(red))
+graph export q3_2_S.png, replace
+\end{verbatim}
 
 \end{document}

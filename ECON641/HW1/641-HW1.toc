@@ -12,26 +12,31 @@
 \contentsline {subsection}{\numberline {3.2}Firm's problem}{8}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}Equilibrium number of firms}{10}{subsection.3.3}
 \contentsline {section}{\numberline {4}A simple model of institutional comparative advantage}{11}{section.4}
-\contentsline {section}{\numberline {5}Technology growth in a parameterized version of DFS}{12}{section.5}
-\contentsline {subsection}{\numberline {5.1}}{12}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}}{13}{subsection.5.2}
-\contentsline {subsection}{\numberline {5.3}}{14}{subsection.5.3}
-\contentsline {section}{\numberline {6}Key implications of EK's Ricardian model}{15}{section.6}
-\contentsline {subsection}{\numberline {6.1}}{15}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}}{15}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}}{16}{subsection.6.3}
-\contentsline {subsection}{\numberline {6.4}}{17}{subsection.6.4}
-\contentsline {subsection}{\numberline {6.5}}{17}{subsection.6.5}
-\contentsline {subsection}{\numberline {6.6}}{18}{subsection.6.6}
-\contentsline {section}{\numberline {7}Quantitative analysis in the EK model}{18}{section.7}
-\contentsline {subsection}{\numberline {7.1}A peek at the data}{18}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}Counterfactuals in the EK model}{21}{subsection.7.2}
-\contentsline {subsubsection}{\numberline {7.2.1}Counterfactual trade shares}{21}{subsubsection.7.2.1}
-\contentsline {subsubsection}{\numberline {7.2.2}Changes in wages}{21}{subsubsection.7.2.2}
-\contentsline {subsubsection}{\numberline {7.2.3}Normalization}{22}{subsubsection.7.2.3}
-\contentsline {subsubsection}{\numberline {7.2.4}System of excess demands for labor}{22}{subsubsection.7.2.4}
-\contentsline {subsubsection}{\numberline {7.2.5}An iterative solution algorithm}{23}{subsubsection.7.2.5}
-\contentsline {subsection}{\numberline {7.3}Simulation results}{23}{subsection.7.3}
-\contentsline {section}{\numberline {8}Gravity}{25}{section.8}
-\contentsline {subsection}{\numberline {8.1}}{25}{subsection.8.1}
-\contentsline {subsection}{\numberline {8.2}}{25}{subsection.8.2}
+\contentsline {subsection}{\numberline {4.1}Optimal team size?}{11}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Expected output per worker}{11}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Efficient contracting and comparative advantage}{11}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Equilibrium conditions}{12}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Pinning down production and trade patterns}{12}{subsection.4.5}
+\contentsline {section}{\numberline {5}Technology growth in a parameterized version of DFS}{13}{section.5}
+\contentsline {subsection}{\numberline {5.1}}{13}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}}{14}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}}{15}{subsection.5.3}
+\contentsline {section}{\numberline {6}Key implications of EK's Ricardian model}{16}{section.6}
+\contentsline {subsection}{\numberline {6.1}}{16}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}}{16}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}}{17}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}}{18}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}}{18}{subsection.6.5}
+\contentsline {subsection}{\numberline {6.6}}{19}{subsection.6.6}
+\contentsline {section}{\numberline {7}Quantitative analysis in the EK model}{19}{section.7}
+\contentsline {subsection}{\numberline {7.1}A peek at the data}{19}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Counterfactuals in the EK model}{22}{subsection.7.2}
+\contentsline {subsubsection}{\numberline {7.2.1}Counterfactual trade shares}{22}{subsubsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2}Changes in wages}{22}{subsubsection.7.2.2}
+\contentsline {subsubsection}{\numberline {7.2.3}Normalization}{23}{subsubsection.7.2.3}
+\contentsline {subsubsection}{\numberline {7.2.4}System of excess demands for labor}{23}{subsubsection.7.2.4}
+\contentsline {subsubsection}{\numberline {7.2.5}An iterative solution algorithm}{24}{subsubsection.7.2.5}
+\contentsline {subsection}{\numberline {7.3}Simulation results}{24}{subsection.7.3}
+\contentsline {section}{\numberline {8}Gravity}{26}{section.8}
+\contentsline {subsection}{\numberline {8.1}}{26}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}}{26}{subsection.8.2}

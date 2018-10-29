@@ -354,9 +354,76 @@ Then
 \end{align*}
 so welfare is increasing in the number of firms (for $\alpha > 0 $).
 
+
+
 \newpage
 
 \section{A simple model of institutional comparative advantage}
+
+\subsection{Optimal team size?}
+I'm not sure I understand this question, but here's my interpretation. Final goods producers have Leontief production functions; accordingly, final good producer $z$ should optimally choose:
+\begin{align*}
+&q(1) = q(2) = ... =q(z)\\
+\implies &\phi L(1) =\phi L(2) = ... = \phi L(z)\\
+\implies & L(1) = L(2) =...=L(z),
+\end{align*}
+so that $L(s)$ does not vary across inputs $s=1,...,z$. I find this result confusing because, given the wording of the question, I thought that intermediate goods producers chose $L(s)$ rather than final good producers. Anyway, let's proceed with the result that $L(s)$ does not vary across inputs. Then we get the result that final good producer $z$ allocates labor across inputs according to
+\begin{align*}
+L(s) = q_z/\phi \text{ for all } s = 1,...,z.
+\end{align*}
+
+\subsection{Expected output per worker}
+Expected output in industry $z$ is given by
+\begin{align*}
+\E[y_z] &= q_z \times [\text{no reneges}]\\
+&= \phi L \rho^z
+\end{align*}
+where the last equality uses the fact that $L(s)$ is the same for all $s = 1,...,z$. Then expected output per worker in sector $z$ is simply $\phi \rho^z$.
+
+\subsection{Efficient contracting and comparative advantage}
+From above, the unit labor requirement in sector $z$ is $a(z) = 1/(\phi \rho^z)$. Thus, I can easily derive the DFS-type $A(z)$ curve:
+\begin{align*}
+A(z) &\equiv \frac{a^S(z)}{a^N(z)}\\
+&= \left(\frac{\rho_N}{\rho_S}\right)^z.
+\end{align*}
+Now, to derive the slope of the $A(z)$ curve, start by taking logs
+\begin{align*}
+\log A(z) &= z \log\left(\frac{\rho_N}{\rho_S}\right)\\
+\implies \frac{d\log A(z) }{dz} &= \log\left(\frac{\rho_N}{\rho_S}\right).
+\end{align*}
+Then, I can use the fact that $ \frac{d\log A(z) }{dz} = A'(z) /A(z)$ to get
+\begin{align*}
+A'(z) &= \left(\frac{\rho_N}{\rho_S}\right)^z\log\left(\frac{\rho_N}{\rho_S}\right) > 0
+\end{align*}
+since $\rho_N > \rho_S$. This result implies that for more complex goods, the ratio of North's productivity to South's is larger -- that is, more efficient contracting creates comparative advantage.
+
+\subsection{Equilibrium conditions}
+Following DFS, market clearing in North requires
+\begin{align*}
+w^N L^N &= (1-S(\tilde z))[w^NL^N + w^SL^S],
+\end{align*}
+where $\tilde z$ is the cutoff good (i.e. North produces goods $[\tilde z, \bar z]$ domestically and imports goods $[0,\tilde z]$). Rearranging the market clearing condition gives
+\begin{align*}
+\omega = \frac{1-S(\tilde z)}{S(\tilde z)} \frac{L^S}{L^N}
+\end{align*}
+Now, with Cobb Douglas preferences and a continuum of goods $(0, \bar z]$, $S(\tilde z) = \tilde z/\bar z$. Thus, the market clearing condition can be written in terms of $\omega$ and $\tilde z$:
+\begin{align}
+\omega = \frac{\bar z- \tilde z}{\tilde z} \frac{L^S}{L^N} \label{eq:inst1}
+\end{align}
+Next, note that consumers in North will purchase goods from the lowest cost supplier. Since North is relatively more productive at higher $z$'s it follows that consumers in North purchase goods $[\tilde z, \bar z]$ domestically and import goods $[0,\tilde z]$. Then, the cutoff good's unit price must be equalized in North and South
+\begin{align}
+w^N a^N(\tilde z) &= w^S a^S(\tilde z)  \nonumber \\
+\implies \omega &= A(\tilde z) \label{eq:inst2},
+\end{align}
+which is the second equilibrium condition.
+
+\subsection{Pinning down production and trade patterns}
+The equilibrium cutoff good solves (\ref{eq:inst1}) and (\ref{eq:inst2}):
+\begin{align*}
+ \frac{\bar z- \tilde z}{\tilde z} \frac{L^S}{L^N}&= A(\tilde z)\\
+ \implies  \frac{\bar z- \tilde z}{\tilde z} \frac{L^S}{L^N}&=\left(\frac{\rho_N}{\rho_S}\right)^{\tilde z}
+\end{align*}
+I'm not sure how to solve this equation by hand, but a solution must exist since the LHS is decreasing in $\tilde z$, the RHS is increasing in $\tilde z$. As mentioned above, North produces and exports more complex goods than South due its more efficient contracting environment.
 
 \newpage
 
