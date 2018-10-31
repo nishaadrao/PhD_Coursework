@@ -52,7 +52,7 @@ r5 = 1;
 nlead 	= 1;  	% Number of leads in system 
 nlag 	= 1;   	% Number of lags in system 
 
-xnum    = 10;
+xnum    = 9;
 neq 	= xnum;
 
 % ======================================================================= %
@@ -61,14 +61,13 @@ neq 	= xnum;
 
 Xpos		= 1;
 Pipos  		= 2;
-Ipos		= 3;
-RNpos       = 4;
-MA1pos   	= 5;		% State variables for MA process (see equation above)
-MA2pos   	= 6;	
-MA3pos   	= 7;		
-MA4pos   	= 8;		
-MA5pos   	= 9;
-eps_RN_pos  = 10; 
+Rpos        = 3;        % Deviation of real rate from natural rate!
+MA1pos   	= 4;		% State variables for MA process (see equation above)
+MA2pos   	= 5;	
+MA3pos   	= 6;		
+MA4pos   	= 7;		
+MA5pos   	= 8;
+eps_RN_pos  = 9;        % Shock to the real rate
 
 % ==================================================================================== %
 
@@ -91,8 +90,7 @@ colcount  = colzero;
 
 Xzero		= colcount + Xpos; 
 Pizero		= colcount + Pipos;
-Izero		= colcount + Ipos;
-RNzero	    = colcount + RNpos;
+Rzero	    = colcount + Rpos;
 MA1zero   	= colcount + MA1pos;
 MA2zero   	= colcount + MA2pos;
 MA3zero   	= colcount + MA3pos;
@@ -107,8 +105,7 @@ colcount  = collead;
 
 Xlead		= colcount + Xpos; 
 Pilead		= colcount + Pipos;
-Ilead		= colcount + Ipos;
-RNlead	    = colcount + RNpos;
+Rlead	    = colcount + Rpos;
 MA1lead   	= colcount + MA1pos;
 MA2lead   	= colcount + MA2pos;
 MA3lead   	= colcount + MA3pos;
@@ -123,8 +120,7 @@ colcount  = collag;
 
 Xlag		= colcount + Xpos; 
 Pilag		= colcount + Pipos;
-Ilag		= colcount + Ipos;
-RNlag	    = colcount + RNpos;
+Rlag	    = colcount + Rpos;
 MA1lag   	= colcount + MA1pos;
 MA2lag   	= colcount + MA2pos;
 MA3lag   	= colcount + MA3pos;
@@ -142,13 +138,11 @@ ncoef   = neq*(nlag+nlead+1);
 
 cof     = zeros(neq,ncoef);         % Coef matrix. Each row is an equation 
 
-% IS Curve
+% IS Curve (in terms of the deviation of real rate from natural rate)
 
 cof(1,Xzero)        = -1;
 cof(1,Xlead)        =  1;
-cof(1,Izero)        = -s;
-cof(1,Pilead)       =  s;
-cof(1,RNzero)       =  s;
+cof(1,Rzero)        = -s;
 
 
 % NKPC 
@@ -158,39 +152,31 @@ cof(2,Pilead)       = beta;
 cof(2,Xzero)        = kappa;
 
 
-% Policy rule
-
-cof(3,Izero)        = -1;
-cof(3,Pilead)       =  1;
-cof(3,RNzero)       =  1;
-%cof(3,eps_RN_zero)  =  1;
-
-
-% Process for RN
-cof(4,RNzero)       =  -1;
-cof(4,MA1zero)      = r1;
-cof(4,MA2zero)      = r2;
-cof(4,MA3zero)      = r3;
-cof(4,MA4zero)      = r4;
-cof(4,MA5zero)      = r5;
+% Process for R
+cof(3,Rzero)        =  -1;
+cof(3,MA1zero)      = r1;
+cof(3,MA2zero)      = r2;
+cof(3,MA3zero)      = r3;
+cof(3,MA4zero)      = r4;
+cof(3,MA5zero)      = r5;
 
 
 % MA Process for RN shock
-cof(5,MA1zero)      = -1;
-cof(5,eps_RN_zero)  =  1;
-cof(6,MA2zero)      = -1;
-cof(6,MA1lag)       =  1;
-cof(7,MA3zero)      = -1;
-cof(7,MA2lag)       =  1;
-cof(8,MA4zero)      = -1;
-cof(8,MA3lag)       =  1;
-cof(9,MA5zero)      = -1;
-cof(9,MA4lag)       =  1;
+cof(4,MA1zero)      = -1;
+cof(4,eps_RN_zero)  =  1;
+cof(5,MA2zero)      = -1;
+cof(5,MA1lag)       =  1;
+cof(6,MA3zero)      = -1;
+cof(6,MA2lag)       =  1;
+cof(7,MA4zero)      = -1;
+cof(7,MA3lag)       =  1;
+cof(8,MA5zero)      = -1;
+cof(8,MA4lag)       =  1;
 
 
 % SHOCK: RN
 
-cof(10,eps_RN_zero)  =  1;
+cof(9,eps_RN_zero)  =  1;
 
 
 
@@ -306,11 +292,36 @@ time = 1:nimpdat;
 
 
 figure(1) 
-plot(time, DATA(:,RNpos),'-r');
+plot(time, DATA(:,Rpos),'-r');
 hold on; 
 plot(time, DATA(:,Xpos), 'b');
 plot(time, DATA(:,Pipos),'-k');
 hold off; 
-legend('RN','X','Pi'); 
-saveas(figure(1),'IR_1_Z','epsc');
+legend('Real interest rate','Output gap','Inflation');
+xlabel('Horizon in quarters');
+ylabel('Percentage points');
+ylim([-1.5 2.5])
+saveas(figure(1),'IR_1_R','epsc');
+
+
+%% ====================================================================== %
+% ======================================================================= %
+%                        Inflation Response
+% ======================================================================= %
+% ======================================================================= %
+
+% NEED TO THINK ABOUT THIS MORE
+
+inflation = zeros(25,1);
+betavec   = zeros(25,1);
+
+for j=0:24
+    betavec(j,1)=beta^j;
+end
+
+for j=1:25
+    inflation(j,1)= sum(betavec(1:j),1);
+end
+
+
 
