@@ -1,38 +1,38 @@
 % ======================================================================= %
-% MNS_Basic_NKM.m
-%
-% This file replicates the results from Section I in MNS (2016)
-% using a standard "3-equation NKM"
-%
-% A. Yadav 10/31/2018
+% BasicRANKchris.m
+% For ECON 611, Replication Project
+% John S. Olson
+% This code performs forward guidance in a super basic model
+% Mostly programmed by our Lord and Savior Chris House, God bless Him.
 % ======================================================================= %
-addpath ./AIM_subroutines;
+
 clc; clear all; close all;
 
-nimpdat 	= 40;	% No. of quarters in impulse response. 
+nimpdat = 10;	% No. of quarters in impulse response. 
+
+
 
 % ======================================================================= %
-% CALIBRATION
+% 			     Parameters 
 % ======================================================================= %
 
-% annual rates
+% Parameters
+alpha   	= 0.36;			% share of capital in ouput
+beta    	= 0.99;			% discount factor
+delta  		= 0.025;		% depreciation of capital
+sigmaC		= 1;			% risk aversion consumption
+kappa       = .4;           % coeffcient on Y/C in a basic Phillips Curve
+rho_r		= 0.7;			% Monetary Policy Smoothing Parameter
 
-r           = .01;		% quarterly discount rate (4 pct annual)
-beta        = 1/(1+r); 
-
-% discrete time parameters [CHECK THESE]
-
-alpha       =.27;              % If =0 we have a CRS production technology. Else it's decreasing returns to scale (see model equation 5).
-theta       =0.698;            % Measure of price stickiness. If =0 then prices are flexible.
-lambda      =0.154;            % or alternatively derived endogneously through lambda=(theta^(-1))*(1-theta)*(1-beta*theta)*(1-alpha)/(1-alpha+alpha*epsilon).
-phi         =1;                % Elasticity of labor supply.
-
-s           = 1;               % intertemporal substitution
-
-kappa       = lambda*(s+(phi+alpha)/(1-alpha)); % Slope of NKPC
-
+% Shock Variances
+sig_R = 1;
 
 % Coefficents for the MA process for Forward Guidance
+% This process is MA = r1*MA1 + r2*MA2 + r3*MA3 + r4*MA4 + r5*MA5
+% For forward guidance we only want the interest rate to drop in period 5
+% Hence we only have a non-zero coefficent in period 5.
+% See class notes for a tax example where the shock is an immediate tax
+% change but agents know it will expire in a few years.
 r1 = 0; 
 r2 = 0; 
 r3 = 0; 
@@ -40,37 +40,31 @@ r4 = 0;
 r5 = 1; 
 
 
-% ======================================================================= %
-% Steady State
-% ======================================================================= %
-
 
 % ======================================================================= %
 % Coefficient Matrix
 % ======================================================================= %
 
-nlead 	= 1;  	% Number of leads in system 
-nlag 	= 1;   	% Number of lags in system 
+nlead = 1;  	% Number of leads in system 
+nlag = 1;   	% Number of lags in system 
 
-xnum    = 10;
-neq 	= xnum;
+xnum = 9; 
+neq = xnum;
 
 % ======================================================================= %
 % Position Counters. 
 % ======================================================================= %
 
-Xpos		= 1;
-Pipos  		= 2;
-Ipos		= 3;
-RNpos       = 4;
-MA1pos   	= 5;		% State variables for MA process (see equation above)
-MA2pos   	= 6;	
-MA3pos   	= 7;		
-MA4pos   	= 8;		
-MA5pos   	= 9;
-eps_RN_pos  = 10; 
-
-% ==================================================================================== %
+var_x	= 1;		% Consumption or Income
+var_pi	= 2;		% Inflation
+var_r	= 3;		% Real Interest Rate
+var_MA1	= 4;		% State variables for MA process (see equation above)
+var_MA2	= 5;		
+var_MA3	= 6;		
+var_MA4	= 7;		
+var_MA5	= 8;		
+e_rPOS  = 9;        % Interest Rate Shock
+% ======================================================================= %
 
 colzero = 0+nlag*xnum;      % Position counter for start of contemp. coefs 
                             % i.e. if there is one lag and 7 equations then the "first"
@@ -83,120 +77,109 @@ collead = 0+nlag*xnum+xnum; % Position counter for start of lead coefs
 collag  = 0;                % Position counter for start of lag coefs  
                             % i.e. these variables start immediately. (place 1)
 
-
 % =========================================================
 % Indicators for contemporanous coefs for each variable: 
 
 colcount  = colzero;
 
-Xzero		= colcount + Xpos; 
-Pizero		= colcount + Pipos;
-Izero		= colcount + Ipos;
-RNzero	    = colcount + RNpos;
-MA1zero   	= colcount + MA1pos;
-MA2zero   	= colcount + MA2pos;
-MA3zero   	= colcount + MA3pos;
-MA4zero   	= colcount + MA4pos;
-MA5zero   	= colcount + MA5pos;
-eps_RN_zero	= colcount + eps_RN_pos;
+var_xZero = colcount + var_x;	
+var_piZero = colcount + var_pi;
+var_rZero = colcount + var_r;	
+var_MA1zero = colcount + var_MA1;
+var_MA2zero = colcount + var_MA2;
+var_MA3zero = colcount + var_MA3;
+var_MA4zero = colcount + var_MA4;
+var_MA5zero = colcount + var_MA5;
+e_rzero = colcount + e_rPOS;     
+
 
 % =========================================================
 % Indicators for lead coefficients for each variable: 
 
 colcount  = collead;
 
-Xlead		= colcount + Xpos; 
-Pilead		= colcount + Pipos;
-Ilead		= colcount + Ipos;
-RNlead	    = colcount + RNpos;
-MA1lead   	= colcount + MA1pos;
-MA2lead   	= colcount + MA2pos;
-MA3lead   	= colcount + MA3pos;
-MA4lead   	= colcount + MA4pos;
-MA5lead   	= colcount + MA5pos;
-eps_RN_lead	= colcount + eps_RN_pos;
+var_xLead = colcount + var_x;	
+var_piLead = colcount + var_pi;
+var_rLead = colcount + var_r;	
+var_MA1lead = colcount + var_MA1;
+var_MA2lead = colcount + var_MA2;
+var_MA3lead = colcount + var_MA3;
+var_MA4lead = colcount + var_MA4;
+var_MA5lead = colcount + var_MA5;
+e_rlead = colcount + e_rPOS;     
+
 
 % =========================================================
 % Indicators for lag coefficients for each variable: 
 
 colcount  = collag;
 
-Xlag		= colcount + Xpos; 
-Pilag		= colcount + Pipos;
-Ilag		= colcount + Ipos;
-RNlag	    = colcount + RNpos;
-MA1lag   	= colcount + MA1pos;
-MA2lag   	= colcount + MA2pos;
-MA3lag   	= colcount + MA3pos;
-MA4lag   	= colcount + MA4pos;
-MA5lag   	= colcount + MA5pos;
-eps_RN_lag	= colcount + eps_RN_pos;
+var_xLag = colcount + var_x;	
+var_piLag = colcount + var_pi;
+var_rLag = colcount + var_r;	
+var_MA1lag = colcount + var_MA1;
+var_MA2lag = colcount + var_MA2;
+var_MA3lag = colcount + var_MA3;
+var_MA4lag = colcount + var_MA4;
+var_MA5lag = colcount + var_MA5;
+e_rLag = colcount + e_rPOS;     
+                   
 
-                                    
-% ==================================================================================== %
+
+% ======================================================================= %
 % Coefficient Matrix
-% ==================================================================================== %
+% ======================================================================= %
 
-% Number of coefficients per equation: 
-ncoef   = neq*(nlag+nlead+1);
+ncoef   = neq*(nlag+nlead+1); % Number of coefficients per equation: 
+cof     = zeros(neq,ncoef); % Coef matrix. Each row is an equation 
 
-cof     = zeros(neq,ncoef);         % Coef matrix. Each row is an equation 
+% Euler Equation
+cof(1,var_xLead) = 1;
+cof(1,var_xZero) = -1;
+cof(1,var_rZero) = -sigmaC;
 
-% IS Curve
+% Price dynamics 
+cof(2,var_piZero) = -1;
+cof(2,var_piLead) = beta;
+cof(2,var_xZero) = kappa;
 
-cof(1,Xzero)        = -1;
-cof(1,Xlead)        =  1;
-cof(1,Izero)        = -s;
-cof(1,Pilead)       =  s;
-cof(1,RNzero)       =  s;
-
-
-% NKPC 
-
-cof(2,Pizero)       = -1;
-cof(2,Pilead)       = beta;
-cof(2,Xzero)        = kappa;
-
-
-% Policy rule
-
-cof(3,Izero)        = -1;
-cof(3,Pilead)       =  1;
-cof(3,RNzero)       =  1;
-%cof(3,eps_RN_zero)  =  1;
+% Monetary Policy 
+% Note that we are including the state variables for the MA process here
+% Because here Fed policy is declaring the states for forward guidiance
+% i.e. "This is how interest rates are gonna be for the next 5 periods."
+cof(3,var_rZero) = -1;
+cof(3,var_MA1zero) = r1;
+cof(3,var_MA2zero) = r2;
+cof(3,var_MA3zero) = r3;
+cof(3,var_MA4zero) = r4;
+cof(3,var_MA5zero) = r5;
 
 
-% Process for RN
-cof(4,RNzero)       =  -1;
-cof(4,MA1zero)      = r1;
-cof(4,MA2zero)      = r2;
-cof(4,MA3zero)      = r3;
-cof(4,MA4zero)      = r4;
-cof(4,MA5zero)      = r5;
+% Evolution of MA terms 
+% In the first period, the announcement of lower rates comes as a shock
+% Hence the shock enters in the first period. The remaining terms are 
+% passing this information along. Since the agents know the monetary policy
+% process, they know the shock won't affect things until the fifth period. 
+% But since they know the process they can plan for it.
+cof(4,var_MA1zero) = -1;
+cof(4,e_rzero) = 1;
+cof(5,var_MA2zero) = -1;
+cof(5,var_MA1lag) =  1;
+cof(6,var_MA3zero) = -1;
+cof(6,var_MA2lag) =  1;
+cof(7,var_MA4zero) = -1;
+cof(7,var_MA3lag) =  1;
+cof(8,var_MA5zero) = -1;
+cof(8,var_MA4lag) =  1;
 
-
-% MA Process for RN shock
-cof(5,MA1zero)      = -1;
-cof(5,eps_RN_zero)  =  1;
-cof(6,MA2zero)      = -1;
-cof(6,MA1lag)       =  1;
-cof(7,MA3zero)      = -1;
-cof(7,MA2lag)       =  1;
-cof(8,MA4zero)      = -1;
-cof(8,MA3lag)       =  1;
-cof(9,MA5zero)      = -1;
-cof(9,MA4lag)       =  1;
-
-
-% SHOCK: RN
-
-cof(10,eps_RN_zero)  =  1;
-
-
+% SHOCK: Monetary Policy
+cof(9,e_rzero) = 1;
 
 % ==================================================================================== %
 %			End coefficient matrix setup
 % ==================================================================================== %
+
+
 
 % ==================================================================================== %
 %		        Begin Solution Algorithm 
@@ -240,38 +223,37 @@ cof(10,eps_RN_zero)  =  1;
 %    nnumeric  Number of numeric shiftrights.                      
 %    lgroots   Number of roots greater in modulus than uprbnd.     
 %    mcode     Return code: see function aimerr.                   
-% ==================================================================================== %
-
+% ======================================================================= %
 
 % Use AIM procedure to solve model: 
 uprbnd = 1+1e-8;    % Tolerance values for AIM program 
 condn = 1e-8;
 
-% ==================================================================================== %
+% ======================================================================= %
 % Run AIM
-% ==================================================================================== %
+% ======================================================================= %
 
 [cofb,rts,ia,nex,nnum,lgrts,mcode] = ...
        aim_eig(cof,neq,nlag,nlead,condn,uprbnd);
 
 scof = obstruct(cof,cofb,neq,nlag,nlead);
 
-% ==================================================================================== %
+% ======================================================================= %
 % need to calculate amat and b
-% ==================================================================================== %
+% ======================================================================= %
 
 s0 = scof(:,(neq*nlag+1):neq*(nlag+1)); 	% Contemp. coefs from obs. structure
 amat=zeros(neq*nlag,neq*nlag);   		% Initialize A matrix 
 bmat=cofb(1:neq,((nlag-1)*neq+1):nlag*neq);  	% Lag 1 coefficients 
 i=2;
-while i<=nlag;
+while i<=nlag
   bmat=[bmat cofb(1:neq,((nlag-i)*neq+1):(nlag-i+1)*neq)]; % Lag i coefs 
   i=i+1;
-end;
+end
 amat(1:neq,:)=bmat;  % Coefs for equations 
-if nlag>1;
+if nlag>1
  amat((length(cofb(:,1))+1):length(amat(:,1)),1:neq*(nlag-1))=eye(neq*(nlag-1));
-end;
+end
 b = zeros(length(amat(:,1)),length(s0(1,:)));
 b(1:length(s0(:,1)),1:length(s0(1,:))) = inv(s0);  % Store coefs 
 %b=b(:,shockvec);
@@ -279,38 +261,33 @@ b(1:length(s0(:,1)),1:length(s0(1,:))) = inv(s0);  % Store coefs
 AVAR = amat; 
 BVAR = b; 
 
-%% ====================================================================== %
+
+
 % ======================================================================= %
-%                           IMPULSE RESPONSES
+%                           IMPULSE RESPONSE
 % ======================================================================= %
-% ======================================================================= %
 
-
-
-% Shock to natural rate
-
+% Forward Guidance Shock
 shock = zeros(neq,1);                       % Shock vector
+shock(e_rPOS,1) = 1;
 
-shock(eps_RN_pos,1) = -1;
+y = BVAR*shock;                   % initial value 
+DATA1 = zeros(nimpdat,neq); 
+DATA1(1,:) = y';                           % store initial value 
 
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
+for t = 2:nimpdat                          % loop through periods 
  	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
+ 	  DATA1(t,:)=y';
+end
 
 time = 1:nimpdat; 
 
-
 figure(1) 
-plot(time, DATA(:,RNpos),'-r');
+plot(time, DATA1(:,var_x),'LineWidth',3);
 hold on; 
-plot(time, DATA(:,Xpos), 'b');
-plot(time, DATA(:,Pipos),'-k');
+plot(time, DATA1(:,var_pi),'LineWidth',3);
+plot(time, DATA1(:,var_r),'LineWidth',3);
 hold off; 
-legend('RN','X','Pi'); 
-saveas(figure(1),'IR_1_Z','epsc');
+legend('x', 'pi', 'r'); 
+
 

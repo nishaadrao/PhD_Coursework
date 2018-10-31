@@ -29,19 +29,21 @@ phi         =1;                % Elasticity of labor supply.
 
 s           = 1;               % intertemporal substitution
 
-kappa       = lambda*(s+(phi+alpha)/(1-alpha));
+kappa       = lambda*(s+(phi+alpha)/(1-alpha)); % Slope of NKPC
 
 
-% Shock Variances
-
-sig_RN      = .01; 
+% Coefficents for the MA process for Forward Guidance
+r1 = 0; 
+r2 = 0; 
+r3 = 0; 
+r4 = 0; 
+r5 = 1; 
 
 
 % ======================================================================= %
 % Steady State
 % ======================================================================= %
 
-RNbar       = 0;
 
 % ======================================================================= %
 % Coefficient Matrix
@@ -50,7 +52,7 @@ RNbar       = 0;
 nlead 	= 1;  	% Number of leads in system 
 nlag 	= 1;   	% Number of lags in system 
 
-xnum    = 5;
+xnum    = 10;
 neq 	= xnum;
 
 % ======================================================================= %
@@ -60,8 +62,13 @@ neq 	= xnum;
 Xpos		= 1;
 Pipos  		= 2;
 Ipos		= 3;
-RNpos       = 4; 
-eps_RN_pos  = 5; 
+RNpos       = 4;
+MA1pos   	= 5;		% State variables for MA process (see equation above)
+MA2pos   	= 6;	
+MA3pos   	= 7;		
+MA4pos   	= 8;		
+MA5pos   	= 9;
+eps_RN_pos  = 10; 
 
 % ==================================================================================== %
 
@@ -86,6 +93,11 @@ Xzero		= colcount + Xpos;
 Pizero		= colcount + Pipos;
 Izero		= colcount + Ipos;
 RNzero	    = colcount + RNpos;
+MA1zero   	= colcount + MA1pos;
+MA2zero   	= colcount + MA2pos;
+MA3zero   	= colcount + MA3pos;
+MA4zero   	= colcount + MA4pos;
+MA5zero   	= colcount + MA5pos;
 eps_RN_zero	= colcount + eps_RN_pos;
 
 % =========================================================
@@ -97,6 +109,11 @@ Xlead		= colcount + Xpos;
 Pilead		= colcount + Pipos;
 Ilead		= colcount + Ipos;
 RNlead	    = colcount + RNpos;
+MA1lead   	= colcount + MA1pos;
+MA2lead   	= colcount + MA2pos;
+MA3lead   	= colcount + MA3pos;
+MA4lead   	= colcount + MA4pos;
+MA5lead   	= colcount + MA5pos;
 eps_RN_lead	= colcount + eps_RN_pos;
 
 % =========================================================
@@ -108,6 +125,11 @@ Xlag		= colcount + Xpos;
 Pilag		= colcount + Pipos;
 Ilag		= colcount + Ipos;
 RNlag	    = colcount + RNpos;
+MA1lag   	= colcount + MA1pos;
+MA2lag   	= colcount + MA2pos;
+MA3lag   	= colcount + MA3pos;
+MA4lag   	= colcount + MA4pos;
+MA5lag   	= colcount + MA5pos;
 eps_RN_lag	= colcount + eps_RN_pos;
 
                                     
@@ -125,7 +147,7 @@ cof     = zeros(neq,ncoef);         % Coef matrix. Each row is an equation
 cof(1,Xzero)        = -1;
 cof(1,Xlead)        =  1;
 cof(1,Izero)        = -s;
-cof(1,Ilead)        =  s;
+cof(1,Pilead)       =  s;
 cof(1,RNzero)       =  s;
 
 
@@ -141,16 +163,34 @@ cof(2,Xzero)        = kappa;
 cof(3,Izero)        = -1;
 cof(3,Pilead)       =  1;
 cof(3,RNzero)       =  1;
-cof(3,eps_RN_zero)  =  1;
+%cof(3,eps_RN_zero)  =  1;
 
 
 % Process for RN
-cof(4,RNzero)       =  1;
+cof(4,RNzero)       =  -1;
+cof(4,MA1zero)      = r1;
+cof(4,MA2zero)      = r2;
+cof(4,MA3zero)      = r3;
+cof(4,MA4zero)      = r4;
+cof(4,MA5zero)      = r5;
+
+
+% MA Process for RN shock
+cof(5,MA1zero)      = -1;
+cof(5,eps_RN_zero)  =  1;
+cof(6,MA2zero)      = -1;
+cof(6,MA1lag)       =  1;
+cof(7,MA3zero)      = -1;
+cof(7,MA2lag)       =  1;
+cof(8,MA4zero)      = -1;
+cof(8,MA3lag)       =  1;
+cof(9,MA5zero)      = -1;
+cof(9,MA4lag)       =  1;
 
 
 % SHOCK: RN
 
-cof(5,eps_RN_zero)  =  1;
+cof(10,eps_RN_zero)  =  1;
 
 
 
@@ -245,13 +285,13 @@ BVAR = b;
 % ======================================================================= %
 % ======================================================================= %
 
-%{
 
-% Productivity shock
+
+% Shock to natural rate
 
 shock = zeros(neq,1);                       % Shock vector
 
-shock(eps_Z_pos,1) = 1;
+shock(eps_RN_pos,1) = -1;
 
 y           = BVAR*shock;                   % initial value 
 DATA        = zeros(nimpdat,neq); 
@@ -266,73 +306,11 @@ time = 1:nimpdat;
 
 
 figure(1) 
-plot(time, DATA(:,eps_Z_pos),'-r');
+plot(time, DATA(:,RNpos),'-r');
 hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
+plot(time, DATA(:,Xpos), 'b');
+plot(time, DATA(:,Pipos),'-k');
 hold off; 
-legend('e-Z','Z','C','K'); 
+legend('RN','X','Pi'); 
 saveas(figure(1),'IR_1_Z','epsc');
-
-% MU shock
-
-shock = zeros(neq,1);                       % Shock vector
-
-shock(eps_C_pos,1) = 1;
-
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
- 	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
-
-time = 1:nimpdat; 
-
-
-figure(2) 
-%plot(time, DATA(:,eps_C_pos),'-r');
-hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
-hold off; 
-%legend('e-C','Z','C','K'); 
-legend('Z','C','K');
-saveas(figure(2),'IR_1_MU','epsc');
-
-
-% Depreciation shock
-
-shock = zeros(neq,1);                       % Shock vector
-
-shock(deltapos,1) = 1;
-
-y           = BVAR*shock;                   % initial value 
-DATA        = zeros(nimpdat,neq); 
-DATA(1,:) 	= y';                           % store initial value 
-
-for t = 2:nimpdat;                          % loop through periods 
- 	  y = AVAR*y;
- 	  DATA(t,:)=y';
-end;
-
-time = 1:nimpdat; 
-
-
-figure(3) 
-%plot(time, DATA(:,deltapos),'-r');
-hold on; 
-plot(time, DATA(:,Zpos), 'b');
-plot(time, DATA(:,Cpos),'-k');
-plot(time, DATA(:,Kpos),'-g');
-hold off; 
-%legend('d','Z','C','K'); 
-legend('Z','C','K'); 
-saveas(figure(3),'IR_1_D','epsc');
-
-%}
 
