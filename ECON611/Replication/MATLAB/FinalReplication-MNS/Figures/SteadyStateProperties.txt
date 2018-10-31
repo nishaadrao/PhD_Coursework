@@ -1,0 +1,13 @@
+ 
+Median assets as frac of annual income = 0.55059
+Median assets in 2010 $ = 26636.1942
+ 
+Fraction of total population with low wealth
+income type     share of pop.       fraction with low weatlh 
+1           0.25             0.80664
+2           0.5             0.54384
+3           0.25             0.052867
+ 
+aggregate assets to annual GDP 1.375
+aggregate debt to annual GDP 0
+Fraction with positive assets 0.86904
