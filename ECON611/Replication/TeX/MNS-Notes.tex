@@ -63,13 +63,18 @@ I've replicated this in AIM. Some notes on the AIM code
 \end{itemize}
 
 \section{Result \# 2}
-This is the main result of the paper, and will requires solving MNS's heterogenous agent model. This is a hard problem. Based on what I've read so far:
+This is the main result of the paper, and it requires solving MNS's heterogeneous agent model. This is a hard problem. Based on what I've read so far:
 \begin{itemize}
 \item Value function iteration is too slow for this kind of problem (rate of convergence is $\beta$).
-\item I think I need to use some kind of approximation method (e.g. splines) to approximate the policy function for consumption.
+\item I think I need to use some kind of approximation method (e.g. splines) to approximate the policy function for consumption [I think this is referred to as `projection' (as opposed to perturbation)]
 \item I also somehow need to simulate the distribution of asset holdings (e.g. with a histogram?)
 \item The weird part is how to update the guessed solution to move it closer to an equilibrium...
 \end{itemize}
+Useful resources:
+\begin{itemize}
+\item \url{https://sites.google.com/a/nyu.edu/glviolante/teaching/quantmacro} [which points to some books too]
+\end{itemize}
+
 
 
 
