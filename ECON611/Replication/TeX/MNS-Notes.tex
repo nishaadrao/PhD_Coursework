@@ -50,13 +50,27 @@
 Main results:
 \begin{enumerate}
 \item In standard NKM there is an outsized response of output/consumption to forward guidance.
+\item In a NKM with idiosyncratic labor income shocks and borrowing constraints, the response of output/consumption to forward guidance is far lower.
+\item Something about ZLB [fill in]
 \end{enumerate}
+
+\subsection{Intuition [for my own understanding]}
 
 \section{Result \#1}
 I've replicated this in AIM. Some notes on the AIM code
 \begin{itemize}
 \item Note that the variable $r_t$ in the code is the deviation of the real rate from the natural rate: $\tilde r_t = i_t -\E_t\pi_{t+1} - r^n_t$. With this note, you can easily map my code back to the exposition in the paper.
 \end{itemize}
+
+\section{Result \# 2}
+This is the main result of the paper, and will requires solving MNS's heterogenous agent model. This is a hard problem. Based on what I've read so far:
+\begin{itemize}
+\item Value function iteration is too slow for this kind of problem (rate of convergence is $\beta$).
+\item I think I need to use some kind of approximation method (e.g. splines) to approximate the policy function for consumption.
+\item I also somehow need to simulate the distribution of asset holdings (e.g. with a histogram?)
+\item The weird part is how to update the guessed solution to move it closer to an equilibrium...
+\end{itemize}
+
 
 
 
