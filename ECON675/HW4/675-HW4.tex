@@ -100,4 +100,38 @@ Using the IPW result above, we know that the first two terms cancel each other o
 \end{align*}
 So each of the four functions is a valid moment condition for $\theta_t(g)$.
 
+\subsection{Plug-in estimators}
+The plug-in IPW estimator is 
+\begin{align*}
+\hat{\theta}_{\texttt{IPW},t}(g) = \frac{1}{n}\sum_{i=1}^n\frac{D_i(t)g(Y_i)}{\hat p_t(\mtx{X}_i)},
+\end{align*}
+where $\hat p_t(\mtx{X}_i)$ is the estimated propensity score. Note that since there are multiple treatment levels, the estimated propensity score would have to be computed using a suitable discrete choice model. For instance, $\hat p_t(\mtx{X}_i)$ could be estimated using a multinomial logit model.\\
+
+The plug-in projection (or regression imputation) estimator is
+\begin{align*}
+\hat{\theta}_{\texttt{RI1},t}(g) = \hat{\E}[e_t(g;\mtx{X}_i)] =  \frac{1}{n}\sum_{i=1}^n \hat{\E}[g(Y_i(t))|\mtx{X}_i] &=  \frac{1}{n}\sum_{i=1}^n \hat{\E}[g(Y_i(t))|\mtx{X}_i, D_i(t)=1] \\
+&= \frac{1}{n}\sum_{i=1}^n \hat{\E}[g(Y_i)|\mtx{X}_i, D_i(t)=1],
+\end{align*}
+where the second last equality uses the ignorability assumption. We need to make a choice about how to estimate the conditional expectation term. I think we could use NLS, or possibly a nonparametric method like kernel regression. To ease notation, let $\widehat{\mu}_t(\mtx{X}_i)$ be the parametric or nonparametric estimate of $\E[g(Y_i)|\mtx{X}_i, D_i(t)=1]$. Then, the projection estimator is
+\begin{align*}
+\hat{\theta}_{\texttt{RI1},t}(g) = \frac{1}{n}\sum_{i=1}^n \widehat{\mu}_t(\mtx{X}_i)
+\end{align*}
+
+The plug-in `hybrid' imputation estimator
+\begin{align*}
+\hat{\theta}_{\texttt{RI2},t}(g) &=  \frac{1}{n}\sum_{i=1}^n\frac{D_i(t)\widehat{\mu}_t(\mtx{X}_i)}{\hat p_t(\mtx{X}_i)}. 
+\end{align*}
+Finally, the plug-in doubly robust estimator is given by
+\begin{align*}
+\hat{\theta}_{\texttt{DR},t}(g) &= \frac{1}{n}\sum_{i=1}^n\frac{D_i(t)g(Y_i)}{\hat p_t(\mtx{X}_i)}-\frac{1}{n}\sum_{i=1}^n\frac{\widehat{\mu}_t(\mtx{X}_i)}{\hat p_t(\mtx{X}_i)}(D_i(t) - \hat p_t(\mtx{X}_i))\\
+&=\frac{1}{n}\sum_{i=1}^n \left(\frac{D_i(t)(g(Y_i) - \widehat{\mu}_t(\mtx{X}_i))}{\hat p_t(\mtx{X}_i)} + \widehat{\mu}_t(\mtx{X}_i) \right).
+\end{align*}
+As discussed in Abadie and Catteneo (2018), the relative performance of the above estimators depends on the features of the data generating process. In finite samples, IPW estimators become unstable when the propensity score approaches zero or one and regression imputation estimators may suffer from extrapolation biases. Doubly robust estimators include safeguards against bias caused by misspecification but impose additional specification choices that may affect the resulting estimate.
+
+\subsection{Estimating the variance of potential outcomes}
+
+\newpage
+
+\section{Estimating average treatment effects}
+
 \end{document}
