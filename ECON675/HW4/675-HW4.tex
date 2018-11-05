@@ -1,0 +1,103 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{ECON675 -- Assignment 4}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\newpage
+
+\section{Estimating equations}
+
+\subsection{Moment conditions}
+The goal of this question is to show that the four given functions are valid moment conditions for the parameter $\theta_t(g)$. That is, we want to show that 
+\begin{align*}
+\E[\psi_{\texttt{f},t}(\mtx{Z}_i; \theta_t(g))] = 0,
+\end{align*}
+for each $\texttt{f} \in \{\texttt{IPW},\texttt{RI1},\texttt{RI2}, \texttt{DR}\}$. Note that in the derivations below I invoke LIE a lot without specifically mentioning it.\\
+
+Start with the inverse probability weighting function
+\begin{align*}
+\E[\psi_{\texttt{IPW},t}(\mtx{Z}_i; \theta_t(g))] &=\E\left[\frac{D_i(t)\cdot g(Y_i(t))}{p_t(\mtx{X}_i)}\right] - \theta_t(g)\\
+&=\E\left[\E\left[\frac{D_i(t)\cdot g(Y_i(t))}{p_t(\mtx{X}_i)}| \mtx{X}_i\right]\right] - \theta_t(g)\\
+&=\E\left[\frac{1}{p_t(\mtx{X}_i)}\E\left[D_i(t)|\mtx{X}_i\right]\E\left[ g(Y_i(t))| \mtx{X}_i\right]\right] - \theta_t(g)
+\end{align*}
+Now, 
+\begin{align*}
+\E\left[D_i(t)|\mtx{X}_i\right] & = \Pr[D_i(t)=1|\mtx{X}_i] = \Pr[T_i = t|\mtx{X}_i] = p_t(\mtx{X}_i).
+\end{align*}
+Thus,
+\begin{align*}
+\E[\psi_{\texttt{IPW},t}(\mtx{Z}_i; \theta_t(g))] &= \E\left[\E\left[ g(Y_i(t))| \mtx{X}_i\right]\right] - \theta_t(g)\\
+&=\E[g(Y_i(t))] - \theta_t(g)\\
+&=0.
+\end{align*}
+Next, consider
+\begin{align*}
+\E[\psi_{\texttt{RI1},t}(\mtx{Z}_i; \theta_t(g))] &= \E[e_t(g;\mtx{X}_i)] - \theta_t(g)\\
+&=\E[\E[g(Y_i(t)|\mtx{X}_i]] - \theta_t(g)\\
+&=\E[g(Y_i(t)] -  \theta_t(g)\\
+&=0.
+\end{align*}
+And,
+\begin{align*}
+\E[\psi_{\texttt{RI2},t}(\mtx{Z}_i; \theta_t(g))] &= \E\left[\frac{D_i(t)\cdot e_t(g;\mtx{X}_i)}{p_t(\mtx{X}_i)}\right]  - \theta_t(g)\\
+&=\E\left[\E\left[\frac{D_i(t)\cdot e_t(g;\mtx{X}_i)}{p_t(\mtx{X}_i)}| \mtx{X}_i\right]\right] - \theta_t(g)\\
+&=\E\left[\E\left[e_t(g;\mtx{X}_i)| \mtx{X}_i\right]\right] - \theta_t(g)\\
+&= \E[e_t(g;\mtx{X}_i)] - \theta_t(g)\\
+&=0.
+\end{align*}
+Finally, consider the doubly robust function
+\begin{align*}
+\E[\psi_{\texttt{DR},t}(\mtx{Z}_i; \theta_t(g))] &= \E\left[\frac{D_i(t)\cdot g(Y_i(t))}{p_t(\mtx{X}_i)}\right] - \theta_t(g) - \E\left[\frac{e_t(g;\mtx{X}_i)}{p_t(\mtx{X}_i)}(D_i(t)-p_t(\mtx{X}_i))\right].
+\end{align*}
+Using the IPW result above, we know that the first two terms cancel each other out, so that
+\begin{align*}
+\E[\psi_{\texttt{DR},t}(\mtx{Z}_i; \theta_t(g))] &=- \E\left[\frac{e_t(g;\mtx{X}_i)}{p_t(\mtx{X}_i)}(D_i(t)-p_t(\mtx{X}_i))\right]\\
+&=- \E\left[\frac{e_t(g;\mtx{X}_i)D_i(t)}{p_t(\mtx{X}_i)}\right] + \E[e_t(g;\mtx{X}_i)]\\
+&= -\theta_t(g) + \theta_t(g)\\
+&=0.
+\end{align*}
+So each of the four functions is a valid moment condition for $\theta_t(g)$.
+
+\end{document}
