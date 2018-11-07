@@ -151,11 +151,12 @@ tvec.ri.treat.ps.A      = as.matrix(X.treat.A)%*%(as.vector(ols.treat.A$coeffici
 tvec.ri.control.ll.A    = as.matrix(X.control.ll.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ll.A$coefficients))  
 tvec.ri.control.ps.A    = as.matrix(X.control.ps.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ps.A$coefficients))  
 
-
 # Compute ATEs
 ate.ri.ll.A       = mean(c(tvec.ri.treat.ll.A,tvec.ri.control.ll.A))
 ate.ri.ps.A       = mean(c(tvec.ri.treat.ps.A,tvec.ri.control.ps.A))
 
+# Compute ATT
+att.ri.A          = mean(tvec.ri.treat.ll.A)
 
 ######################################################################
 # [3.B] Regression Imputation, covariate set B
@@ -187,8 +188,67 @@ tvec.ri.treat.ps.B      = as.matrix(X.treat.B)%*%(as.vector(ols.treat.B$coeffici
 tvec.ri.control.ll.B    = as.matrix(X.control.ll.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ll.B$coefficients))  
 tvec.ri.control.ps.B    = as.matrix(X.control.ps.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ps.B$coefficients))  
 
-
 # Compute ATEs
 ate.ri.ll.B       = mean(c(tvec.ri.treat.ll.B,tvec.ri.control.ll.B))
 ate.ri.ps.B       = mean(c(tvec.ri.treat.ps.B,tvec.ri.control.ps.B))
+
+# Compute ATT
+att.ri.B          = mean(tvec.ri.treat.ll.B)
+
+######################################################################
+# [3.C] Regression Imputation, covariate set C
+######################################################################
+
+# Subset covariates for imputation
+X.treat.C       = data[treat==1,-c("re78","re74","re75","treat")]
+X.control.ll.C  = data[treat==0,-c("re78","re74","re75","treat")]
+X.control.ps.C  = data[treat==2,-c("re78","re74","re75","treat")]
+
+# Get OLS coefficients for imputation
+ols.treat.C          = lm(as.matrix(Y.treat)~as.matrix(X.treat.C))
+ols.control.ll.C     = lm(as.matrix(Y.control.ll)~as.matrix(X.control.ll.C))
+ols.control.ps.C     = lm(as.matrix(Y.control.ps)~as.matrix(X.control.ps.C))
+
+# I need to add constants to the X's to compute imputed treatment effects,
+# Then reorder so const is the first variable
+X.treat.C[,const:=1]
+setcolorder(X.treat.C,c("const"))
+X.control.ll.C[,const:=1]
+setcolorder(X.control.ll.C,c("const"))
+X.control.ps.C[,const:=1]
+setcolorder(X.control.ps.C,c("const"))
+
+# Impute `individual treatment effects`
+tvec.ri.treat.ll.C      = as.matrix(X.treat.C)%*%(as.vector(ols.treat.C$coefficients)-as.vector(ols.control.ll.C$coefficients))
+tvec.ri.treat.ps.C      = as.matrix(X.treat.C)%*%(as.vector(ols.treat.C$coefficients)-as.vector(ols.control.ps.C$coefficients))
+
+tvec.ri.control.ll.C    = as.matrix(X.control.ll.C)%*%(as.vector(ols.treat.C$coefficients)-as.vector(ols.control.ll.C$coefficients))  
+tvec.ri.control.ps.C    = as.matrix(X.control.ps.C)%*%(as.vector(ols.treat.C$coefficients)-as.vector(ols.control.ps.C$coefficients))  
+
+# Compute ATEs
+ate.ri.ll.C       = mean(c(tvec.ri.treat.ll.C,tvec.ri.control.ll.C))
+ate.ri.ps.C       = mean(c(tvec.ri.treat.ps.C,tvec.ri.control.ps.C))
+
+# Compute ATT
+att.ri.C          = mean(tvec.ri.treat.ll.C)
+
+######################################################################
+# [4] Inverse Probability Weighting
+######################################################################
+
+# Generate treatment outcome variables
+T.ll = data[treat==1|treat==0,.(treat)]
+T.ps = data[treat==1|treat==2,.(treat)]
+
+#Recode 2's to 0's for PSID sample
+T.ps = T.ps[,treat:=as.numeric(treat==1)]
+
+# Get propensity scores using logit regression
+prop.ll.A = glm(as.matrix(T.ll) ~ as.matrix(X.ll.A[,-c("treat")]),family = "binomial")
+prop.ll.B = glm(as.matrix(T.ll) ~ as.matrix(X.ll.B[,-c("treat")]),family = "binomial")
+prop.ll.C = glm(as.matrix(T.ll) ~ as.matrix(X.ll.C[,-c("treat")]),family = "binomial")
+
+prop.ps.A = glm(as.matrix(T.ps) ~ as.matrix(X.ps.A[,-c("treat")]),family = "binomial")
+prop.ps.B = glm(as.matrix(T.ps) ~ as.matrix(X.ps.B[,-c("treat")]),family = "binomial")
+prop.ps.C = glm(as.matrix(T.ps) ~ as.matrix(X.ps.C[,-c("treat")]),family = "binomial")
 
