@@ -1,0 +1,194 @@
+## ECON675: ASSIGNMENT 4
+## Q2: ESTIMATING AVERAGE TREATMENT EFFECTS
+## Anirudh Yadav 
+## 11/06/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+######################################################################
+# Input data, add covariates and subset data
+######################################################################
+data <- as.data.table(read.csv('PhD_Coursework/ECON675/HW4/LaLonde_all.csv'))
+
+data = data[,log.re74:=log(re74+1)]
+data = data[,log.re75:=log(re75+1)]
+data = data[,age.sq:=age^2]
+data = data[,educ.sq:=educ^2]
+data = data[,age.cu:=age^3]
+data = data[,black.u74:=black*u74]
+data = data[,educ.logre74:=educ*log.re74]
+
+# subset data for LaLonde control only
+X.ll = data[treat==1 | treat==0]
+Y.ll = data[treat==1 | treat==0,.(re78)]
+
+# subset data for PSID control only
+X.ps = data[treat==1 | treat==2]
+Y.ps = data[treat==1 | treat==2,.(re78)]
+
+# Recode treatment indicate in PSID control dataset (recode 2's as 0's)
+X.ps = X.ps[,treat:=as.numeric(treat==1)]
+
+
+######################################################################
+# Create covariate sets
+######################################################################
+X.ll.0  = X.ll[,.(treat)]
+X.ps.0  = X.ps[,.(treat)]
+
+X.ll.A  = X.ll[,-c("age.sq","educ.sq","age.cu","black.u74","educ.logre74","u74","u75","re78","re74","re75")]
+X.ps.A  = X.ps[,-c("age.sq","educ.sq","age.cu","black.u74","educ.logre74","u74","u75","re78","re74","re75")]
+
+X.ll.B  =  X.ll[,-c("age.cu","black.u74","educ.logre74","re78","re74","re75")]
+X.ps.B  =  X.ps[,-c("age.cu","black.u74","educ.logre74","re78","re74","re75")]
+
+X.ll.C  =  X.ll[,-c("re78","re74","re75")]
+X.ps.C  =  X.ps[,-c("re78","re74","re75")]
+
+######################################################################
+# [1] Difference in means
+######################################################################
+dmeans.ll = lm(as.matrix(Y.ll)~as.matrix(X.ll.0))
+dmeans.ps = lm(as.matrix(Y.ps)~as.matrix(X.ps.0))
+
+# Compute robust standard errors
+dmeans.ll.se    = sqrt(diag(vcovHC(dmeans.ll, type = "HC1")))
+dmeans.ps.se    = sqrt(diag(vcovHC(dmeans.ps, type = "HC1")))
+
+# Compute 95% CIs
+dmeans.ll.lower = dmeans.ll$coefficients - 1.96*dmeans.ll.se
+dmeans.ll.upper = dmeans.ll$coefficients + 1.96*dmeans.ll.se
+
+dmeans.ps.lower = dmeans.ps$coefficients - 1.96*dmeans.ps.se
+dmeans.ps.upper = dmeans.ps$coefficients + 1.96*dmeans.ps.se
+
+# Put results together
+dmeans.ll.results = cbind(dmeans.ll$coefficients,dmeans.ll.se,dmeans.ll.lower,dmeans.ll.upper)
+dmeans.ps.results = cbind(dmeans.ps$coefficients,dmeans.ps.se,dmeans.ps.lower,dmeans.ps.upper)
+
+
+######################################################################
+# [2] OLS
+######################################################################
+# Compute OLS coefficients
+ols.ll.A = lm(as.matrix(Y.ll)~as.matrix(X.ll.A))
+ols.ps.A = lm(as.matrix(Y.ps)~as.matrix(X.ps.A))
+ols.ll.B = lm(as.matrix(Y.ll)~as.matrix(X.ll.B))
+ols.ps.B = lm(as.matrix(Y.ps)~as.matrix(X.ps.B))
+ols.ll.C = lm(as.matrix(Y.ll)~as.matrix(X.ll.C))
+ols.ps.C = lm(as.matrix(Y.ps)~as.matrix(X.ps.C))
+
+# Compute robust standard errors
+ols.ll.se.A    = sqrt(diag(vcovHC(ols.ll.A, type = "HC1")))
+ols.ps.se.A    = sqrt(diag(vcovHC(ols.ps.A, type = "HC1")))
+ols.ll.se.B    = sqrt(diag(vcovHC(ols.ll.B, type = "HC1")))
+ols.ps.se.B    = sqrt(diag(vcovHC(ols.ps.B, type = "HC1")))
+ols.ll.se.C    = sqrt(diag(vcovHC(ols.ll.C, type = "HC1")))
+ols.ps.se.C    = sqrt(diag(vcovHC(ols.ps.C, type = "HC1")))
+
+# Compute 95% CIs
+ols.ll.lower.A = ols.ll.A$coefficients - 1.96*ols.ll.se.A
+ols.ll.upper.A = ols.ll.A$coefficients + 1.96*ols.ll.se.A
+ols.ps.lower.A = ols.ps.A$coefficients - 1.96*ols.ps.se.A
+ols.ps.upper.A = ols.ps.A$coefficients + 1.96*ols.ps.se.A
+ols.ll.lower.B = ols.ll.B$coefficients - 1.96*ols.ll.se.B
+ols.ll.upper.B = ols.ll.B$coefficients + 1.96*ols.ll.se.B
+ols.ps.lower.B = ols.ps.B$coefficients - 1.96*ols.ps.se.B
+ols.ps.upper.B = ols.ps.B$coefficients + 1.96*ols.ps.se.B
+ols.ll.lower.C = ols.ll.C$coefficients - 1.96*ols.ll.se.C
+ols.ll.upper.C = ols.ll.C$coefficients + 1.96*ols.ll.se.C
+ols.ps.lower.C = ols.ps.C$coefficients - 1.96*ols.ps.se.C
+ols.ps.upper.C = ols.ps.C$coefficients + 1.96*ols.ps.se.C
+
+# Put treatment effect results together 
+ols.ll.results = cbind(c(ols.ll.A$coefficients[2],ols.ll.B$coefficients[2],ols.ll.C$coefficients[2]),c(ols.ll.se.A[2],ols.ll.se.B[2],ols.ll.se.C[2]),c(ols.ll.lower.A[2],ols.ll.lower.B[2],ols.ll.lower.C[2]),c(ols.ll.upper.A[2],ols.ll.upper.B[2],ols.ll.upper.C[2]))
+ols.ps.results = cbind(c(ols.ps.A$coefficients[2],ols.ps.B$coefficients[2],ols.ps.C$coefficients[2]),c(ols.ps.se.A[2],ols.ps.se.B[2],ols.ps.se.C[2]),c(ols.ps.lower.A[2],ols.ps.lower.B[2],ols.ps.lower.C[2]),c(ols.ps.upper.A[2],ols.ps.upper.B[2],ols.ps.upper.C[2]))
+
+
+######################################################################
+# [3.A] Regression Imputation, covariate set A
+######################################################################
+
+# Subset outcome data for imputation
+Y.treat        = data[treat==1,.(re78)]
+Y.control.ll   = data[treat==0,.(re78)]
+Y.control.ps   = data[treat==2,.(re78)]
+
+# Subset covariates for imputation
+X.treat.A       = data[treat==1,-c("age.sq","educ.sq","age.cu","black.u74","educ.logre74","u74","u75","re78","re74","re75","treat")]
+X.control.ll.A  = data[treat==0,-c("age.sq","educ.sq","age.cu","black.u74","educ.logre74","u74","u75","re78","re74","re75","treat")]
+X.control.ps.A  = data[treat==2,-c("age.sq","educ.sq","age.cu","black.u74","educ.logre74","u74","u75","re78","re74","re75","treat")]
+
+# Get OLS coefficients for imputation
+ols.treat.A          = lm(as.matrix(Y.treat)~as.matrix(X.treat.A))
+ols.control.ll.A     = lm(as.matrix(Y.control.ll)~as.matrix(X.control.ll.A))
+ols.control.ps.A     = lm(as.matrix(Y.control.ps)~as.matrix(X.control.ps.A))
+
+# I need to add constants to the X's to compute imputed treatment effects,
+# Then reorder so const is the first variable
+X.treat.A[,const:=1]
+setcolorder(X.treat.A,c("const"))
+X.control.ll.A[,const:=1]
+setcolorder(X.control.ll.A,c("const"))
+X.control.ps.A[,const:=1]
+setcolorder(X.control.ps.A,c("const"))
+
+# Impute `individual treatment effects`
+tvec.ri.treat.ll.A      = as.matrix(X.treat.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ll.A$coefficients))
+tvec.ri.treat.ps.A      = as.matrix(X.treat.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ps.A$coefficients))
+
+tvec.ri.control.ll.A    = as.matrix(X.control.ll.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ll.A$coefficients))  
+tvec.ri.control.ps.A    = as.matrix(X.control.ps.A)%*%(as.vector(ols.treat.A$coefficients)-as.vector(ols.control.ps.A$coefficients))  
+
+
+# Compute ATEs
+ate.ri.ll.A       = mean(c(tvec.ri.treat.ll.A,tvec.ri.control.ll.A))
+ate.ri.ps.A       = mean(c(tvec.ri.treat.ps.A,tvec.ri.control.ps.A))
+
+
+######################################################################
+# [3.B] Regression Imputation, covariate set B
+######################################################################
+
+# Subset covariates for imputation
+X.treat.B       = data[treat==1,-c("age.cu","black.u74","educ.logre74","re78","re74","re75","treat")]
+X.control.ll.B  = data[treat==0,-c("age.cu","black.u74","educ.logre74","re78","re74","re75","treat")]
+X.control.ps.B  = data[treat==2,-c("age.cu","black.u74","educ.logre74","re78","re74","re75","treat")]
+
+# Get OLS coefficients for imputation
+ols.treat.B          = lm(as.matrix(Y.treat)~as.matrix(X.treat.B))
+ols.control.ll.B     = lm(as.matrix(Y.control.ll)~as.matrix(X.control.ll.B))
+ols.control.ps.B     = lm(as.matrix(Y.control.ps)~as.matrix(X.control.ps.B))
+
+# I need to add constants to the X's to compute imputed treatment effects,
+# Then reorder so const is the first variable
+X.treat.B[,const:=1]
+setcolorder(X.treat.B,c("const"))
+X.control.ll.B[,const:=1]
+setcolorder(X.control.ll.B,c("const"))
+X.control.ps.B[,const:=1]
+setcolorder(X.control.ps.B,c("const"))
+
+# Impute `individual treatment effects`
+tvec.ri.treat.ll.B      = as.matrix(X.treat.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ll.B$coefficients))
+tvec.ri.treat.ps.B      = as.matrix(X.treat.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ps.B$coefficients))
+
+tvec.ri.control.ll.B    = as.matrix(X.control.ll.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ll.B$coefficients))  
+tvec.ri.control.ps.B    = as.matrix(X.control.ps.B)%*%(as.vector(ols.treat.B$coefficients)-as.vector(ols.control.ps.B$coefficients))  
+
+
+# Compute ATEs
+ate.ri.ll.B       = mean(c(tvec.ri.treat.ll.B,tvec.ri.control.ll.B))
+ate.ri.ps.B       = mean(c(tvec.ri.treat.ps.B,tvec.ri.control.ps.B))
+
