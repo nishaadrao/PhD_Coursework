@@ -63,17 +63,43 @@ I've replicated this in AIM. Some notes on the AIM code
 \end{itemize}
 
 \section{Result \# 2}
-This is the main result of the paper, and it requires solving MNS's heterogeneous agent model. This is a hard problem. Based on what I've read so far:
-\begin{itemize}
-\item Value function iteration is too slow for this kind of problem (rate of convergence is $\beta$).
-\item I think I need to use some kind of approximation method (e.g. splines) to approximate the policy function for consumption [I think this is referred to as `projection' (as opposed to perturbation)]
-\item I also somehow need to simulate the distribution of asset holdings (e.g. with a histogram?)
-\item The weird part is how to update the guessed solution to move it closer to an equilibrium...
-\end{itemize}
+This is the main result of the paper, and it requires solving MNS's heterogeneous agent model. This is a hard problem. Based MNS's online appendix, these are the main steps in solving for equilibrium:
+
+\begin{enumerate}
+\item Solve the households' problems using the endogenous grid point method (Carrol, 2006).
+\item Simulate the distribution of the households' asset holdings using Young's (2006) nonstochastic histogram method.
+\item Checking the equilibrium
+\item Updating the initial guess using results from a `simpler' economy.
+\end{enumerate}
+
+
 Useful resources:
 \begin{itemize}
 \item \url{https://sites.google.com/a/nyu.edu/glviolante/teaching/quantmacro} [which points to some books too]
 \end{itemize}
+
+\subsection{Solving the households' problems}
+I need to use the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration). Note that value function iteration is too slow for this problem. Also note that this method requires approximating the policy function for consumption using a `shape preserving cubic spline'.
+
+\subsubsection{EGM}
+\begin{itemize}
+\item What I really need to try to understanding is EGM. QuantEcon has one \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{lecture} on it, but not sure if it's super useful. Here are some other \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{notes}.
+\end{itemize}
+
+
+\subsubsection{Approximating the policy function}
+\begin{itemize}
+\item QuantEcon recommends the \href{https://github.com/JuliaMath/Interpolations.jl}{Interpolations} package in Julia. Not sure if it implements shape preserving cubic splines.
+\item I think Rudd and MF have notes on approximations using splines.
+\end{itemize}
+
+
+
+\subsection{Simulating the distribution of asset holdings}
+
+\subsection{Checking equilibrium}
+
+\subsection{Updating the guess}
 
 
 
