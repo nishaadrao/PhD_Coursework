@@ -233,7 +233,7 @@ ate.ri.ps.C       = mean(c(tvec.ri.treat.ps.C,tvec.ri.control.ps.C))
 att.ri.C          = mean(tvec.ri.treat.ll.C)
 
 ######################################################################
-# [4] Inverse Probability Weighting
+# Compute propensity scores for each sample and model
 ######################################################################
 
 # Generate treatment outcome variables
@@ -252,3 +252,93 @@ prop.ps.A = glm(as.matrix(T.ps) ~ as.matrix(X.ps.A[,-c("treat")]),family = "bino
 prop.ps.B = glm(as.matrix(T.ps) ~ as.matrix(X.ps.B[,-c("treat")]),family = "binomial")
 prop.ps.C = glm(as.matrix(T.ps) ~ as.matrix(X.ps.C[,-c("treat")]),family = "binomial")
 
+# Add prop scores to the data matrices for easy computing of treatment effects
+X.ll.ipw = X.ll
+X.ll.ipw[,ps.A:=prop.ll.A$fitted.values]
+X.ll.ipw[,ps.B:=prop.ll.B$fitted.values]
+X.ll.ipw[,ps.C:=prop.ll.C$fitted.values]
+
+X.ps.ipw = X.ps
+X.ps.ipw[,ps.A:=prop.ps.A$fitted.values]
+X.ps.ipw[,ps.B:=prop.ps.B$fitted.values]
+X.ps.ipw[,ps.C:=prop.ps.C$fitted.values]
+
+######################################################################
+# [4.A] Inverse Probability Weighting, Lalonde control
+######################################################################
+
+# Create variables for computing ATEs 
+X.ll.ipw[,t1.A:=treat*re78/ps.A]
+X.ll.ipw[,t0.A:=(1-treat)*re78/(1-ps.A)]
+X.ll.ipw[,t1.B:=treat*re78/ps.B]
+X.ll.ipw[,t0.B:=(1-treat)*re78/(1-ps.B)]
+X.ll.ipw[,t1.C:=treat*re78/ps.C]
+X.ll.ipw[,t0.C:=(1-treat)*re78/(1-ps.C)]
+
+# Compute proportion of treated respondents
+p.ll           = mean(X.ll[,treat])
+
+# Create additional variables for computing ATTs
+X.ll.ipw[,t1.att:=treat*re78/p.ll]
+X.ll.ipw[,t0.A2:=(1-treat)*re78/(1-ps.A)*(ps.A/p.ll)]
+X.ll.ipw[,t0.B2:=(1-treat)*re78/(1-ps.B)*(ps.B/p.ll)]
+X.ll.ipw[,t0.C2:=(1-treat)*re78/(1-ps.C)*(ps.C/p.ll)]
+
+# Compute ATEs
+ate.ipw.ll.A  = mean(X.ll.ipw[,t1.A])-mean(X.ll.ipw[,t0.A])
+ate.ipw.ll.B  = mean(X.ll.ipw[,t1.B])-mean(X.ll.ipw[,t0.B])
+ate.ipw.ll.C  = mean(X.ll.ipw[,t1.C])-mean(X.ll.ipw[,t0.C])
+
+# Compute ATTs
+att.ipw.ll.A  = mean(X.ll.ipw[,t1.att])-mean(X.ll.ipw[,t0.A2])
+att.ipw.ll.B  = mean(X.ll.ipw[,t1.att])-mean(X.ll.ipw[,t0.B2])
+att.ipw.ll.C  = mean(X.ll.ipw[,t1.att])-mean(X.ll.ipw[,t0.C2])
+
+######################################################################
+# [4.B] Inverse Probability Weighting, PSID control
+######################################################################
+
+# Create variables for computing ATEs 
+X.ps.ipw[,t1.A:=treat*re78/ps.A]
+X.ps.ipw[,t0.A:=(1-treat)*re78/(1-ps.A)]
+X.ps.ipw[,t1.B:=treat*re78/ps.B]
+X.ps.ipw[,t0.B:=(1-treat)*re78/(1-ps.B)]
+X.ps.ipw[,t1.C:=treat*re78/ps.C]
+X.ps.ipw[,t0.C:=(1-treat)*re78/(1-ps.C)]
+
+# Compute proportion of treated respondents
+p.ps           = mean(X.ps[,treat])
+
+# Create additional variables for computing ATTs
+X.ps.ipw[,t1.att:=treat*re78/p.ps]
+X.ps.ipw[,t0.A2:=(1-treat)*re78/(1-ps.A)*(ps.A/p.ps)]
+X.ps.ipw[,t0.B2:=(1-treat)*re78/(1-ps.B)*(ps.B/p.ps)]
+X.ps.ipw[,t0.C2:=(1-treat)*re78/(1-ps.C)*(ps.C/p.ps)]
+
+# Compute ATEs
+ate.ipw.ps.A  = mean(X.ps.ipw[,t1.A])-mean(X.ps.ipw[,t0.A])
+ate.ipw.ps.B  = mean(X.ps.ipw[,t1.B])-mean(X.ps.ipw[,t0.B])
+ate.ipw.ps.C  = mean(X.ps.ipw[,t1.C])-mean(X.ps.ipw[,t0.C])
+
+# Compute ATTs
+att.ipw.ps.A  = mean(X.ps.ipw[,t1.att])-mean(X.ps.ipw[,t0.A2])
+att.ipw.ps.B  = mean(X.ps.ipw[,t1.att])-mean(X.ps.ipw[,t0.B2])
+att.ipw.ps.C  = mean(X.ps.ipw[,t1.att])-mean(X.ps.ipw[,t0.C2])
+
+
+######################################################################
+# TESTING THE estimate.ATE function
+######################################################################
+
+ATE.out <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                        pscore.family = binomial,
+                        outcome.formula.t = y ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                        outcome.formula.c = y ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                        outcome.family = gaussian,
+                        treatment.var = "treat",
+                        data=as.data.frame(X.ll.A),
+                        divby0.action="t",
+                        divby0.tol=0.001,
+                        var.gam.plot=FALSE,
+                        nboot=0
+                        )      	   	
