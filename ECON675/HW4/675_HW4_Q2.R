@@ -388,7 +388,8 @@ ATE.ll.C <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + ma
 #                          divby0.action="t",
 #                          divby0.tol=0.001,
 #                          var.gam.plot=FALSE,
-#                          nboot=0
+#                          nboot=0,
+#                          suppress.warnings = FALSE
 # )
 
 # Covariates B, PSID control
@@ -418,4 +419,33 @@ ATE.ps.C <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + ma
                          var.gam.plot=FALSE,
                          nboot=0
 )
+
+
+######################################################################
+#  CONSTRUCT TABLE 1
+######################################################################
+
+## LALONDE CONTROL
+
+# Mean Diff + OLS results
+a  =    rbind(dmeans.ll.results[2,],ols.ll.results)
+
+# Reg imputation results
+b1  =   c(ATE.ll.A$ATE.reg.hat,ATE.ll.A$ATE.reg.asymp.SE,ATE.ll.A$ATE.reg.hat-1.96*ATE.ll.A$ATE.reg.asymp.SE,ATE.ll.A$ATE.reg.hat+1.96*ATE.ll.A$ATE.reg.asymp.SE)
+b2  =   c(ATE.ll.B$ATE.reg.hat,ATE.ll.B$ATE.reg.asymp.SE,ATE.ll.B$ATE.reg.hat-1.96*ATE.ll.B$ATE.reg.asymp.SE,ATE.ll.B$ATE.reg.hat+1.96*ATE.ll.B$ATE.reg.asymp.SE)
+b3  =   c(ATE.ll.C$ATE.reg.hat,ATE.ll.C$ATE.reg.asymp.SE,ATE.ll.C$ATE.reg.hat-1.96*ATE.ll.C$ATE.reg.asymp.SE,ATE.ll.C$ATE.reg.hat+1.96*ATE.ll.C$ATE.reg.asymp.SE)
+
+# IPW results
+c1  =   c(ATE.ll.A$ATE.IPW.hat,ATE.ll.A$ATE.IPW.asymp.SE,ATE.ll.A$ATE.IPW.hat-1.96*ATE.ll.A$ATE.IPW.asymp.SE,ATE.ll.A$ATE.IPW.hat+1.96*ATE.ll.A$ATE.IPW.asymp.SE)
+c2  =   c(ATE.ll.B$ATE.IPW.hat,ATE.ll.B$ATE.IPW.asymp.SE,ATE.ll.B$ATE.IPW.hat-1.96*ATE.ll.B$ATE.IPW.asymp.SE,ATE.ll.B$ATE.IPW.hat+1.96*ATE.ll.B$ATE.IPW.asymp.SE)
+c3  =   c(ATE.ll.C$ATE.IPW.hat,ATE.ll.C$ATE.IPW.asymp.SE,ATE.ll.C$ATE.IPW.hat-1.96*ATE.ll.C$ATE.IPW.asymp.SE,ATE.ll.C$ATE.IPW.hat+1.96*ATE.ll.C$ATE.IPW.asymp.SE)
+
+# Doubly robust results
+d1  =   c(ATE.ll.A$ATE.AIPW.hat,ATE.ll.A$ATE.AIPW.asymp.SE,ATE.ll.A$ATE.AIPW.hat-1.96*ATE.ll.A$ATE.AIPW.asymp.SE,ATE.ll.A$ATE.AIPW.hat+1.96*ATE.ll.A$ATE.AIPW.asymp.SE)
+d2  =   c(ATE.ll.B$ATE.AIPW.hat,ATE.ll.B$ATE.AIPW.asymp.SE,ATE.ll.B$ATE.AIPW.hat-1.96*ATE.ll.B$ATE.AIPW.asymp.SE,ATE.ll.B$ATE.AIPW.hat+1.96*ATE.ll.B$ATE.AIPW.asymp.SE)
+d3  =   c(ATE.ll.C$ATE.AIPW.hat,ATE.ll.C$ATE.AIPW.asymp.SE,ATE.ll.C$ATE.AIPW.hat-1.96*ATE.ll.C$ATE.AIPW.asymp.SE,ATE.ll.C$ATE.AIPW.hat+1.96*ATE.ll.C$ATE.AIPW.asymp.SE)
+
+# Put results together
+ll.results = rbind(a,b1,b2,b3,c1,c2,c3,d1,d2,d3)
+
 
