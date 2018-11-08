@@ -21,7 +21,7 @@
 \usepackage{xcolor}
 
 % Packages to create table 1
-\usepackage{lscape}
+\usepackage{pdflscape}
 \usepackage{subfig}
 \usepackage{graphicx}
 
@@ -136,17 +136,29 @@ As discussed in Abadie and Catteneo (2018), the relative performance of the abov
 
 \subsection{Estimating the variance of potential outcomes}
 
-\newpage
 
+\newpage
 \section{Estimating average treatment effects}
+
+Some notes on my progress so far:
+\begin{itemize}
+\item I've computed most of the RI, IPW and DR estimates for ATE in \verb|R| using the \verb|CausalGAM| package. Note that I specified a logit model to compute propensity scores. This package also computes bootstrap and (estimated) asymptotic SEs. However, for some reason the \verb|estimate.ATE| function breaks when trying to compute estimates for the PSID control using covariate set A.
+\item As far as I can tell, the \verb|CausalGAM| package does not allow easy computation of ATTs, so I think I will have to use \verb|STATA| for these, which is a bit of a shame.
+\item On an initial run, it looks like \verb|STATA| spits out the same estimates for IPW and DR, which is weird because \verb|CausalGAM| does not (and the \verb|CausalGAM| estimates of the IPW estimator match \verb|STATA|'s).
+\end{itemize}
+
 
 \begin{landscape}
 \begin{table}
 \centering
 \caption{Estimation and Inference on ATE and ATT}\label{tab:tableQ2}
+\vspace{-.1in}\resizebox{\columnwidth}{!}{
 \subfloat[][ATE]{\input{teffectsATEq.txt}}\quad
 \subfloat[][ATT]{\input{teffectsATTq.txt}}
+}
 \end{table}
 \end{landscape}
+
+\newpage
 
 \end{document}
