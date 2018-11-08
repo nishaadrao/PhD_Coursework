@@ -445,7 +445,33 @@ d1  =   c(ATE.ll.A$ATE.AIPW.hat,ATE.ll.A$ATE.AIPW.asymp.SE,ATE.ll.A$ATE.AIPW.hat
 d2  =   c(ATE.ll.B$ATE.AIPW.hat,ATE.ll.B$ATE.AIPW.asymp.SE,ATE.ll.B$ATE.AIPW.hat-1.96*ATE.ll.B$ATE.AIPW.asymp.SE,ATE.ll.B$ATE.AIPW.hat+1.96*ATE.ll.B$ATE.AIPW.asymp.SE)
 d3  =   c(ATE.ll.C$ATE.AIPW.hat,ATE.ll.C$ATE.AIPW.asymp.SE,ATE.ll.C$ATE.AIPW.hat-1.96*ATE.ll.C$ATE.AIPW.asymp.SE,ATE.ll.C$ATE.AIPW.hat+1.96*ATE.ll.C$ATE.AIPW.asymp.SE)
 
-# Put results together
-ll.results = rbind(a,b1,b2,b3,c1,c2,c3,d1,d2,d3)
+## PSID control
 
+# Mean Diff + OLS results
+e  =    rbind(dmeans.ps.results[2,],ols.ps.results)
+
+# Reg imputation results
+f1  =   c(0,0,0,0)
+f2  =   c(ATE.ps.B$ATE.reg.hat,ATE.ps.B$ATE.reg.asymp.SE,ATE.ps.B$ATE.reg.hat-1.96*ATE.ps.B$ATE.reg.asymp.SE,ATE.ps.B$ATE.reg.hat+1.96*ATE.ps.B$ATE.reg.asymp.SE)
+f3  =   c(ATE.ps.C$ATE.reg.hat,ATE.ps.C$ATE.reg.asymp.SE,ATE.ps.C$ATE.reg.hat-1.96*ATE.ps.C$ATE.reg.asymp.SE,ATE.ps.C$ATE.reg.hat+1.96*ATE.ps.C$ATE.reg.asymp.SE)
+
+# IPW results
+g1  =   c(0,0,0,0)
+g2  =   c(ATE.ps.B$ATE.IPW.hat,ATE.ps.B$ATE.IPW.asymp.SE,ATE.ps.B$ATE.IPW.hat-1.96*ATE.ps.B$ATE.IPW.asymp.SE,ATE.ps.B$ATE.IPW.hat+1.96*ATE.ps.B$ATE.IPW.asymp.SE)
+g3  =   c(ATE.ps.C$ATE.IPW.hat,ATE.ps.C$ATE.IPW.asymp.SE,ATE.ps.C$ATE.IPW.hat-1.96*ATE.ps.C$ATE.IPW.asymp.SE,ATE.ps.C$ATE.IPW.hat+1.96*ATE.ps.C$ATE.IPW.asymp.SE)
+
+# Doubly robust results
+h1  =   c(0,0,0,0)
+h2  =   c(ATE.ps.B$ATE.AIPW.hat,ATE.ps.B$ATE.AIPW.asymp.SE,ATE.ps.B$ATE.AIPW.hat-1.96*ATE.ps.B$ATE.AIPW.asymp.SE,ATE.ps.B$ATE.AIPW.hat+1.96*ATE.ps.B$ATE.AIPW.asymp.SE)
+h3  =   c(ATE.ps.C$ATE.AIPW.hat,ATE.ps.C$ATE.AIPW.asymp.SE,ATE.ps.C$ATE.AIPW.hat-1.96*ATE.ps.C$ATE.AIPW.asymp.SE,ATE.ps.C$ATE.AIPW.hat+1.96*ATE.ps.C$ATE.AIPW.asymp.SE)
+
+
+## PUT RESULTS TOGETHER
+ll.results  = rbind(a,b1,b2,b3,c1,c2,c3,d1,d2,d3)
+ps.results  = rbind(e,f1,f2,f3,g1,g2,g3,h1,h2,h3)
+ate.results = round(cbind(ll.results,ps.results),2)
+
+# EXPORT RESULTS AS CSV
+setwd("/Users/Anirudh/Desktop/GitHub/PhD_Coursework/ECON675/HW4")
+write.table(ate.results, file = "Table1_ATE_resultq.csv",row.names=FALSE,col.names=FALSE,sep=",")
 
