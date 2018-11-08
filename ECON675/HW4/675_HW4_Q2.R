@@ -14,6 +14,7 @@ library(ggplot2)            #for pretty plots
 library(sandwich)           #for variance-covariance estimation 
 library(xtable)             #for latex tables
 library(boot)               #for bootstrapping
+library(CausalGAM)          #for computing ATEs
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 ######################################################################
@@ -329,6 +330,9 @@ att.ipw.ps.C  = mean(X.ps.ipw[,t1.att])-mean(X.ps.ipw[,t0.C2])
 ######################################################################
 # TESTING THE estimate.ATE function
 ######################################################################
+
+# Add outcome variable to Lalonde control dataset
+X.ll.A[,y:=Y.ll]
 
 ATE.out <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
                         pscore.family = binomial,
