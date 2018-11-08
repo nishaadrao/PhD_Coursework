@@ -328,21 +328,94 @@ att.ipw.ps.C  = mean(X.ps.ipw[,t1.att])-mean(X.ps.ipw[,t0.C2])
 
 
 ######################################################################
-# TESTING THE estimate.ATE function
+# [4,5] IPW and Doubly Robust using the "CausalGAM" package
 ######################################################################
+# For some reason my manual IPW estimates did not match STATA's
+# Furthermore, I'm not sure how exactly to compute the SEs by hand
+# Accordingly, I'm going to use the CausalGAM package below,
+# These results match STATA's.
 
-# Add outcome variable to Lalonde control dataset
-X.ll.A[,y:=Y.ll]
-
-ATE.out <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+# Covariates A, Lalonde control
+ATE.ll.A <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
                         pscore.family = binomial,
-                        outcome.formula.t = y ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
-                        outcome.formula.c = y ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                        outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                        outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
                         outcome.family = gaussian,
                         treatment.var = "treat",
-                        data=as.data.frame(X.ll.A),
+                        data=as.data.frame(X.ll),
                         divby0.action="t",
                         divby0.tol=0.001,
                         var.gam.plot=FALSE,
                         nboot=0
-                        )      	   	
+                        ) 
+
+# Covariates B, Lalonde control
+ATE.ll.B <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         pscore.family = binomial,
+                         outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         outcome.family = gaussian,
+                         treatment.var = "treat",
+                         data=as.data.frame(X.ll),
+                         divby0.action="t",
+                         divby0.tol=0.001,
+                         var.gam.plot=FALSE,
+                         nboot=0
+) 
+
+# Covariates C, Lalonde control
+ATE.ll.C <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         pscore.family = binomial,
+                         outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         outcome.family = gaussian,
+                         treatment.var = "treat",
+                         data=as.data.frame(X.ll),
+                         divby0.action="t",
+                         divby0.tol=0.001,
+                         var.gam.plot=FALSE,
+                         nboot=0
+)
+
+# Covariates A, PSID control
+ATE.ps.A <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                         pscore.family = binomial,
+                         outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                         outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75,
+                         outcome.family = gaussian,
+                         treatment.var = "treat",
+                         data=as.data.frame(X.ps),
+                         divby0.action="t",
+                         divby0.tol=0.001,
+                         var.gam.plot=FALSE,
+                         nboot=0
+)
+
+# Covariates B, PSID control
+ATE.ps.B <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         pscore.family = binomial,
+                         outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75,
+                         outcome.family = gaussian,
+                         treatment.var = "treat",
+                         data=as.data.frame(X.ps),
+                         divby0.action="t",
+                         divby0.tol=0.001,
+                         var.gam.plot=FALSE,
+                         nboot=0
+) 
+
+# Covariates C, PSID control
+ATE.ps.C <- estimate.ATE(pscore.formula = treat ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         pscore.family = binomial,
+                         outcome.formula.t = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         outcome.formula.c = re78 ~ age + educ + black + hisp + married + nodegr + log.re74 + log.re75 + age.sq + educ.sq + u74 + u75 + age.cu + black.u74 + educ.logre74,
+                         outcome.family = gaussian,
+                         treatment.var = "treat",
+                         data=as.data.frame(X.ps),
+                         divby0.action="t",
+                         divby0.tol=0.001,
+                         var.gam.plot=FALSE,
+                         nboot=0
+)
+

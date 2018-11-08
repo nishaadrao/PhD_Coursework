@@ -1,0 +1,41 @@
+%latex.default(round(tableATTq, 2), file = paste0("teffectsATTq.txt"),     append = FALSE, table.env = FALSE, center = "none", title = "",     n.cgroup = c(4, 4), cgroup = c("Experimental Data", "PSID Control"),     colheads = c("$\\hat{\\tau}$", "s.e.", "C.I.", "", "$\\hat{\\tau}$",         "s.e.", "C.I.", ""), n.rgroup = c(1, rep(3, 6)), rgroup = c("Mean Diff.",         "OLS", "Reg. Impute", "IPW", "D. Robust", "N1 Match",         "p Match"), rowname = c("", rep(c("a", "b", "c"), 8)))%
+\begin{tabular}{lrrrrcrrrr}
+\hline\hline
+\multicolumn{1}{l}{\bfseries }&\multicolumn{4}{c}{\bfseries Experimental Data}&\multicolumn{1}{c}{\bfseries }&\multicolumn{4}{c}{\bfseries PSID Control}\tabularnewline
+\cline{2-5} \cline{7-10}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{$\hat{\tau}$}&\multicolumn{1}{c}{s.e.}&\multicolumn{1}{c}{C.I.}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{$\hat{\tau}$}&\multicolumn{1}{c}{s.e.}&\multicolumn{1}{c}{C.I.}&\multicolumn{1}{c}{}\tabularnewline
+\hline
+{\bfseries Mean Diff.}&&&&&&&&&\tabularnewline
+~~&$1794.34$&$$&$$&$$&&$-15204.78$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries OLS}&&&&&&&&&\tabularnewline
+~~a&$1582.17$&$$&$$&$$&&$  6302.40$&$$&$$&$$\tabularnewline
+~~b&$1506.90$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$1501.37$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries Reg. Impute}&&&&&&&&&\tabularnewline
+~~a&$1726.60$&$$&$$&$$&&$  8543.16$&$$&$$&$$\tabularnewline
+~~b&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries IPW}&&&&&&&&&\tabularnewline
+~~a&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~b&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries D. Robust}&&&&&&&&&\tabularnewline
+~~a&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~b&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries N1 Match}&&&&&&&&&\tabularnewline
+~~a&$1558.16$&$$&$$&$$&&$  1671.33$&$$&$$&$$\tabularnewline
+~~b&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$1137.43$&$$&$$&$$&&$  2003.80$&$$&$$&$$\tabularnewline
+\hline
+{\bfseries p Match}&&&&&&&&&\tabularnewline
+~~a&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~b&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+~~c&$$&$$&$$&$$&&$$&$$&$$&$$\tabularnewline
+\hline
+\end{tabular}

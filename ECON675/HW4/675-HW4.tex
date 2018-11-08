@@ -20,6 +20,12 @@
 \usepackage{mathtools}
 \usepackage{xcolor}
 
+% Packages to create table 1
+\usepackage{lscape}
+\usepackage{subfig}
+\usepackage{graphicx}
+
+
 %personal definitions and commands
 \newcommand{\R}{\mathbb{R}} 
 \newcommand{\E}{\mathbb{E}}
@@ -133,5 +139,14 @@ As discussed in Abadie and Catteneo (2018), the relative performance of the abov
 \newpage
 
 \section{Estimating average treatment effects}
+
+\begin{landscape}
+\begin{table}
+\centering
+\caption{Estimation and Inference on ATE and ATT}\label{tab:tableQ2}
+\subfloat[][ATE]{\input{teffectsATEq.txt}}\quad
+\subfloat[][ATT]{\input{teffectsATTq.txt}}
+\end{table}
+\end{landscape}
 
 \end{document}
