@@ -166,4 +166,31 @@ I had some issues with the estimation of both ATEs and ATTs:
 
 \newpage
 
+\section{Post-model selection inference}
+
+\subsection{Summary statistics and density plots}
+The summary statistics for each estimator are presented in Table 2 and the kernel density plots are just below. As expected, the empirical distribution of $\hat{\beta}$ is approximately normal and the distributions of $\tilde{\beta}$ and $\check{\beta}$ are not.
+
+\begin{table}[!htpb]
+\centering
+\caption{\textbf{Summary Statistics for each Estimator}}
+\begin{tabular}{crrrrrr}
+  \hline
+Estimator & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\ 
+  \hline
+(i) $\hat{\beta}$ & -0.50 & 0.32 & 0.52 & 0.51 & 0.71 & 1.32 \\ 
+(ii) $\tilde{\beta}$ & 0.77 & 1.26 & 1.36 & 1.36 & 1.47 & 1.88 \\ 
+(iii) $ \check{\beta}$& -0.50 & 0.32 & 0.52 & 0.54 & 0.72 & 1.66 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htpb]
+    \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{dens.pdf}
+
+\end{figure}
+
 \end{document}
