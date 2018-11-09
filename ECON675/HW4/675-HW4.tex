@@ -140,11 +140,15 @@ As discussed in Abadie and Catteneo (2018), the relative performance of the abov
 \newpage
 \section{Estimating average treatment effects}
 
-Results overleaf. Add some commentary and talk about my issues with the estimation; e.g:
+Estimation results are overleaf. Estimates of ATEs are very different across the Lalonde and PSID control samples (for all estimators), which suggests that there are large and systematic differences between the two control groups . For instance, ATEs are generally positive when using the Lalonde control, while many ATEs are large and negative when using the PSID control group. This makes sense because the NSW program was targeted at individuals who had faced economic and social problems prior to enrolment (i.e. these respondents, on average, had low incomes), whereas the PSID sample is more representative of the entire US population. \\
+
+Most estimates of ATTs are broadly similar across the samples. The ATTs using matching estimators are quite similar across both samples. Again, this makes sense, because matching estimators specifically ensure that there is a decent degree of covariate balance between the treatment and control samples (i.e. the matching estimators would pick respondents from the PSID sample who have similar characteristics to the respondents in the Lalonde experiment).\\
+
+I had some issues with the estimation of both ATEs and ATTs:
 \begin{itemize}
-\item RI and IPW results are the same \verb|STATA|
-\item Implemented matching estimators in \verb|STATA| only
-\item Had problem getting RI/IPW/DR estimates for PSID covariate set A in \verb|R| so used \verb|STATA| only.
+\item I had problem getting RI/IPW/DR estimates for PSID covariate set A in \verb|R| (using the \verb|CausalGAM| package) so I used \verb|STATA| only in this case.
+\item IPW and DR ATT estimates are the same in \verb|STATA|; I'm not sure why.
+\item Many of the logit regressions for estimating propensity scores did not converge, so I generally set the maximum number of iterations to 25.
 \end{itemize}
 
 
