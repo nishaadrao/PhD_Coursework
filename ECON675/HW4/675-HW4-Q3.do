@@ -112,8 +112,6 @@ twoway kdensity beta_hat, k(epanechnikov) || ///
  leg(lab(1 "beta_hat") lab(2 "beta_tilde") lab(3 "beta_check")) ///
  ytitle("Density") xtitle("")
 	 
-* save
-graph export q3_s.png, replace
 
 ********************************************************************************
 * [2] Coverage rates

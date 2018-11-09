@@ -6,3 +6,10 @@
 \contentsline {section}{\numberline {3}Post-model selection inference}{7}{section.3}
 \contentsline {subsection}{\numberline {3.1}Summary statistics and density plots}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Coverage rates}{7}{subsection.3.2}
+\contentsline {section}{\numberline {4}Appendix}{9}{section.4}
+\contentsline {subsection}{\numberline {4.1}\texttt {R} code}{9}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {4.1.1}Question 2}{9}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}Question 3}{16}{subsubsection.4.1.2}
+\contentsline {subsection}{\numberline {4.2}\texttt {STATA} code}{17}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Question 2}{17}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Question 3}{21}{subsubsection.4.2.2}
