@@ -5,3 +5,4 @@
 \contentsline {section}{\numberline {2}Estimating average treatment effects}{5}{section.2}
 \contentsline {section}{\numberline {3}Post-model selection inference}{7}{section.3}
 \contentsline {subsection}{\numberline {3.1}Summary statistics and density plots}{7}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Coverage rates}{7}{subsection.3.2}

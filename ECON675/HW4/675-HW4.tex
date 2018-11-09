@@ -169,7 +169,7 @@ I had some issues with the estimation of both ATEs and ATTs:
 \section{Post-model selection inference}
 
 \subsection{Summary statistics and density plots}
-The summary statistics for each estimator are presented in Table 2 and the kernel density plots are just below. As expected, the empirical distribution of $\hat{\beta}$ is approximately normal and the distributions of $\tilde{\beta}$ and $\check{\beta}$ are not.
+The summary statistics for each estimator are presented in Table 2 and the kernel density plots are just below. As expected, the empirical distribution of $\hat{\beta}$ is approximately normal with a mean very close to the true parameter, $\beta_0=0.5$. The empirical distribution of $\tilde{\beta}$ looks fairly normal, but clearly $\tilde{\beta}$ is inconsistent for $\beta_0$. As expected, the empirical distribution of $\check{\beta}$ is clearly not normal, and the mean is a bit than the true parameter.
 
 \begin{table}[!htpb]
 \centering
@@ -192,5 +192,10 @@ Estimator & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
         \includegraphics[width=0.7\textwidth]{dens.pdf}
 
 \end{figure}
+
+\subsection{Coverage rates}
+To compute the coverage rates, I first create an indicator variable which is equal to 1 if, for a given simulation, the 95\% asymptotic CI contains the true parameter $\beta_0 = 0.5$; I do this for each estimator and then take the mean of the indicator variable to get the coverage rate. Note that the asymptotic CI using $\check{\beta}$ is just equal to the CI using $\hat{\beta}$ whenever $\check{\beta}=\hat{\beta}$, and equal to the CI using $\tilde{\beta}$ otherwise.\\
+
+The $\hat{\beta}$'s coverage rate is 0.936, which is very close to 0.95, as expected. In contrast, $\tilde{\beta}$'s coverage rate is only 0.001, which is unsurprising since $\tilde{\beta}$ is inconsistent for $\beta_0$. Finally, $\check{\beta}$'s coverage rate is 0.900, which is because $\check{\beta}$ is also inconsistent for $\beta_0$.
 
 \end{document}
