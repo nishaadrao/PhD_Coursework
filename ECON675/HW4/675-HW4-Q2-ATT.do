@@ -85,7 +85,8 @@ teffects ipw (re78) (treat age educ black hisp married nodegr log_re74 log_re75 
 eststo i5: teffects ipw (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 & viol==0 , atet iter(50)
 
 * Covariates C, PSID control
-eststo i6: teffects ipw (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 , atet 
+eststo i6: teffects ipw (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 , atet osample(violl)
+eststo i6: teffects ipw (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 & violl==0, atet iter(50) 
 
 
 esttab i4 i5 i6 using Q2_att.csv, se nostar keep(r2vs1.treat) wide noparentheses nonumber noobs plain nomtitles append
@@ -107,13 +108,13 @@ esttab dr1 dr2 dr3 using Q2_att.csv, se nostar keep(r1vs0.treat) wide noparenthe
 
 
 * Covariates A, PSID control
-eststo dr4: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==2 , atet 
+eststo dr4: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==2 , atet iter(25) 
 
 * Covariates B, PSID control
-eststo dr5: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 , atet
+eststo dr5: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 & viol==0 , atet iter(25)
 
 * Covariates C, PSID control
-eststo dr6: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 , atet 
+eststo dr6: teffects ipwra (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 & violl==0 , atet iter(25)
 
 esttab dr4 dr5 dr6 using Q2_att.csv, se nostar keep(r2vs1.treat) wide noparentheses nonumber noobs plain nomtitles append
 
@@ -122,49 +123,58 @@ esttab dr4 dr5 dr6 using Q2_att.csv, se nostar keep(r2vs1.treat) wide noparenthe
 ********************************************************************************
 
 * Covariates A, Lalonde control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
+eststo nn1: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
 
 * Covariates B, Lalonde control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
+eststo nn2: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
 
 * Covariates C, Lalonde control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
+eststo nn3: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74) (treat) if treat==1|treat==0 , atet nneighbor(1) metric(maha)
+
+esttab nn1 nn2 nn3 using Q2_att.csv, se nostar keep(r1vs0.treat) wide noparentheses nonumber noobs plain nomtitles append
+
 
 * Covariates A, PSID control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
+eststo nn4: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
 
 * Covariates B, PSID control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
+eststo nn5: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
 
 * Covariates C, PSID control
-teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
+eststo nn6: teffects nnmatch (re78 age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74) (treat) if treat==1|treat==2 , atet nneighbor(1) metric(maha)
+
+
+esttab nn4 nn5 nn6 using Q2_att.csv, se nostar keep(r2vs1.treat) wide noparentheses nonumber noobs plain nomtitles append
 
 ********************************************************************************
 * [7] PS matching
 ********************************************************************************
 
 * Covariates A, Lalonde control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==0 , atet 
+eststo ps1: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==0 , atet 
 
 * Covariates B, Lalonde control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==0 , atet
+eststo ps2: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==0 , atet
 
 * Covariates C, Lalonde control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==0 , atet 
+eststo ps3: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==0 , atet 
+
+esttab ps1 ps2 ps3 using Q2_att.csv, se nostar keep(r1vs0.treat) wide noparentheses nonumber noobs plain nomtitles append
+
 
 * Covariates A, PSID control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==2 , ate 
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==2 , atet 
+eststo ps4: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75, logit) if treat==1|treat==2 , atet 
 
 * For the PSID samples below there are some prop scores too close to 1.
 * First I need to run the treatment models, identify the respondents w/ problematic prop scores -- this will cause the code to break
 * Then I drop the violators and estimate the treatment effects
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 , ate osample(viol2)
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 & viol2==0 , ate osample(viol3)
+teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 , ate osample(viol3)
 
 
 * Covariates B, PSID control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 & viol2==0, atet 
+eststo ps5: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75, logit) if treat==1|treat==2 & viol==0, atet 
 
 * Covariates C, PSID control
-teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 & viol3==0 , atet 
+eststo ps6: teffects psmatch (re78) (treat age educ black hisp married nodegr log_re74 log_re75 age_sq educ_sq u74 u75 age_cu black_u74 educ_log_re74, logit) if treat==1|treat==2 & violl==0 , atet 
+
+esttab ps4 ps5 ps6 using Q2_att.csv, se nostar keep(r2vs1.treat) wide noparentheses nonumber noobs plain nomtitles append
