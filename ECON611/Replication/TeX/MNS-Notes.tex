@@ -82,9 +82,76 @@ Useful resources:
 I need to use the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration). Note that value function iteration is too slow for this problem. Also note that this method requires approximating the policy function for consumption using a `shape preserving cubic spline'.
 
 \subsubsection{EGM}
+Here's roughly how EGM works. \textcolor{red}{[I need to understand how exactly this relates to `time iteration'; and the fact that MNS assume that the economy returns to steady state after 250 periods.]} \\
+
+Consider the simplified consumer's problem from MNS (i.e. I've assumed exogenous income rather than a wage and a labor choice)
+\begin{align*}
+&\max \sum_t \beta^t u(c_t) \\
+&\text{s.t. } c_t + \frac{b_{t+1}}{1+r_t} = b_t + z_t\\
+&\text{\& } b_{t+1} \geq 0.
+\end{align*}
+The Euler equation is (you can check handwritten notes for the details):
+\begin{align*}
+u'(c_t) \geq \beta(1+r_t) \sum_{z_{t+1}}\Pr(z_{t+1}|z_t)u'(c_{t+1})
+\end{align*}
+For simplicity assume that the solution is interior (i.e. $b_{t+1} > 0$) so that the Euler holds with equality (note that I'll need to figure out how to deal with the constraint too!). I want to implement EGM, which is a policy function iteration method (c.f. value function iteration). Let $g_0(b,z)$ denote our initial guess of the optimal (consumption) policy for a given state pair $(b,z)$. (Note that we are trying to solve for the true policy function $g(b,z)$). Then, I can write the Euler as:
+\begin{align*}
+u'(c) = \beta(1+r) \sum_{z'}\Pr(z'|z)u'(g_0(b',z')).
+\end{align*}
+Then, today's consumption is simply
+\begin{align}
+c = u'^{-1}\left( \beta(1+r) \sum_{z'}\Pr(z'|z)u'(g_0(b',z'))\right) \label{eq:egm1}
+\end{align}
+Now, recall that the HH optimally chooses $b_{t+1}$, which $b_t$ is predetermined. Thus, (\ref{eq:egm1}) gives today's consumption for someone who drew income $z$ today, and optimally chose $b'$. So, we can write (\ref{eq:egm1}) as
+\begin{align}
+\tilde g_0(b',z) = u'^{-1}\left( \beta(1+r) \sum_{z'}\Pr(z'|z)u'(g_0(b',z'))\right)  \label{eq:egm2}
+\end{align}
+Next, define a grid over values of \textit{tomorrow's} bond holdings $b'$ and call it $B = \{b_1, ...,b_{n_b}\}$, with $b_1 = 0$. Also suppose we have a grid of possible income draws, $Z=\{z_1, ..., z_{n_z}\}$, and an associated transition matrix $\Gamma$. Then we can write (\ref{eq:egm2}) as
+\begin{align}
+\tilde g_0(b_i,z_j) = u'^{-1}\left( \beta(1+r) \sum_{\ell}\Gamma_{j\ell} u'(g_0(b_i, z_\ell))\right) \label{eq:egm3}, 
+\end{align}
+which gives the optimal policy $c$, for an agent with current income $z_j$, and who optimally chooses tomorrow's bond holdings $b_i$. Thus, for each $(b_i, z_j)$ pair we can get the associated optimal consumption today using (\ref{eq:egm3}).\\
+
+Next, we can use the budget constraint to back out \textit{today's} bond holdings $b_t$:
+\begin{align*}
+b_t = c_t + \frac{b_{t+1}}{1+r_t} - z_t\\
+\end{align*}
+Using the grid indicies, we can write:
+\begin{align*}
+b^*_{i,j} = \tilde g_0(b_i,z_j) + \frac{b_i}{1+r} - z_j,
+\end{align*}
+where $b^*_{i,j}$ defines bond holdings today for a HH who gets an income draw $z_j$ today, and who optimally chooses tomorrow's level of bond holdings, $b_j$. Then, we can finally define the `endogenous grid' of today's bond holdings (for each level of income $z_j$):
+\begin{align*}
+B_j^* = \{ b^*_{1,j}, ... , b^*_{n_b,j}\}.
+\end{align*}
+Next, note that for each grid point in $B_j^*$ we have the updated guess of the optimal policy:
+\begin{align*}
+g_1(b^*_{i,j},z_j) =  \tilde g_0(b_i,z_j)
+\end{align*}
+Note that the grid points in $B_j^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g_1(b_i,z_j)$ for each $b_i \in B$ we need to interpolate $g_1(b^*_{i,j},z_j)$ (see below).\\
+
+Now, let's try to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current income $z_j$ and who optimally chooses $b_i$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_1 =0$. Thus,
+\begin{align*}
+b^*_{1,j} = \tilde g_0(b_1,z_j) - z_j.
+\end{align*}
+Recall that $\tilde g_0(b_1,z_j)$ is our guess of optimal consumption today. Thus, $b^*_{1,j}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current income $z_j$, such that the borrowing constraint binds. Then, for all grid points $b_i \leq b^*_{1,j}$, when $z=z_j$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
+\begin{align*}
+g_1^{constrained}(b_i,z_j) = b_i + z_j \text{ for all } b_i \leq b^*_{1,j}
+\end{align*}
+Putting all this together, the updated guess of the optimal policy function is
+\begin{align*}
+g_1(b^*_{i,j},z_j) = 
+\begin{cases}
+\tilde g_0(b_i,z_j) &\text{ if } b_i > b^*_{1,j}\\
+b_i + z_j &\text{ otherwise.}
+\end{cases}
+\end{align*}
+
+\iffalse
 \begin{itemize}
-\item What I really need to try to understanding is EGM. QuantEcon has one \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{lecture} on it, but not sure if it's super useful. Here are some other \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{notes}.
+\item What I really need to try to understanding is EGM. QuantEcon has one \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{lecture} on it, but not sure if it's super useful. Here are some other useful \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{notes}.
 \end{itemize}
+\fi
 
 
 \subsubsection{Approximating the policy function}
