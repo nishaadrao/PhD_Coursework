@@ -22,7 +22,7 @@ options(scipen = 999)       #forces R to use normal numbers instead of scientifi
 ######################################################################
 data <- as.data.table(read.csv('PhD_Coursework/ECON675/HW4/LaLonde_all.csv'))
 
-data = data[,log.re74:=log(re74+1)]
+data[,log.re74:=log(re74+1)]
 data = data[,log.re75:=log(re75+1)]
 data = data[,age.sq:=age^2]
 data = data[,educ.sq:=educ^2]

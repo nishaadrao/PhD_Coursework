@@ -7,7 +7,10 @@
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
-    linkcolor=JungleGreen
+    linkcolor=JungleGreen,
+    urlcolor  =JungleGreen,
+    citecolor = JungleGreen,
+    anchorcolor = JungleGreen
 }
 \usepackage[utf8]{inputenc}
 \usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
@@ -49,7 +52,7 @@
 \section{Overview and results}
 Main results:
 \begin{enumerate}
-\item In standard NKM there is an outsized response of output/consumption to forward guidance.
+\item In standard NKM, the response of (current) output/consumption to forward guidance is too big.
 \item In a NKM with idiosyncratic labor income shocks and borrowing constraints, the response of output/consumption to forward guidance is far lower.
 \item Something about ZLB [fill in]
 \end{enumerate}
@@ -63,7 +66,7 @@ I've replicated this in AIM. Some notes on the AIM code
 \end{itemize}
 
 \section{Result \# 2}
-This is the main result of the paper, and it requires solving MNS's heterogeneous agent model. This is a hard problem. Based MNS's online appendix, these are the main steps in solving for equilibrium:
+This is the main result of the paper, and it requires solving MNS's heterogeneous agent model. Note this their model is essentially just a Bewley/Hugget/Aiygari model with sticky prices. This is a hard problem. Based MNS's online appendix, these are the main steps in solving for equilibrium:
 
 \begin{enumerate}
 \item Solve the households' problems using the endogenous grid point method (Carrol, 2006).
@@ -147,17 +150,24 @@ b_i + z_j &\text{ otherwise.}
 \end{cases}
 \end{align*}
 
-\iffalse
+Notes on EGM/time iteration:
 \begin{itemize}
-\item What I really need to try to understanding is EGM. QuantEcon has one \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{lecture} on it, but not sure if it's super useful. Here are some other useful \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{notes}.
+\item \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{QuantEcon} (the `coleman\_egm' function computes the updated guess of the policy funtion, and the 'check\_convergence' function implements the iteration).
+\item \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{CEMFI}. (I summarized these above).
 \end{itemize}
-\fi
 
 
-\subsubsection{Approximating the policy function}
+\subsubsection{Interpolating the policy function}
 \begin{itemize}
-\item QuantEcon recommends the \href{https://github.com/JuliaMath/Interpolations.jl}{Interpolations} package in Julia. Not sure if it implements shape preserving cubic splines.
+\item QuantEcon recommends the \href{https://github.com/JuliaMath/Interpolations.jl}{Interpolations} package in Julia. Not sure if it implements shape preserving cubic splines \textcolor{red}{But maybe I can just start with their in-built linear interpolation?}
 \item I think Rudd and MF have notes on approximations using splines.
+\end{itemize}
+
+\subsubsection{The Markov Chain for idiosyncratic wage risk}
+MNS discretize an AR(1) process for $z$ to a three-point Markov chain. I think it's OK to skip the details of this step given the time constraint. But I still need to get the actual transition matrix they used somehow!
+\begin{itemize}
+\item MNS use the \verb|rouwen.m| function to get the transition matrix (in the \verb|initparams.m| file) \href{https://sites.google.com/site/dlkhagva/research/matlab-codes-for-the-rouwenhorst-method}{Link}.
+\item QuantEcon has an inbuilt \verb|rouwenhorst| function. \href{https://github.com/QuantEcon/QuantEcon.jl/blob/master/src/markov/markov_approx.jl}{Link}.
 \end{itemize}
 
 
