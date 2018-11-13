@@ -76,13 +76,25 @@ This is the main result of the paper, and it requires solving MNS's heterogeneou
 \end{enumerate}
 
 
+
 Useful resources:
 \begin{itemize}
 \item \url{https://sites.google.com/a/nyu.edu/glviolante/teaching/quantmacro} [which points to some books too]
 \end{itemize}
+The following QuantEcon lectures are probably going to be useful
+\begin{itemize}
+\item \href{https://lectures.quantecon.org/jl/finite_markov.html}{Markov chains}
+\item \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{EGM}
+\item \href{https://lectures.quantecon.org/jl/discrete_dp.html}{Implementing a discrete state dynamic program}
+\item \href{https://lectures.quantecon.org/jl/ifp.html}{Hugget model}
+\item \href{https://lectures.quantecon.org/jl/aiyagari.html}{Aiyagari model}
+\end{itemize}
+
 
 \subsection{Solving the households' problems}
-I need to use the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration). Note that value function iteration is too slow for this problem. Also note that this method requires approximating the policy function for consumption using a `shape preserving cubic spline'.
+I need to use the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration). Note that value function iteration is too slow for this problem. Also note that this method requires approximating the policy function for consumption using a `shape preserving cubic spline'.\\
+
+\textbf{\textcolor{blue}{A good place to start may be to write down and program the Bewley/Hugget model. Then extend to Aiygari, which has a firm. These models are obviously more basic than MNS, but at least I can get a decent handle on using grids, EGM and deriving the stationary distribution of asset holdings.}}
 
 \subsubsection{EGM}
 Here's roughly how EGM works. \textcolor{red}{[I need to understand how exactly this relates to `time iteration'; and the fact that MNS assume that the economy returns to steady state after 250 periods.]} \\
@@ -150,10 +162,10 @@ b_i + z_j &\text{ otherwise.}
 \end{cases}
 \end{align*}
 
-Notes on EGM/time iteration:
+Notes on EGM:
 \begin{itemize}
 \item \href{https://lectures.quantecon.org/jl/egm_policy_iter.html}{QuantEcon} (the `coleman\_egm' function computes the updated guess of the policy funtion, and the 'check\_convergence' function implements the iteration).
-\item \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{CEMFI}. (I summarized these above).
+\item \href{https://www.cemfi.es/~pijoan/Teaching_files/Notes%20on%20endogenous%20grid%20method.pdf}{CEMFI} (I summarized these above).
 \end{itemize}
 
 
@@ -168,6 +180,7 @@ MNS discretize an AR(1) process for $z$ to a three-point Markov chain. I think i
 \begin{itemize}
 \item MNS use the \verb|rouwen.m| function to get the transition matrix (in the \verb|initparams.m| file) \href{https://sites.google.com/site/dlkhagva/research/matlab-codes-for-the-rouwenhorst-method}{Link}.
 \item QuantEcon has an inbuilt \verb|rouwenhorst| function. \href{https://github.com/QuantEcon/QuantEcon.jl/blob/master/src/markov/markov_approx.jl}{Link}.
+\item I think $z$ is mean zero.
 \end{itemize}
 
 
