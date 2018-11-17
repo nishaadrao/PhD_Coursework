@@ -73,6 +73,7 @@ Params.tax_weights = Params.endow;
 Params.tax_weights(1:2) = 0;
 %Params.tax_weights = [0.01 0.111 0.232] .* Params.endow;
 
+%%
 Params.AvgTaxWeight = dot(invdistr(Params.Trans'), Params.tax_weights);
 
 
