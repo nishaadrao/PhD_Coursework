@@ -105,9 +105,101 @@ using the CMT and the above results. Thus, $\hat\beta_{\texttt{2SLS}} = \beta + 
 \subsection{plim of the bias-corrected 2SLS estimator}
 The bias-corrected 2SLS estimator is
 \begin{align*}
-\hat\beta_{\texttt{2SLS}} &= (\mtx{x}'\mtx{P}\mtx{x})^{-1}(\mtx{x}'\mtx{P}\mtx{y})\\
+\hat\beta_{\texttt{2SLS}} &= (\mtx{x}'\check{\mtx{P}}\mtx{x})^{-1}(\mtx{x}'\check{\mtx{P}}\mtx{y})\\
+&=\beta + (\mtx{x}'\check{\mtx{P}}\mtx{x}/n)^{-1}(\mtx{x}'\check{\mtx{P}}\mtx{u}/n)
+\end{align*}
+Now,
+\begin{align*}
+\mtx{x}'\check{\mtx{P}}\mtx{u}/n &=\frac{1}{n}(\mtx{\pi}'\mtx{Z}'+\mtx{v}')(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\\
+&=\frac{\mtx{\pi}'\mtx{Z}'\mtx{u}}{n} -\frac{\frac{K}{n}\mtx{\pi}'\mtx{Z}'\mtx{u}}{n} + \frac{\mtx{v}'\mtx{P}\mtx{u}}{n} - \frac{\frac{K}{n}\mtx{v}'\mtx{u}}{n}\\
+&\to_p 0 - 0 + \rho \sigma_{uv}^2 + \rho \sigma^2_{uv}\\
+&=0.
+\end{align*}
+Thus, $\hat\beta_{\texttt{2SLS}} \to_p \beta$.
+
+\subsection{Asymptotic normality of the bias-corrected 2SLS estimator}
+
+\subsubsection{}
+First note that
+\begin{align*}
+\mtx{x}'\check{\mtx{P}}\mtx{u} &=(\mtx{\pi}'\mtx{Z}'+\mtx{v}')(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\\
+&=\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u} + \mtx{v}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\\
+&=\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u} + \left(\check{\mtx{v}}' + \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\right)(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\\
+&=\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u} + \check{\mtx{v}}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u} + \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u},
+\end{align*}
+as required.
+
+\subsubsection{}
+Next, note that
+\begin{align*}
+\E[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}] &= \mtx{\pi}'\mtx{Z}'\E[\mtx{u}] - \frac{K}{n}\mtx{\pi}'\mtx{Z}'\E[\mtx{u}] = 0,
+\end{align*}
+since $\mtx{Z}$ is nonrandom. Accordingly, the CLT implies that
+\begin{align*}
+\frac{1}{\sqrt{n}} \mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u} \to_d \N(0, V_1(\rho)),
+\end{align*}
+where
+\begin{align*}
+V_1(\rho) &= \V[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}]\\
+&=\E[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\mtx{u}' (\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}]\\
+&=\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n) \E[\mtx{u}\mtx{u}' ](\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}
 \end{align*}
 
+\subsubsection{}
+Now,
+\begin{align*}
+\E[ \check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u}] &= \E\left[\left({\mtx{v}}' - \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\right)\mtx{P}\mtx{u} - \frac{K}{n} \left({\mtx{v}}' - \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\right)\mtx{u}\right]\\
+&=\E[{\mtx{v}}'\mtx{P}\mtx{u}] - \frac{\sigma^2_{uv}}{\sigma^2_u}\E[\mtx{u}'\mtx{P}\mtx{u}] - \frac{K}{n}\E[\mtx{v}'\mtx{u}] + \frac{K}{n}\frac{\sigma^2_{uv}}{\sigma^2_u}\E[\mtx{u}'\mtx{u}]
+\end{align*}
+Then, plugging in the results from part 1 gives
+\begin{align*}
+\E[ \check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u}] &= K\sigma^2_{uv} - \frac{\sigma^2_{uv}}{\sigma^2_u} K \sigma^2_u - \frac{K}{n} \cdot n \sigma^2_{uv} + \frac{K}{n}\frac{\sigma^2_{uv}}{\sigma^2_u} \cdot n \sigma^2_u = 0,
+\end{align*}
+as required. I think the convergence result follows from the Markov inequality.
 
+\iffalse
+Now, to show the convergence result note that
+\begin{align*}
+ \check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u} &= {\mtx{v}}'\mtx{P}\mtx{u} -  \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\mtx{P}\mtx{u} - \frac{K}{n}\mtx{v}'\mtx{u} + \frac{K}{n}\frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\mtx{u}
+\end{align*}
+Thus
+\begin{align*}
+\frac{1}{\sqrt{K}} \check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u} =  {\mtx{v}}'\mtx{P}\mtx{u} -  \frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\mtx{P}\mtx{u} - \frac{K}{n}\mtx{v}'\mtx{u} + \frac{K}{n}\frac{\sigma^2_{uv}}{\sigma^2_u}\mtx{u}'\mtx{u}
+\end{align*}
+\fi
+
+\subsubsection{}
+Analogous derivations to the above question give the desired results.
+
+\subsubsection{}
+Now,
+\begin{align*}
+\E[\mtx{x}'\check{\mtx{P}}\mtx{u}] &= \E[(\mtx{\pi}'\mtx{Z}'+\mtx{v}')(\mtx{P} -K/n\mtx{I}_n)\mtx{u}]\\
+&= \E[\mtx{\pi}'\mtx{Z}'(\mtx{P} -K/n\mtx{I}_n)\mtx{u}] + \E[\mtx{v}'(\mtx{P} -K/n\mtx{I}_n)\mtx{u}]\\
+&=0 + \E[\mtx{v}'\mtx{P}\mtx{u}] - K/n\E[\mtx{v}'\mtx{u}]\\
+&= K \sigma^2_{uv} - K/n \cdot n \sigma^2_{uv}\\
+&=0.
+\end{align*}
+And
+\begin{align*}
+\vartheta^2 = \V[\mtx{x}'\check{\mtx{P}}\mtx{u}/\sqrt{n}] &= \frac{1}{n}\E[\mtx{x}'\check{\mtx{P}}\mtx{u}\mtx{u}'\check{\mtx{P}}\mtx{x}]\\
+&=\frac{1}{n}\E[\mtx{x}'(\mtx{P} -K/n\mtx{I}_n)\mtx{u}\mtx{u}'(\mtx{P} -K/n\mtx{I}_n)\mtx{x}]\\
+&=\frac{1}{n}\E[(\mtx{x}'\mtx{P}\mtx{u} - K/n\mtx{x}'\mtx{u})(\mtx{u}'\mtx{P}\mtx{x}-K/n\mtx{u}'\mtx{x})]
+\end{align*}
+
+\subsubsection{}
+Note that
+\begin{align*}
+\sqrt{n}(\hat\beta_{\texttt{2SLS}} - \beta) &= (\mtx{x}'\check{\mtx{P}}\mtx{x}/n)^{-1}(\frac{1}{\sqrt{n}}\mtx{x}'\check{\mtx{P}}\mtx{u})
+\end{align*}
+And we assume that
+\begin{align*}
+\frac{1}{\sqrt{n}}\mtx{x}'\check{\mtx{P}}\mtx{u} \to_d \N(0, \vartheta^2)
+\end{align*}
+Thus,
+\begin{align*}
+\sqrt{n}(\hat\beta_{\texttt{2SLS}} - \beta) \to_d \N(0, \E[\mtx{x}'\check{\mtx{P}}\mtx{x}]^{-1}\vartheta^2\E[\mtx{x}'\check{\mtx{P}}\mtx{x}]^{-1})
+\end{align*}
+Intuitively, I think that when $K/n \to \rho = 0$, then the many instruments problem dissipates, so that the bias-corrected 2SLS estimator and the classical 2SLS estimator are asymptotically equivalent.
 
 \end{document}
