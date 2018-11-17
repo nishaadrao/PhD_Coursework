@@ -48,6 +48,124 @@
 %\setcounter{tocdepth}{2}
 %\tableofcontents
 
+\section{Solving the households' problems}
+I need to solve the HH problem using the the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration) [see my notes below].\\
+
+Each household faces the same problem, so I will suppress the $h$ subscripts. They solve
+\begin{align*}
+&\max_{c,\ell, b_{t+1}} \sum_t \beta^t \left(\frac{c_t^{1-\gamma}}{1-\gamma} - \frac{\ell_t^{1+\psi}}{1+\psi}\right)\\
+&\text{s.t. } c_t + \frac{b_{t+1}}{1+r_t} = b_t + W_tz_t\ell_t - \tau_t\bar\tau(z_t) +D_t\\
+&\text{\& } b_{t+1} \geq 0.
+\end{align*}
+
+The HH's Euler equation is standard
+\begin{align}
+c_t^{-\gamma} \geq \beta(1+r_t) \sum_{z_{t+1}}\Pr(z_{t+1}|z_t)c_{t+1}^{-\gamma}  \label{eq:hh1}
+\end{align}
+And the intratemporal labor supply condition is also standard
+\begin{align}
+\ell_t^\psi &= W_tz_tc_t^{-1/\gamma} \label{eq:hh2}\\
+\implies  \ell_t&=c_t^{-\gamma/\psi}(W_tz_t)^{1/\psi}
+\end{align}
+
+\subsection{Initial guess of the household's policy function}
+For the EGM method, I need an initial guess of the policy function. Let's keep this as simple as possible: guess that we start in the steady state, and that households consume all of their available resources and save nothing. That is
+\begin{align*}
+c =  b + \bar Wz\ell - \tau\bar\tau(z) +\bar D
+\end{align*}
+Substituting the labor supply condition into the above expression, and rearranging a little gives
+\begin{align}
+c = c^{-\gamma/\psi}(\bar Wz)^{\frac{1+\psi}{\psi}}+ b - \tau\bar\tau(z) +\bar D \label{eq:hh3}
+\end{align}
+Thus, the initial guess for the policy function, denoted by $g^0(b,z)$, is the level of $c$ that solves (\ref{eq:hh3}). \textcolor{blue}{(It looks like I'll need to use some nonlinear solver to get $c$.).} So I have an initial consumption level for each $(b,z)$ pair.
+
+\subsection{Iterating on the Euler equation}
+For starters, assume that the Euler equation holds with equality (I'll deal with the borrowing constraint properly below). Then, with my initial guess of the policy function, I can write the Euler as
+\begin{align*}
+c^{-1/\gamma} = \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}.
+\end{align*}
+Then, today's consumption is simply
+\begin{align}
+c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh4}
+\end{align}
+Now, recall that the HH optimally chooses $b_{t+1}$, with $b_t$ is predetermined. Thus, (\ref{eq:hh4}) gives today's consumption for someone who drew income $z$ today, and optimally chose $b'$. So, we can write (\ref{eq:hh4}) as
+\begin{align}
+\tilde g^0(b',z) = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh5}
+\end{align}
+Next, define a grid over values of \textit{tomorrow's} bond holdings $b'$ and call it $B = \{b_1, ...,b_{n_b}\}$, with $b_1 = 0$. Also suppose we have a grid of possible productivity draws, $Z=\{z_1, ..., z_{n_z}\}$, and an associated transition matrix $\Gamma$. Then we can write (\ref{eq:hh5}) as
+\begin{align}
+\tilde g^0(b_i,z_j) = \left( \beta(1+r) \sum_{\ell}\Gamma_{j\ell} (g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh6}, 
+\end{align}
+which gives the optimal policy $c$, for an agent with current productivity $z_j$, and who optimally chooses tomorrow's bond holdings $b_i$. Thus, for each $(b_i, z_j)$ pair I can get the associated optimal consumption today using (\ref{eq:hh6}).\\
+
+Next, I can use the budget constraint to back out \textit{today's} bond holdings $b_t$:
+\begin{align*}
+b_t = c_t + \frac{b_{t+1}}{1+r_t} -  W_tz_t\ell_t + \tau_t\bar\tau(z_t) - D_t
+\end{align*}
+Using the intratemporal labor supply condition (\ref{eq:hh2}) to substitute in for $\ell_t$, gives
+\begin{align*}
+b_t = c_t + \frac{b_{t+1}}{1+r_t} -  c^{-\gamma/\psi}(\bar Wz)^{\frac{1+\psi}{\psi}} + \tau_t\bar\tau(z_t) - D_t
+\end{align*}
+
+Using the grid indicies, and my guess for today's consumption, I can write:
+\begin{align*}
+b^*_{i,j} = \tilde g^0(b_i,z_j) + \frac{b_i}{1+r} - \left(\tilde g^0(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D ,
+\end{align*}
+where $b^*_{i,j}$ denotes the bond holdings today for a household who gets a productivity draw $z_j$ today, and who optimally chooses tomorrow's level of bond holdings, $b_j$. Then, we can finally define the `endogenous grid' of today's bond holdings (for each level of productivity $z_j$):
+\begin{align*}
+B_j^* = \{ b^*_{1,j}, ... , b^*_{n_b,j}\}.
+\end{align*}
+Next, note that for each grid point in $B_j^*$, I have the updated guess of the optimal policy:
+\begin{align*}
+g^1(b^*_{i,j},z_j) =  \tilde g^0(b_i,z_j)
+\end{align*}
+Note that the grid points in $B_j^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g^1(b_i,z_j)$ for each $b_i \in B$ I need to interpolate $g^1(b^*_{i,j},z_j)$ (see below).\\
+
+Now, I need to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current productivity $z_j$ and who optimally chooses $b_i$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_1 =0$. Thus,
+\begin{align*}
+b^*_{1,j} = \tilde g^0(b_i,z_j) - \left(\tilde g^0(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D.
+\end{align*}
+Recall that $\tilde g_0(b_1,z_j)$ is our guess of optimal consumption today. Thus, $b^*_{1,j}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current productivity $z_j$, such that the borrowing constraint binds. Then, for all grid points $b_i \leq b^*_{1,j}$, when $z=z_j$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
+\begin{align*}
+g^{1,c}(b_i,z_j) = b_i + \left(g^{1,c}(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} - \tau\bar\tau(z_j) +\bar D \text{ for all } b_i \leq b^*_{1,j},
+\end{align*}
+where $c$ superscript denotes `constrained'. \textcolor{blue}{Again, I'll need to use a nonlinear solver here.}\\
+
+Putting all this together, the updated guess of the optimal policy function is
+\begin{align*}
+g^1(b_i,z_j) = 
+\begin{cases}
+\tilde g^0(b_i,z_j) &\text{ if } b_i > b^*_{1,j} \text{ (and appropriately interpolated)}\\
+g^{1,c}(b_i,z_j)&\text{ otherwise.}
+\end{cases}
+\end{align*}
+
+\subsection{Other details for computation}
+\subsubsection{The Markov chain for productivity}
+I think I found the Markov chain for productivity in MNS's \verb|initparams.m| file (in the `\verb|parameters|' folder). It looks like the grid is given by
+\begin{align*}
+Z = (0.493, 1, 2.031)
+\end{align*}
+with transition matrix
+\begin{align*}
+\Gamma = 
+\begin{bmatrix}
+0.966 &	0.0338 &	0.00029 \\
+0.017&	0.966& 	0.017 \\
+0.0003 &	0.0337 &	0.966
+\end{bmatrix}
+\end{align*}
+
+\subsubsection{Details I need to iron out}
+\begin{itemize}
+\item What are the steady state values of $W, D, r, \tau$? Can I solve for these by hand? I need these values for the above procedure.
+\item What is the exact form of the function $\bar \tau(z_j)$? Maybe I can leave this out, along with steady state $\tau_t$?
+\end{itemize}
+
+
+
+
+\newpage
 
 \section{Overview and results}
 Main results:
@@ -182,6 +300,13 @@ MNS discretize an AR(1) process for $z$ to a three-point Markov chain. I think i
 \item QuantEcon has an inbuilt \verb|rouwenhorst| function. \href{https://github.com/QuantEcon/QuantEcon.jl/blob/master/src/markov/markov_approx.jl}{Link}.
 \item I think $z$ is mean zero.
 \end{itemize}
+
+\subsubsection{CH suggestions}
+\begin{itemize}
+\item Focus on solving the HH's problems before even thinking about the other steps of the solution.
+\item For the initial guess of the policy function, suppose that all households consume their idiosyncratic wage income, steady state dividends and bond holdings (i.e. they save nothing). 
+\end{itemize}
+
 
 
 

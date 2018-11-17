@@ -1,0 +1,113 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{ECON675 -- Assignment 5}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\newpage
+
+\section{Many instruments asymptotics}
+
+\subsection{Some moments}
+First,
+\begin{align*}
+\E[\mtx{u}'\mtx{u}/n] &= \frac{1}{n} \E[\mtx{u}'\mtx{u}]= \frac{1}{n} \sum_{i=1}^n \E[u_i^2] = \sigma^2_u.
+\end{align*}
+An analogous derivation shows that $\E[\mtx{v}'\mtx{v}/n] = \sigma^2_v$. \\
+
+Next,
+\begin{align*}
+\E[\mtx{x}'\mtx{u}/n]= \frac{1}{n} \E[\mtx{x}'\mtx{u}]&=  \frac{1}{n} \E[(\mtx{\pi}'\mtx{Z}'+\mtx{v}')\mtx{u}]\\
+&=\frac{1}{n}\mtx{\pi}'\mtx{Z}'\E[\mtx{u}]+\frac{1}{n}\E[\mtx{v}'\mtx{u}]\\
+&= \frac{1}{n} \sum_{i=1}^n \E[v_iu_i]\\
+&= \sigma^2_{uv},
+\end{align*}
+where I used the assumptions that $\mtx{Z}$ and $\mtx{\pi}$ are nonrandom and $\E[\mtx{u}] = \bm{0}$.\\
+
+Now,
+\begin{align*}
+\E[\mtx{x}'\mtx{P}\mtx{u}/n] &= \frac{1}{n}\E[(\mtx{\pi}'\mtx{Z}'+\mtx{v}')\mtx{P}\mtx{u}]\\
+&=\frac{1}{n}\E[\mtx{\pi}'\mtx{Z}'\mtx{P}\mtx{u}]+\frac{1}{n}\E[\mtx{v}'\mtx{P}\mtx{u}]\\
+&=\frac{1}{n}\E[\mtx{\pi}'\mtx{Z}'\mtx{u}]+\frac{1}{n}\E[\mtx{v}'\mtx{P}\mtx{u}]\\
+&=\frac{1}{n}\E[\mtx{v}'\mtx{P}\mtx{u}]\\
+&= \frac{K}{n}\sigma^2_{uv}
+\end{align*}
+since $\E[v_iu_j] = 0$ for all $i\neq j$ and $\sum_{i=1}^n P_{ii} = K$. An analogous derivation proves the last result $\E[\mtx{u}'\mtx{P}\mtx{u}/n] = K/n \sigma^2_u$.
+
+\subsection{Some probability limits}
+First,
+\begin{align*}
+\mtx{x}'\mtx{x}/n &= (\mtx{\pi}'\mtx{Z}'+\mtx{v}')(\mtx{Z}\mtx{\pi}+\mtx{v})/n\\
+&= \frac{\mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{\pi}'\mtx{Z}'\mtx{v}}{n} + \frac{\mtx{v}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{v}'\mtx{v}}{n}\\
+&\to_p \mu + \E[\mtx{\pi}'\mtx{z}_iv_i] + \E[\mtx{z}_i'\mtx{\pi}v_i] + \E[v_i^2]\\
+&=\mu + \sigma^2_v
+\end{align*}
+Next,
+\begin{align*}
+\mtx{x}'\mtx{P}\mtx{x}/n &= (\mtx{\pi}'\mtx{Z}'+\mtx{v}')\mtx{P}(\mtx{Z}\mtx{\pi}+\mtx{v})/n\\
+&=\frac{\mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{\pi}'\mtx{Z}'\mtx{v}}{n} + \frac{\mtx{v}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{v}'\mtx{P}\mtx{v}}{n}\\
+&\to_p \mu + \rho \sigma^2_v
+\end{align*}
+since $K/n \to \rho$. An analogous derivation proves the last result, $\mtx{x}'\mtx{P}\mtx{u}/n \to_p \rho \sigma^2_u$.
+
+\subsection{plim of the classical 2SLS estimator}
+The classical 2SLS estimator is
+\begin{align*}
+\hat\beta_{\texttt{2SLS}} &= (\mtx{x}'\mtx{P}\mtx{x})^{-1}(\mtx{x}'\mtx{P}\mtx{y})\\
+&= (\mtx{x}'\mtx{P}\mtx{x})^{-1}\mtx{x}'\mtx{P}(\mtx{x}\mtx{\beta} + \mtx{u})\\
+&= \beta + (\mtx{x}'\mtx{P}\mtx{x})^{-1}(\mtx{x}'\mtx{P}\mtx{u})\\
+&= \beta + (\mtx{x}'\mtx{P}\mtx{x}/n)^{-1}(\mtx{x}'\mtx{P}\mtx{u}/n)\\
+&\to_p \beta + \frac{\rho\sigma^2_u}{ \mu + \rho \sigma^2_v},
+\end{align*}
+using the CMT and the above results. Thus, $\hat\beta_{\texttt{2SLS}} = \beta + \frac{\rho\sigma^2_u}{ \mu + \rho \sigma^2_v} + o_p(1)$.
+
+\subsection{plim of the bias-corrected 2SLS estimator}
+The bias-corrected 2SLS estimator is
+\begin{align*}
+\hat\beta_{\texttt{2SLS}} &= (\mtx{x}'\mtx{P}\mtx{x})^{-1}(\mtx{x}'\mtx{P}\mtx{y})\\
+\end{align*}
+
+
+
+\end{document}
