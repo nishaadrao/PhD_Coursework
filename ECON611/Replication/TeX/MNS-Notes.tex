@@ -77,7 +77,7 @@ Substituting the labor supply condition into the above expression, and rearrangi
 \begin{align}
 c = c^{-\gamma/\psi}(\bar Wz)^{\frac{1+\psi}{\psi}}+ b - \tau\bar\tau(z) +\bar D \label{eq:hh3}
 \end{align}
-Thus, the initial guess for the policy function, denoted by $g^0(b,z)$, is the level of $c$ that solves (\ref{eq:hh3}). \textcolor{blue}{(It looks like I'll need to use some nonlinear solver to get $c$.).} So I have an initial consumption level for each $(b,z)$ pair.
+Thus, the initial guess for the policy function, denoted by $g^0(z,b)$, is the level of $c$ that solves (\ref{eq:hh3}). \textcolor{blue}{(With MNS's calibration, this is just a quadratic equation in $c$, which I can solve easily).} So I have an initial consumption level for each $(z,b)$ pair.
 
 \subsection{Iterating on the Euler equation}
 For starters, assume that the Euler equation holds with equality (I'll deal with the borrowing constraint properly below). Then, with my initial guess of the policy function, I can write the Euler as
@@ -90,13 +90,19 @@ c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}\right)^{-1/\gamma
 \end{align}
 Now, recall that the HH optimally chooses $b_{t+1}$, with $b_t$ is predetermined. Thus, (\ref{eq:hh4}) gives today's consumption for someone who drew income $z$ today, and optimally chose $b'$. So, we can write (\ref{eq:hh4}) as
 \begin{align}
-\tilde g^0(b',z) = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh5}
+\tilde g^0(z,b') = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(z',b'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh5}
 \end{align}
 Next, define a grid over values of \textit{tomorrow's} bond holdings $b'$ and call it $B = \{b_1, ...,b_{n_b}\}$, with $b_1 = 0$. Also suppose we have a grid of possible productivity draws, $Z=\{z_1, ..., z_{n_z}\}$, and an associated transition matrix $\Gamma$. Then we can write (\ref{eq:hh5}) as
 \begin{align}
-\tilde g^0(b_i,z_j) = \left( \beta(1+r) \sum_{\ell=1}^{n_z}\Gamma_{j\ell} (g_0(b_i,z_\ell))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh6}, 
+\tilde g^0(z_i,b_j) = \left( \beta(1+r) \sum_{\ell=1}^{n_z}\Gamma_{i\ell} (g_0(z_\ell,b_j))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh6}, 
 \end{align}
-which gives the optimal policy $c$, for an agent with current productivity $z_j$, and who optimally chooses tomorrow's bond holdings $b_i$. Thus, for each $(b_i, z_j)$ pair I can get the associated optimal consumption today using (\ref{eq:hh6}).\\
+which gives the optimal policy $c$, for an agent with current productivity $z_j$, and who optimally chooses tomorrow's bond holdings $b_j$. Thus, for each $(z_i,b_j)$ pair I can get the associated optimal consumption today using (\ref{eq:hh6}).\\
+
+Note that I can easily stack (\ref{eq:hh6}) in matrix form. Let $\mtx{G}^0$ be the $n_z \times n_b$ matrix containing our initial guesses of the optimal policy (so $\mtx{G}^0_{ij}$ gives the optimal consumption for state pair $(z_i,b_j)$). Then, the updated guess can simply be computed as
+\begin{align*}
+\widetilde{\mtx{G}}^0 = \left( \beta(1+r) \mtx{\Gamma} (\mtx{G}^0)^{-\gamma}\right)^{-1/\gamma},
+\end{align*}
+which is essentially what my \verb|Julia| code is doing (note that my \verb|Julia| code actually uses a nested for loop, but I could probably change it to the above matrix code!)\\
 
 Next, I can use the budget constraint to back out \textit{today's} bond holdings $b_t$:
 \begin{align*}
@@ -109,34 +115,34 @@ b_t = c_t + \frac{b_{t+1}}{1+r_t} -  c^{-\gamma/\psi}(\bar Wz)^{\frac{1+\psi}{\p
 
 Using the grid indicies, and my guess for today's consumption, I can write:
 \begin{align*}
-b^*_{i,j} = \tilde g^0(b_i,z_j) + \frac{b_i}{1+r} - \left(\tilde g^0(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D ,
+b^*_{i,j} = \tilde g^0(z_i,b_j) + \frac{b_j}{1+r} - \left(\tilde g^0(z_i,b_j)\right)^{-\gamma/\psi} (\bar Wz_i)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_i) - \bar D ,
 \end{align*}
-where $b^*_{i,j}$ denotes the bond holdings today for a household who gets a productivity draw $z_j$ today, and who optimally chooses tomorrow's level of bond holdings, $b_j$. Then, we can finally define the `endogenous grid' of today's bond holdings (for each level of productivity $z_j$):
+where $b^*_{i,j}$ denotes the bond holdings today for a household who gets a productivity draw $z_i$ today, and who optimally chooses tomorrow's level of bond holdings, $b_j$. Then, we can finally define the `endogenous grid' of today's bond holdings (for each level of productivity $z_i$):
 \begin{align*}
-B_j^* = \{ b^*_{1,j}, ... , b^*_{n_b,j}\}.
+B_i^* = \{ b^*_{i,1}, ... , b^*_{i,n_b}\}.
 \end{align*}
-Next, note that for each grid point in $B_j^*$, I have the updated guess of the optimal policy:
+Next, note that for each grid point in $B_i^*$, I have the updated guess of the optimal policy:
 \begin{align*}
-g^1(b^*_{i,j},z_j) =  \tilde g^0(b_i,z_j)
+g^1(z_i,b^*_{i,j}) =  \tilde g^0(z_i,b_j)
 \end{align*}
-Note that the grid points in $B_j^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g^1(b_i,z_j)$ for each $b_i \in B$ I need to interpolate $g^1(b^*_{i,j},z_j)$ (see below).\\
+Note that the grid points in $B_i^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g^1(z_i,b_j)$ for each $b_i \in B$ I need to interpolate $g^1(z_i,b^*_{i,j})$ (see below).\\
 
-Now, I need to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current productivity $z_j$ and who optimally chooses $b_i$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_1 =0$. Thus,
+Now, I need to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current productivity $z_i$ and who optimally chooses $b_j$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_j =0$. Thus,
 \begin{align*}
-b^*_{1,j} = \tilde g^0(b_i,z_j) - \left(\tilde g^0(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D.
+b^*_{i,1} = \tilde g^0(z_i,b_j) - \left(\tilde g^0(z_i,b_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D.
 \end{align*}
-Recall that $\tilde g_0(b_1,z_j)$ is our guess of optimal consumption today. Thus, $b^*_{1,j}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current productivity $z_j$, such that the borrowing constraint binds. Then, for all grid points $b_i \leq b^*_{1,j}$, when $z=z_j$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
+Recall that $\tilde g_0(z_i,b_1)$ is our guess of optimal consumption today. Thus, $b^*_{i,1}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current productivity $z_i$, such that the borrowing constraint binds. Then, for all grid points $b_j \leq b^*_{i,1}$, when $z=z_i$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
 \begin{align*}
-g^{1,c}(b_i,z_j) = b_i + \left(g^{1,c}(b_i,z_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} - \tau\bar\tau(z_j) +\bar D \text{ for all } b_i \leq b^*_{1,j},
+g^{1,c}(z_i,b_j) = b_j + \left(g^{1,c}(z_i,b_j)\right)^{-\gamma/\psi} (\bar Wz_i)^{\frac{1+\psi}{\psi}} - \tau\bar\tau(z_i) +\bar D \text{ for all } b_j \leq b^*_{i,1},
 \end{align*}
 where $c$ superscript denotes `constrained'. \textcolor{blue}{Again, I'll need to use a nonlinear solver here.}\\
 
 Putting all this together, the updated guess of the optimal policy function is
 \begin{align*}
-g^1(b_i,z_j) = 
+g^1(z_i,b_j) = 
 \begin{cases}
-\tilde g^0(b_i,z_j) &\text{ if } b_i > b^*_{1,j} \text{ (and appropriately interpolated)}\\
-g^{1,c}(b_i,z_j)&\text{ otherwise.}
+\tilde g^0(z_i,b_j) &\text{ if } b_j > b^*_{i,1} \text{ (and appropriately interpolated)}\\
+g^{1,c}(z_i,b_j)&\text{ otherwise.}
 \end{cases}
 \end{align*}
 
