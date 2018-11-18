@@ -120,7 +120,7 @@ Params.nStatesDistr = Params.ndstst*Params.npp;
 ndk = Params.ndstst ;
 [Params.knotDistrK,Params.logshift] = makeknotd(Params.bhmin,Params.bhmax,ndk);
 
-
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % KNOT POINTS FOR_ CONSUMPTION POLYNOMIAL:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ Params.xmin = 0.001;
 Params.xmax = Params.bhmax;
 
 
-Params.bgrid = logspaceshift(Params.xmin,Params.xmax,Params.nc,Params.logshift)';
+Params.bgrid = logspace(Params.xmin,Params.xmax,Params.nc)';
 
 
 

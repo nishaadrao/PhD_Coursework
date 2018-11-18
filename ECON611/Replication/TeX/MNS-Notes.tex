@@ -82,19 +82,19 @@ Thus, the initial guess for the policy function, denoted by $g^0(b,z)$, is the l
 \subsection{Iterating on the Euler equation}
 For starters, assume that the Euler equation holds with equality (I'll deal with the borrowing constraint properly below). Then, with my initial guess of the policy function, I can write the Euler as
 \begin{align*}
-c^{-1/\gamma} = \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}.
+c^{-\gamma} = \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}.
 \end{align*}
 Then, today's consumption is simply
 \begin{align}
-c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh4}
+c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh4}
 \end{align}
 Now, recall that the HH optimally chooses $b_{t+1}$, with $b_t$ is predetermined. Thus, (\ref{eq:hh4}) gives today's consumption for someone who drew income $z$ today, and optimally chose $b'$. So, we can write (\ref{eq:hh4}) as
 \begin{align}
-\tilde g^0(b',z) = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh5}
+\tilde g^0(b',z) = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh5}
 \end{align}
 Next, define a grid over values of \textit{tomorrow's} bond holdings $b'$ and call it $B = \{b_1, ...,b_{n_b}\}$, with $b_1 = 0$. Also suppose we have a grid of possible productivity draws, $Z=\{z_1, ..., z_{n_z}\}$, and an associated transition matrix $\Gamma$. Then we can write (\ref{eq:hh5}) as
 \begin{align}
-\tilde g^0(b_i,z_j) = \left( \beta(1+r) \sum_{\ell}\Gamma_{j\ell} (g_0(b',z'))^{-1/\gamma}\right)^{-\gamma} \label{eq:hh6}, 
+\tilde g^0(b_i,z_j) = \left( \beta(1+r) \sum_{\ell=1}^{n_z}\Gamma_{j\ell} (g_0(b_i,z_\ell))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh6}, 
 \end{align}
 which gives the optimal policy $c$, for an agent with current productivity $z_j$, and who optimally chooses tomorrow's bond holdings $b_i$. Thus, for each $(b_i, z_j)$ pair I can get the associated optimal consumption today using (\ref{eq:hh6}).\\
 
