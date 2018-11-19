@@ -251,6 +251,37 @@ This is unsurprising, given that $x_i$ is endogenous.
 \section{Weak instruments -- empirical studies}
 
 \subsection{Angrist and Krueger (1991)}
+\begin{table}[htpb!]
+\centering
+\caption{OLS and 2SLS Estimates of Return to Schooling}
+\begin{tabular}{l*{4}{c}}
+\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{l\_w\_wage}&\multicolumn{1}{c}{l\_w\_wage}&\multicolumn{1}{c}{l\_w\_wage}&\multicolumn{1}{c}{l\_w\_wage}\\
+\hline
+educ        &      0.0632&      0.0632&      0.0806&      0.0600\\
+            &  (0.000377)&  (0.000377)&    (0.0164)&    (0.0290)\\
+[1em]
+non\_white   &      -0.257&      -0.257&      -0.230&      -0.263\\
+            &   (0.00459)&   (0.00459)&    (0.0261)&    (0.0458)\\
+[1em]
+married     &       0.248&       0.248&       0.244&       0.249\\
+            &   (0.00358)&   (0.00358)&   (0.00487)&   (0.00726)\\
+[1em]
+SMSA        &      -0.176&      -0.176&      -0.158&      -0.180\\
+            &   (0.00305)&   (0.00305)&    (0.0174)&    (0.0305)\\
+[1em]
+age\_q       &            &     -0.0760&            &     -0.0741\\
+            &            &    (0.0601)&            &    (0.0626)\\
+[1em]
+age\_sq      &            &    0.000770&            &    0.000743\\
+            &            &  (0.000667)&            &  (0.000712)\\
+\hline
+\(N\)       &      329509&      329509&      329509&      329509\\
+\hline
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\end{tabular}
+\end{table}
 \subsection{Bound, Jaeger and Baker (1995)}
 
 \end{document}
