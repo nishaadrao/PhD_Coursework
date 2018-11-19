@@ -148,9 +148,11 @@ since $\mtx{Z}$ is nonrandom. Accordingly, the CLT implies that
 \end{align*}
 where
 \begin{align*}
-V_1(\rho) &= \V[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}]\\
-&=\E[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\mtx{u}' (\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}]\\
-&=\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n) \E[\mtx{u}\mtx{u}' ](\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}
+V_1(\rho) &= \lim_{n\to \infty} \V[1/\sqrt{n}\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}]\\
+&=\lim_{n\to \infty} \frac{1}{n}\E[\mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{u}\mtx{u}' (\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}]\\
+&=\lim_{n\to \infty} \frac{1}{n} \sigma^2_u \left[ \mtx{\pi}'\mtx{Z}'(\mtx{P} - \frac{K}{n}\mtx{I}_n)(\mtx{P} - \frac{K}{n}\mtx{I}_n)\mtx{Z}\mtx{\pi}\right]\\
+&=\lim_{n\to \infty} \frac{1}{n} \sigma^2_u \left[ \mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi}- 2\frac{K}{n}\mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi} + \frac{K^2}{n^2}\mtx{Z}\mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi}\right]\\
+&= \sigma^2_u (1-\rho^2).
 \end{align*}
 
 \subsubsection{}
@@ -163,7 +165,13 @@ Then, plugging in the results from part 1 gives
 \begin{align*}
 \E[ \check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u}] &= K\sigma^2_{uv} - \frac{\sigma^2_{uv}}{\sigma^2_u} K \sigma^2_u - \frac{K}{n} \cdot n \sigma^2_{uv} + \frac{K}{n}\frac{\sigma^2_{uv}}{\sigma^2_u} \cdot n \sigma^2_u = 0,
 \end{align*}
-as required. I think the convergence result follows from the Markov inequality.
+as required. \\
+
+To get the convergence result we would do the following. Compute $\V[\check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u}]$. Using the assumption $\V[\mtx{u}|\check{\mtx{v}}] = \sigma^2_u\mtx{I}_n$, it can be shown that
+\begin{align*}
+\lim_{n\to \infty} \V[\check{\mtx{v}}'(\mtx{P} -K/n\mtx{I}_n) \mtx{u}] = O(K).
+\end{align*}
+Then, we can somehow use the Markov inequality to get the desired convergence result.
 
 \iffalse
 Now, to show the convergence result note that
