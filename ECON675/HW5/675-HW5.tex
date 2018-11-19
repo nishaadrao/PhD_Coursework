@@ -20,6 +20,11 @@
 \usepackage{mathtools}
 \usepackage{xcolor}
 
+% Packages to create table 1
+\usepackage{pdflscape}
+\usepackage{subfig}
+\usepackage{graphicx}
+
 %personal definitions and commands
 \newcommand{\R}{\mathbb{R}} 
 \newcommand{\E}{\mathbb{E}}
@@ -217,5 +222,20 @@ Thus,
 \sqrt{n}(\hat\beta_{\texttt{2SLS}} - \beta) \to_d \N(0, \E[\mtx{x}'\check{\mtx{P}}\mtx{x}]^{-1}\vartheta^2\E[\mtx{x}'\check{\mtx{P}}\mtx{x}]^{-1})
 \end{align*}
 Intuitively, I think that when $K/n \to \rho = 0$, then the many instruments problem dissipates, so that the bias-corrected 2SLS estimator and the classical 2SLS estimator are asymptotically equivalent.
+
+\newpage
+\begin{landscape}
+\section{Weak instruments simulations}
+\begin{table}[!htp]
+\centering
+\renewcommand{\arraystretch}{1.5}  
+\caption{Weak Instrument Summary Statistics}\label{tab:weak_IV_simulation}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=0/n$ ($F\approx1$)]{\input{tab0.txt}}}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=0.25/n$ ($F\approx1.25$)]{\input{tab1.txt}}}\\
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=9/n$ ($F\approx10$)]{\input{tab2.txt}}}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=99/n$ ($F\approx100$)]{\input{tab3.txt}}}\\
+\end{table}
+\end{landscape}
+
 
 \end{document}

@@ -1,0 +1,18 @@
+\begin{tabular}{llclclll}
+\hline\hline
+\multicolumn{1}{l}{\bfseries }&\multicolumn{1}{c}{\bfseries mean}&\multicolumn{1}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries st.dev.}&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries quantiles}\tabularnewline
+\cline{2-2} \cline{4-4} \cline{6-8}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{0.1}&\multicolumn{1}{c}{0.5}&\multicolumn{1}{c}{0.9}\tabularnewline
+\hline
+{\bfseries OLS}&&&&&&&\tabularnewline
+~~$\hat\beta$&0.662&& 0.035&& 0.619& 0.661& 0.707\tabularnewline
+~~$SE(\hat\beta)$&0.034 &&0.002&& 0.031 &0.034& 0.037\tabularnewline
+~~$\mathbf{1}_{\mathtt{rej}}$&1.00 &&0.000&& 1.000 &1.00& 1.000\tabularnewline
+\hline
+{\bfseries 2SLS}&&&&&&&\tabularnewline
+~~$\hat\beta$& -0.002 && 0.104&& -0.140 & 0.009 &  0.121\tabularnewline
+~~$SE(\hat\beta)$&0.103 && 0.023 && 0.077 & 0.099 &  0.134\tabularnewline
+~~$\mathbf{1}_{\mathtt{rej}}$&0.057 && 0.232 && 0.000 & 0.000 &  0.000\tabularnewline
+~~$\hat F$&100.842 &&25.222&& 70.239 &98.868& 133.923\tabularnewline
+\hline
+\end{tabular}

@@ -1,0 +1,37 @@
+#### Latex code##############
+#### The following is tab0.txt
+%latex.default(table, file = paste0("tab0.txt"), append = FALSE,     table.env = FALSE, center = "none", title = "", n.cgroup = c(1,         1, 3), cgroup = c("mean", "st.dev.", "quantiles"), colheads = c("",         "", "0.1", "0.5", "0.9"), n.rgroup = c(3, 4), rgroup = c("OLS",         "2SLS"), rowname = c("$\\hat\\beta$", "$\\SE(\\hat\\beta)$",         "$\\mathbf{1}_{\\mathtt{rej}}$", "$\\hat\\beta$", "$\\SE(\\hat\\beta)$",         "$\\mathbf{1}_{\\mathtt{rej}}$", "$\\hat F$"))%
+
+\begin{tabular}{llclclll}
+\hline\hline
+\multicolumn{1}{l}{\bfseries }&\multicolumn{1}{c}{\bfseries mean}&\multicolumn{1}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries st.dev.}&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries quantiles}\tabularnewline
+\cline{2-2} \cline{4-4} \cline{6-8}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{0.1}&\multicolumn{1}{c}{0.5}&\multicolumn{1}{c}{0.9}\tabularnewline
+\hline
+{\bfseries OLS}&&&&&&&\tabularnewline
+~~$\hat\beta$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+~~$SE(\hat\beta)$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+~~$\mathbf{1}_{\mathtt{rej}}$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+\hline
+{\bfseries 2SLS}&&&&&&&\tabularnewline
+~~$\hat\beta$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+~~$SE(\hat\beta)$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+~~$\mathbf{1}_{\mathtt{rej}}$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+~~$\hat F$&\phantom{1234}&&\phantom{1234}&&\phantom{1234}&\phantom{1234}&\phantom{1234}\tabularnewline
+\hline
+\end{tabular}
+
+
+
+#### Import the tab0.txt
+\begin{landscape}
+\begin{table}[!htp]
+\centering
+\renewcommand{\arraystretch}{1.5}  
+\caption{Weak Instrument Summary Statistics}\label{tab:weak_IV_simulation}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=0/n$ ($F\approx1$)]{\input{results/tab0.txt}}}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=0.25/n$ ($F\approx1.25$)]{\input{results/tab0.txt}}}\\
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=9/n$ ($F\approx10$)]{\input{results/tab0.txt}}}
+\resizebox{0.45\paperwidth}{0.021\paperwidth}{\subfloat[][$\gamma^2=99/n$ ($F\approx100$)]{\input{results/tab0.txt}}}\\
+\end{table}
+\end{landscape}
