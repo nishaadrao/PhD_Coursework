@@ -10,4 +10,7 @@
 \contentsline {subsubsection}{\numberline {1.5.4}}{5}{subsubsection.1.5.4}
 \contentsline {subsubsection}{\numberline {1.5.5}}{5}{subsubsection.1.5.5}
 \contentsline {subsubsection}{\numberline {1.5.6}}{5}{subsubsection.1.5.6}
-\contentsline {section}{\numberline {2}Weak instruments simulations}{6}{section.2}
+\contentsline {section}{\numberline {2}Weak instruments -- simulations}{6}{section.2}
+\contentsline {section}{\numberline {3}Weak instruments -- empirical studies}{8}{section.3}
+\contentsline {subsection}{\numberline {3.1}Angrist and Krueger (1991)}{8}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Bound, Jaeger and Baker (1995)}{8}{subsection.3.2}
