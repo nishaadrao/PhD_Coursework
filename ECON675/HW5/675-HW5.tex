@@ -87,9 +87,17 @@ Next,
 \begin{align*}
 \mtx{x}'\mtx{P}\mtx{x}/n &= (\mtx{\pi}'\mtx{Z}'+\mtx{v}')\mtx{P}(\mtx{Z}\mtx{\pi}+\mtx{v})/n\\
 &=\frac{\mtx{\pi}'\mtx{Z}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{\pi}'\mtx{Z}'\mtx{v}}{n} + \frac{\mtx{v}'\mtx{Z}\mtx{\pi}}{n} + \frac{\mtx{v}'\mtx{P}\mtx{v}}{n}\\
-&\to_p \mu + \rho \sigma^2_v
+&\to_p \mu + \rho \sigma^2_v.
 \end{align*}
-since $K/n \to \rho$. An analogous derivation proves the last result, $\mtx{x}'\mtx{P}\mtx{u}/n \to_p \rho \sigma^2_u$.
+The above convergence result involves a few steps, which I've suppressed for brevity. First, it uses the assumption that $\mtx{Z}$ and $\mtx{\pi}$ are nonrandom. More importantly, it uses the result that
+\begin{align*}
+ \frac{\mtx{v}'\mtx{P}\mtx{v}}{n} \to_p \E[{\mtx{v}'\mtx{P}\mtx{v}}/{n}] = \rho\sigma^2_v
+\end{align*} 
+
+
+since $K/n \to \rho$. Note that this is not just a direct application of the WLLN, since we're not dealing with a sum of iid random variables. Rather, you can show that $\V[{\mtx{v}'\mtx{P}\mtx{v}}/{n}]$ is bounded in probability (i.e. it goes to zero at some rate), and then use the Markov/Chebyshev inequality to get the desired convergence result. This type of result will be used a lot in the following questions too.\\
+
+An analogous derivation proves the last result, $\mtx{x}'\mtx{P}\mtx{u}/n \to_p \rho \sigma^2_u$.
 
 \subsection{plim of the classical 2SLS estimator}
 The classical 2SLS estimator is
