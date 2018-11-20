@@ -13,4 +13,11 @@
 \contentsline {section}{\numberline {2}Weak instruments -- simulations}{6}{section.2}
 \contentsline {section}{\numberline {3}Weak instruments -- empirical studies}{8}{section.3}
 \contentsline {subsection}{\numberline {3.1}Angrist and Krueger (1991)}{8}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Bound, Jaeger and Baker (1995)}{8}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.2}Bound, Jaeger and Baker (1995)}{9}{subsection.3.2}
+\contentsline {section}{\numberline {4}Appendix}{10}{section.4}
+\contentsline {subsection}{\numberline {4.1}\texttt {R} code}{10}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {4.1.1}Question 2}{10}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}Question 3}{11}{subsubsection.4.1.2}
+\contentsline {subsection}{\numberline {4.2}\texttt {STATA} code}{16}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Question 2}{16}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Question 3}{17}{subsubsection.4.2.2}

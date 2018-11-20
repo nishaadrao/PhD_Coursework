@@ -282,6 +282,637 @@ age\_sq      &            &    0.000770&            &    0.000743\\
 \multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
 \end{tabular}
 \end{table}
+
+Table 2 replicates columns (5), (7), (6) and (8) from Angrist and Krueger (1991, AK) as required. The OLS and 2SLS estimates are quite similar, suggesting that there is little bias in the OLS estimates. From these models, a reasonable estimate of the return to school is around 0.06 (i.e. each additional year of schooling increases wages by around 6\%, on average).\\
+
+Bound, Jaeger and Baker (1995, BJB) outline a number of potential problems with these estimates. First, the association between quarter of birth and years of schooling is very weak (so we're in weak instruments territory). Furthermore, quarter of birth may affect wages through channels other than its affect on educational attainment (`other seasonal effects' on wages). BJB argue that the weak association between educational attainment and quarter of birth indicates that even if other seasonal effects are weak, they could still have large effects on the estimated return to schooling.\newpage
+
 \subsection{Bound, Jaeger and Baker (1995)}
+
+Table 3, below, replicates the first two columns of Table 3 in BJB. As BJB note, it is striking that these results look very similar to AK's results, even though the simulated instruments contain no information about educational attainment. The estimated standard deviations are also pretty close to the estimated standard errors from AK's 2SLS regressions. These results imply that AK's 2SLS results suffer badly from the weak instruments problem; in particular, they show that when the correlation between the instruments and the endogenous variable is small, then even very large sample sizes do not guarantee that quantitatively important finite sample bias will be eliminated from 2SLS estimates.
+
+\begin{table}[htpb!]
+\centering
+\caption{2SLS Estimates of Return to Schooling Using Permuted Quarter of Birth*}
+\begin{tabular}{llc}
+\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)} \\
+            &\multicolumn{1}{c}{l\_w\_wage}&\multicolumn{1}{c}{l\_w\_wage}\\
+\hline
+Mean        &      .0646165 &  .0646411       \\
+Std. dev. & .0387673 &    .0387972\\
+\hline
+\multicolumn{3}{l}{\footnotesize *500 replications}\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{Appendix}
+\scriptsize
+\subsection{\texttt{R} code}
+\subsubsection{Question 2}
+\begin{verbatim}
+## ECON675: ASSIGNMENT 5
+## Q2: WEAK INSTRUMENTS SIMULATIONS
+## Anirudh Yadav 
+## 11/19/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+library(mvtnorm)            #for MVN stuff
+library(AER)                #for IV regressions
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+######################################################################
+# Generate random data for each simulation
+######################################################################
+N     = 200
+M     = 5000
+SIGMA = matrix(c(1,0,0,0,1,0.99,0,0.99,1),3,3)
+
+set.seed(1234)
+
+# Generate Z, U, V
+W     = replicate(M,rmvnorm(N, mean = c(0,0,0), sigma = SIGMA, method="chol"))
+
+# Get Y (assuming that beta=0, Y=U)
+Y     = W[,2,]
+
+# Generate X matrix for each value of gamma
+gamma.vec = sqrt((1/N)*c(0,0.25,9,99))
+X         = lapply(1:length(gamma.vec),function(i) gamma.vec[i]*W[,1,]+W[,3,])
+
+######################################################################
+# Compute OLS statistics for each gamma, and simulation
+######################################################################
+
+# Run OLS for each gamma and each simulation -- this spits out 5000 lm's for each gamma
+ols.big = foreach(j=1:length(gamma.vec)) %do%
+  lapply(1:M, function(i) lm(Y[,i]~X[[j]][,i]-1))
+
+# Extract point estimates, standard errors, t-stats
+ols.beta = foreach(j=1:length(gamma.vec)) %do%
+  sapply(1:M, function(i) ols.big[[j]][[i]]$coefficients)
+
+ols.se   = foreach(j=1:length(gamma.vec)) %do%
+  sapply(1:M, function(i) coef(summary(ols.big[[j]][[i]]))[,"Std. Error"])
+
+ols.t    = sapply(1:length(gamma.vec),function(j) ols.beta[[j]]/ols.se[[j]])
+
+ols.rej  = ifelse(ols.t>1.96,1,0)
+
+# Compute desired summary statistics across the simulations (spits out a list containing results for each gamma)
+ols.results = foreach(j=1:length(gamma.vec)) %do%
+  rbind(c(mean(ols.beta[[j]]),sd(ols.beta[[j]]),quantile(ols.beta[[j]], probs = c(0.1, 0.5 ,0.9))),
+  c(mean(ols.se[[j]]),sd(ols.se[[j]]),quantile(ols.se[[j]], probs = c(0.1, 0.5 ,0.9))),
+  c(mean(ols.rej[,j]),sd(ols.rej[,j]),quantile(ols.rej[,j], probs = c(0.1, 0.5 ,0.9))))
+
+# Remove big objects!
+rm(ols.big,ols.beta,ols.se,ols.t,ols.rej)
+
+######################################################################
+# Compute 2SLS statistics for each gamma, and simulation
+######################################################################
+
+# Run 2SLS for each gamma and each simulation -- this spits out 5000 ivreg's for each gamma
+# WATCH OUT: this takes a minute or so!
+iv.big = foreach(j=1:length(gamma.vec)) %do%
+  lapply(1:M, function(i) ivreg(Y[,i]~X[[j]][,i]-1|W[,1,i]))
+
+# Extract point estimates, standard errors, t-stats
+iv.beta = foreach(j=1:length(gamma.vec)) %do%
+  sapply(1:M, function(i) iv.big[[j]][[i]]$coefficients)
+
+iv.se   = foreach(j=1:length(gamma.vec)) %do%
+  sapply(1:M, function(i) summary(iv.big[[j]][[i]])[["coefficients"]][,"Std. Error"])
+
+iv.t    = sapply(1:length(gamma.vec),function(j) iv.beta[[j]]/iv.se[[j]])
+
+iv.rej  = ifelse(iv.t>1.96,1,0)
+
+# Run first-stage regression and extract F-statistics
+iv.f       = foreach(j=1:length(gamma.vec)) %do%
+  sapply(1:M, function(i) summary(lm(X[[j]][,i]~W[,1,i]-1))$fstatistic[1])
+
+# Combine results for each gamma
+iv.results = foreach(j=1:length(gamma.vec)) %do%
+  rbind(c(mean(iv.beta[[j]]),sd(iv.beta[[j]]),quantile(iv.beta[[j]], probs = c(0.1, 0.5 ,0.9))),
+        c(mean(iv.se[[j]]),sd(iv.se[[j]]),quantile(iv.se[[j]], probs = c(0.1, 0.5 ,0.9))),
+        c(mean(iv.rej[,j]),sd(iv.rej[,j]),quantile(iv.rej[,j], probs = c(0.1, 0.5 ,0.9))),
+        c(mean(iv.f[[j]]),sd(iv.f[[j]]),quantile(iv.f[[j]], probs = c(0.1, 0.5 ,0.9))))
+
+# Remove big objects!
+rm(iv.big,iv.beta,iv.se,iv.t,iv.rej,iv.f)
+\end{verbatim}
+
+\subsubsection{Question 3}
+\begin{verbatim}
+## ECON675: ASSIGNMENT 5
+## Q3: WEAK INSTRUMENTS -- EMPIRICAL STUDIES
+## Anirudh Yadav 
+## 11/19/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(boot)               #for bootstrapping
+library(mvtnorm)            #for MVN stuff
+library(AER)                #for IV regressions
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+######################################################################
+# Input data
+###################################################################### 
+ak <- fread('PhD_Coursework/ECON675/HW5/Angrist_Krueger.csv')
+
+
+######################################################################
+# [3.1] Angrist-Krueger
+######################################################################
+
+# make YOB dummies
+ak[, .N, "YoB_ld"]
+for(year_i in unique(ak$YoB_ld)){
+  
+  ak[ ,temp := 0]
+  ak[YoB_ld == year_i ,temp := 1]
+  setnames(ak, "temp", paste0("d_YOB_ld_", year_i))
+  
+}
+# get a list of all year dummies but one. Exclude the proper one to match coeffs 
+year_dummies <- setdiff(grep("d_YOB", colnames(ak), value = TRUE), "d_YOB_ld_0")
+
+# make QoB dummies 
+for(qob_i in unique(ak$QoB)){
+  
+  ak[ ,temp := 0]
+  ak[QoB == qob_i ,temp := 1]
+  setnames(ak, "temp", paste0("d_QoB_", qob_i))
+  
+}
+
+# get qob dummy list.  Exclude the proper one to match coeffs 
+qob_dummies <- setdiff(grep("d_QoB", colnames(ak), value = TRUE), "d_QoB_1")
+
+# make cross variables of year dummies and qob
+#note there is almost certainly a better way to do this but here we are 
+inter_list <- NULL
+for(d_year in year_dummies){
+  
+  for(d_qob in qob_dummies){
+    
+    ak[, temp := get(d_qob)*get(d_year)]
+    setnames(ak, "temp", paste0(d_year, "X", d_qob))
+    inter_list<- c(inter_list, paste0(d_year, "X", d_qob))
+  }
+}
+
+
+# standard controls 
+# (i) race, (ii) marrital status, (iii) SMSA, (iv) dummies for
+# region, and (iv) dummies for YoB ld.
+std_cont <- c("non_white","married", "SMSA", 
+              "ENOCENT","ESOCENT", "MIDATL", 
+              "MT", "NEWENG", "SOATL", "WNOCENT",
+              "WSOCENT",  year_dummies) # get year dummies but leave one out 
+
+# save extra controls 
+extra_cont <- c("age_q", "age_sq")
+
+#================#
+# ==== ols 1 ====
+#================#
+
+# make the formula 
+ols1_form <- as.formula(paste0("l_w_wage~educ +", paste(std_cont, collapse = " + ")))
+
+# run ols 
+out_ols1 <- data.table(tidy(lm(ols1_form, data = ak)))
+
+# keep what I need 
+out_ols1 <- out_ols1[term %chin% c("educ"), c("term", "estimate", "std.error")]
+out_ols1[, model := "OLS 1"]
+
+#================#
+# ==== OlS 2 ====
+#================#
+
+# make the formula 
+ols2_form <- as.formula(paste0("l_w_wage~educ +", paste(std_cont, collapse = " + "), " + ", paste0(extra_cont, collapse = " + ")))
+
+#run ols
+out_ols2 <- data.table(tidy(lm(ols2_form, data = ak)))
+
+# keep what I need 
+out_ols2 <- out_ols2[term %chin% c("educ"), c("term", "estimate", "std.error")]
+out_ols2[, model := "OLS 2"]
+
+#===============#
+# ==== 2sls ====
+#===============#
+
+# write this part as a function so I can use it in 3.2 
+# ACTUALLY, im gonna use different faster function but this is fine as a function too
+wrap_2sls <- function(in_data){
+  
+  #=================#
+  # ==== 2sls 1 ====
+  #=================#
+  
+  iv_form <- as.formula(paste0("l_w_wage~educ +", paste(std_cont, collapse = " + "), 
+                               "| ", 
+                               paste(std_cont, collapse = " + "), " + ", paste0(inter_list, collapse = " + ")))
+  iv_reg1 <- data.table(tidy(ivreg(iv_form , data = in_data)))
+  
+  # keep what I need 
+  iv_reg1 <- iv_reg1[term %chin% c("educ"), c("term", "estimate", "std.error")]
+  iv_reg1[, model := "2sls 1"]
+  
+  #=================#
+  # ==== 2sls 2 ====
+  #=================#
+  
+  
+  iv_form2 <- as.formula(paste0("l_w_wage~educ +", paste(std_cont, collapse = " + "), "+", paste0(extra_cont, collapse = " + "),
+                                "| ", 
+                                paste(std_cont, collapse = " + "), 
+                                " + ", paste0(inter_list, collapse = " + "), 
+                                "+", paste0(extra_cont, collapse = " + ")))
+  iv_reg2 <- data.table(tidy(ivreg(iv_form2 , data = in_data)))
+  
+  # keep what I need 
+  iv_reg2 <- iv_reg2[term %chin% c("educ"), c("term", "estimate", "std.error")]
+  iv_reg2[, model := "2sls 2"]
+  
+  # stack 2sls 
+  out_2sls <- rbind(iv_reg1, iv_reg2)
+  
+  return(out_2sls)
+  
+}#end 2sls function 
+
+# run function 
+ak_2sls <- wrap_2sls(ak)
+
+#========================#
+# ==== output tables ====
+#========================#
+
+output_3.1 <- rbind(out_ols1, out_ols2, ak_2sls)
+setcolorder(output_3.1, c("model", "term", "estimate", "std.error"))
+
+# out put it 
+
+print(xtable(output_3.1, type = "latex"), 
+      file = paste0("C://Users/Nmath_000/Documents/Code/courses/econ 675/PS_5_tex/q3.1_table.tex"),
+      include.rownames = FALSE,
+      floating = FALSE)
+
+
+
+#================#
+# ==== Q 3.2 ====
+#================#
+
+
+#===================================#
+# ==== Fast 2sls function ==========
+#===================================#
+
+fast_2sls <- function(in_data){
+  
+  #===============#
+  # ==== reg1 ====
+  #===============#
+  
+  # make x z and y matrices
+  y <- as.matrix(in_data[, l_w_wage])
+  x <- as.matrix(in_data[, educ])
+  cont <- as.matrix(in_data[, c( std_cont, 'const'), with = FALSE])
+  z <- as.matrix(in_data[, c(inter_list, std_cont, "const"), with = FALSE])
+  
+  first_stage_fit <-  z%*%Matrix::solve(Matrix::crossprod(z))%*%(Matrix::crossprod(z, x))
+  
+  # make x' matrix 
+  x_prime <- cbind(first_stage_fit, cont)
+  
+  
+  form_2nd <-  Matrix::solve(Matrix::crossprod(x_prime))%*%(Matrix::crossprod(x_prime, y))
+  
+  reg1 <- data.table( term = "educ", estimate = form_2nd[1,1], model = "2sls 1")
+  
+  #===============#
+  # ==== reg2 ====
+  #===============#
+  
+  cont <- as.matrix(in_data[, c( std_cont, extra_cont, 'const'), with = FALSE])
+  z <- as.matrix(in_data[, c(inter_list, std_cont, extra_cont, "const"), with = FALSE])
+  
+  first_stage_fit <-  z%*%Matrix::solve(Matrix::crossprod(z))%*%(Matrix::crossprod(z, x))
+  
+  # make x' matrix 
+  x_prime <- cbind(first_stage_fit, cont)
+  
+  
+  form_2nd <-  Matrix::solve(Matrix::crossprod(x_prime))%*%(Matrix::crossprod(x_prime, y))
+  
+  reg2 <- data.table( term = "educ", estimate = form_2nd[1,1], model = "2sls 2")
+  
+  # stack results and retur n
+  out_results <- rbind(reg1, reg2)
+}
+
+
+#=========================#
+# ==== run simulation ====
+#=========================#
+
+# copy data for permutation 
+ak_perm <- copy(ak)
+
+# add constant 
+ak_perm[, const := 1]
+
+# write a function so I can parallel this shiz  
+sim_warper <- function(sim_i, in_data = ak_perm ){
+  
+  # get random sampel 
+  perm <- sample(c(1:nrow(in_data)))
+  
+  # purmute data 
+  in_data[, QoB := QoB[perm]]
+  
+  # clear out dummy variables 
+  in_data <- in_data[, -c(grep("d_QoB", colnames(in_data), value = TRUE), inter_list), with = FALSE]
+  
+  # redo dummy vars 
+  for(qob_i in unique(in_data$QoB)){
+    
+    in_data[ ,temp := 0]
+    in_data[QoB == qob_i ,temp := 1]
+    setnames(in_data, "temp", paste0("d_QoB_", qob_i))
+    
+  }
+  # recalculate interactions
+  inter_list <- NULL
+  for(d_year in year_dummies){
+    
+    for(d_qob in qob_dummies){
+      
+      in_data[, temp := get(d_qob)*get(d_year)]
+      setnames(in_data, "temp", paste0(d_year, "X", d_qob))
+      inter_list<- c(inter_list, paste0(d_year, "X", d_qob))
+    }
+  }
+  
+  # run 2sls funciton on new data 
+  ak_2sls_i <- fast_2sls(in_data)
+  
+  # add simulation 
+  ak_2sls_i[, sim := sim_i]
+  
+  # retunrn it 
+  return(ak_2sls_i)
+  
+} # end funciton 
+
+# time this sucker 
+start_time <- Sys.time()
+
+# parallel setup
+cl <- makeCluster(4, type = "PSOCK")
+registerDoParallel(cl)
+
+# run simulations in parallel
+output_list <- foreach(sim = 1 : 5000,
+                       .inorder = FALSE,
+                       .packages = "data.table",
+                       .options.multicore = list(preschedule = FALSE, cleanup = 9)) %dopar% sim_warper(sim_i = sim)
+
+# stop clusters 
+stopCluster(cl)
+
+# check time 
+end_time <- Sys.time()
+
+# print time 
+print(paste0(round(as.numeric(end_time - start_time, units = "mins"), 3), " minutes to run"))
+
+
+#==========================#
+# ==== organize output ====
+#==========================#
+
+# stack data 
+sim_res3.2 <- rbindlist(output_list)
+
+# make table 
+output3.2 <- sim_res3.2[, list(mean = mean(estimate), std.dev = sd(estimate)), "model"]
+
+\end{verbatim}
+
+\subsection{\texttt{STATA} code}
+
+\subsubsection{Question 2}
+\begin{verbatim}
+clear all
+set more off
+cap log close
+
+program define weak_IV, rclass
+    syntax [, obs(integer 200) f_stat(real 10) ]
+	drop _all
+	
+	set obs `obs'
+	
+	* DGP
+	gen u = rnormal()
+	gen v = 0.99 * u + sqrt(1-0.99^2) * rnormal()
+	gen z = rnormal()
+	
+	local gamma_0 = sqrt((`f_stat' - 1) / `obs')
+	gen x = `gamma_0' * z + v
+	gen y = u
+	
+	* OLS
+	qui reg y x, robust
+	return scalar OLS_b   = _b[x]
+	return scalar OLS_se  = _se[x]
+	return scalar OLS_rej = abs(_b[x]/_se[x]) > 1.96
+	
+	* 2SLS
+	qui ivregress 2sls y (x = z)
+	return scalar TSLS_b   = _b[x]
+	return scalar TSLS_se  = _se[x]
+	return scalar TSLS_rej = abs(_b[x]/_se[x]) > 1.96
+	qui reg x z
+	return scalar TSLS_F   = e(F)
+end
+
+* simulation 1: F = 1 
+simulate OLS_b=r(OLS_b) OLS_se=r(OLS_se) OLS_rej=r(OLS_rej) ///
+    TSLS_b=r(TSLS_b) TSLS_se=r(TSLS_se) TSLS_rej=r(TSLS_rej) TSLS_F=r(TSLS_F), ///
+    reps(5000) seed(123) nodots: ///
+    weak_IV, f_stat(1)
+	
+local k = 1
+matrix Results = J(7, 5, .)
+
+qui sum OLS_b, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum OLS_se, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum OLS_rej, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum TSLS_b, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum TSLS_se, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum TSLS_rej, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+qui sum TSLS_F, detail
+matrix Results[`k',1] = r(mean)
+matrix Results[`k',2] = r(sd)
+matrix Results[`k',3] = r(p10)
+matrix Results[`k',4] = r(p50)
+matrix Results[`k',5] = r(p90)
+local k = `k' + 1
+
+mat2txt, matrix(Results) saving(result1.txt) format(%9.4f) replace
+
+
+\end{verbatim}
+
+\subsubsection{Question 3}
+\begin{verbatim}
+********************************************************************************
+* ECON675: ASSIGNMENT 5
+* Q3: WEAK INSTRUMENTS -- EMPIRICAL STUDIES
+* Anirudh Yadav
+* 11/19/2018
+********************************************************************************
+
+
+********************************************************************************
+* Preliminaries
+********************************************************************************
+clear all
+set more off
+
+* Set working directory 
+global dir "/Users/Anirudh/Desktop/GitHub"
+
+
+********************************************************************************
+* Import AK data
+********************************************************************************
+
+use "$dir/PhD_Coursework/ECON675/HW5/Angrist_Krueger.dta"
+
+********************************************************************************
+* [3.1] Run AK regressions
+********************************************************************************
+eststo ols1: reg l_w_wage educ non_white married SMSA i.region i.YoB_ld, r
+eststo ols2: reg l_w_wage educ non_white married SMSA i.region i.YoB_ld age_q age_sq, r
+eststo  iv1: ivregress 2sls l_w_wage non_white married SMSA i.region i.YoB_ld (educ = i.QoB##i.YoB_ld),r
+eststo  iv2: ivregress 2sls l_w_wage non_white married SMSA i.region i.YoB_ld age_q age_sq (educ = i.QoB##i.YoB_ld), r
+
+esttab ols1 ols2 iv1 iv2 using "$dir/PhD_Coursework/ECON675/HW5/q3_ak_results.tex", keep(educ non_white SMSA married age_q age_sq) se nostar
+
+********************************************************************************
+* [3.2] Run BJB permutation regressions
+********************************************************************************
+capture program drop IV_quick
+program define IV_quick, rclass
+    syntax varlist(max=1) [, model(integer 1) ]
+	local x "`varlist'"
+	
+	if (`model' == 1) {
+	    capture drop educ_hat
+		qui reg educ non_white married SMSA i.region i.YoB_ld i.YoB_ld##i.`x'
+		predict educ_hat
+		qui reg l_w_wage educ_hat non_white married SMSA i.region i.YoB_ld
+		return scalar beta = _b[educ_hat]
+	}
+	if (`model' == 2) {
+	    capture drop educ_hat
+		qui reg educ non_white married SMSA age_q age_sq i.region i.YoB_ld i.YoB_ld##i.`x'
+		predict educ_hat
+		qui reg l_w_wage educ_hat non_white married SMSA age_q age_sq i.region i.YoB_ld
+		return scalar beta = _b[educ_hat]
+	}
+end
+
+
+permute QoB TSLS_1_b = r(beta), reps(500) seed(123) saving("$dir/PhD_Coursework/ECON675/HW5/premute1.dta", replace): ///
+    IV_quick QoB, model(1)
+	
+permute QoB TSLS_2_b = _b[educ], reps(500) seed(123) saving("$dir/PhD_Coursework/ECON675/HW5/premute2.dta", replace): ///
+    IV_quick QoV, model(2)
+
+clear all
+use "$dir/PhD_Coursework/ECON675/HW5/premute1.dta"
+sum TSLS_1_b
+
+clear all
+use "$dir/PhD_Coursework/ECON675/HW5/premute2.dta"
+sum TSLS_2_b
+\end{verbatim}
+
+
+
 
 \end{document}

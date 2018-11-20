@@ -61,13 +61,12 @@ permute QoB TSLS_1_b = r(beta), reps(500) seed(123) saving("$dir/PhD_Coursework/
     IV_quick QoB, model(1)
 	
 permute QoB TSLS_2_b = _b[educ], reps(500) seed(123) saving("$dir/PhD_Coursework/ECON675/HW5/premute2.dta", replace): ///
-    ivregress 2sls l_w_wage non_white married SMSA age_q age_sq i.region i.YoB_ld ///
-    (educ = i.YoB_ld##i.QoB)
+    IV_quick QoV, model(2)
 
 clear all
 use "$dir/PhD_Coursework/ECON675/HW5/premute1.dta"
 sum TSLS_1_b
 
 clear all
-use "$dir/PhD_Coursework/ECON675/HW5/premute1.dta"
+use "$dir/PhD_Coursework/ECON675/HW5/premute2.dta"
 sum TSLS_2_b
