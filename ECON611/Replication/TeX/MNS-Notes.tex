@@ -49,7 +49,7 @@
 %\tableofcontents
 
 \section{Solving the households' problems}
-I need to solve the HH problem using the the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration) [see my notes below].\\
+I solve the HH problem using the the endogenous grid point method (EGM) (which is a numerical method for implementing policy function iteration). I focus on the steady state solution for simplicity.\\
 
 Each household faces the same problem, so I will suppress the $h$ subscripts. They solve
 \begin{align*}
@@ -60,16 +60,16 @@ Each household faces the same problem, so I will suppress the $h$ subscripts. Th
 
 The HH's Euler equation is standard
 \begin{align}
-c_t^{-\gamma} \geq \beta(1+r_t) \sum_{z_{t+1}}\Pr(z_{t+1}|z_t)c_{t+1}^{-\gamma}  \label{eq:hh1}
+c_t^{-\gamma} \geq \beta(1+r_t) \sum_{z_{t+1}}\Pr(z_{t+1}|z_t)c_{t+1}^{-\gamma},  \label{eq:hh1}
 \end{align}
-And the intratemporal labor supply condition is also standard
+which holds with equality when the borrowing constraint is not binding. The intratemporal labor supply condition is also standard
 \begin{align}
 \ell_t^\psi &= W_tz_tc_t^{-\gamma} \label{eq:hh2}\\
 \implies  \ell_t&=c_t^{-\gamma/\psi}(W_tz_t)^{1/\psi}
 \end{align}
 
 \subsection{Initial guess of the household's policy function}
-For the EGM method, I need an initial guess of the policy function. Let's keep this as simple as possible: guess that we start in the steady state, and that households consume all of their available resources and save nothing. That is
+For the EGM method, I need an initial guess of the policy function. Let's keep this as simple as possible: suppose we start in the steady state and that households consume all of their available resources and save nothing. That is
 \begin{align*}
 c =  b + \bar Wz\ell - \tau\bar\tau(z) +\bar D
 \end{align*}
@@ -77,24 +77,24 @@ Substituting the labor supply condition into the above expression, and rearrangi
 \begin{align}
 c = c^{-\gamma/\psi}(\bar Wz)^{\frac{1+\psi}{\psi}}+ b - \tau\bar\tau(z) +\bar D \label{eq:hh3}
 \end{align}
-Thus, the initial guess for the policy function, denoted by $g^0(z,b)$, is the level of $c$ that solves (\ref{eq:hh3}). \textcolor{blue}{(With MNS's calibration, this is just a quadratic equation in $c$, which I can solve easily).} So I have an initial consumption level for each $(z,b)$ pair.
+Thus, the initial guess for the policy function, denoted by $g^0(z,b)$, is the level of $c$ that solves (\ref{eq:hh3}). With MNS's calibration, this is just a quadratic equation in $c$ (since $\gamma=\psi=2$), which I can solve easily. So I have an initial consumption level for each $(z,b)$ pair.
 
 \subsection{Iterating on the Euler equation}
 For starters, assume that the Euler equation holds with equality (I'll deal with the borrowing constraint properly below). Then, with my initial guess of the policy function, I can write the Euler as
 \begin{align*}
-c^{-\gamma} = \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}.
+c^{-\gamma} = \beta(1+r) \sum_{z'}\Pr(z'|z)(g^0(z',b'))^{-\gamma}.
 \end{align*}
 Then, today's consumption is simply
 \begin{align}
-c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(b',z'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh4}
+c = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g^0(z',b'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh4}
 \end{align}
-Now, recall that the HH optimally chooses $b_{t+1}$, with $b_t$ is predetermined. Thus, (\ref{eq:hh4}) gives today's consumption for someone who drew income $z$ today, and optimally chose $b'$. So, we can write (\ref{eq:hh4}) as
+Now, recall that the HH optimally chooses $b_{t+1}$, while $b_t$ is predetermined. Thus, (\ref{eq:hh4}) gives today's consumption for someone who drew productivity $z$ today, and optimally chose $b'$ for tomorow's bond holdings. So, we can write (\ref{eq:hh4}) as
 \begin{align}
-\tilde g^0(z,b') = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g_0(z',b'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh5}
+\tilde g^0(z,b') = \left( \beta(1+r) \sum_{z'}\Pr(z'|z)(g^0(z',b'))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh5}
 \end{align}
 Next, define a grid over values of \textit{tomorrow's} bond holdings $b'$ and call it $B = \{b_1, ...,b_{n_b}\}$, with $b_1 = 0$. Also suppose we have a grid of possible productivity draws, $Z=\{z_1, ..., z_{n_z}\}$, and an associated transition matrix $\Gamma$. Then we can write (\ref{eq:hh5}) as
 \begin{align}
-\tilde g^0(z_i,b_j) = \left( \beta(1+r) \sum_{\ell=1}^{n_z}\Gamma_{i\ell} (g_0(z_\ell,b_j))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh6}, 
+\tilde g^0(z_i,b_j) = \left( \beta(1+r) \sum_{\ell=1}^{n_z}\Gamma_{i\ell} (g^0(z_\ell,b_j))^{-\gamma}\right)^{-1/\gamma} \label{eq:hh6}, 
 \end{align}
 which gives the optimal policy $c$, for an agent with current productivity $z_j$, and who optimally chooses tomorrow's bond holdings $b_j$. Thus, for each $(z_i,b_j)$ pair I can get the associated optimal consumption today using (\ref{eq:hh6}).\\
 
@@ -125,17 +125,17 @@ Next, note that for each grid point in $B_i^*$, I have the updated guess of the 
 \begin{align*}
 g^1(z_i,b^*_{i,j}) =  \tilde g^0(z_i,b_j)
 \end{align*}
-Note that the grid points in $B_i^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g^1(z_i,b_j)$ for each $b_i \in B$ I need to interpolate $g^1(z_i,b^*_{i,j})$ (see below).\\
+However, the grid points in $B_i^*$ need not (and will not, in general) coincide with the points in the original grid $B$. Thus, to get the updated guesses $g^1(z_i,b_j)$ for each $b_i \in B$ I need to interpolate $g^1(z_i,b^*_{i,j})$, which is pretty straightforward in \verb|Julia|. MNS use a shape-preserving cubic spline, but for now I'll stick with a simple linear interpolation.\\
 
-Now, I need to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current productivity $z_i$ and who optimally chooses $b_j$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_j =0$. Thus,
+Now, I need to deal with the borrowing constraint, $b_{t+1} \geq 0$. Recall that $b^*_{i,j}$ is today's bond holdings for someone with current productivity $z_i$ and who optimally chooses $b_j$. Suppose the borrowing constraint binds;  then agent optimally chooses $b_{t+1} = b_j =0$. Thus, from the borrowing constraint, today's bond holdings are
 \begin{align*}
 b^*_{i,1} = \tilde g^0(z_i,b_j) - \left(\tilde g^0(z_i,b_j)\right)^{-\gamma/\psi} (\bar Wz_j)^{\frac{1+\psi}{\psi}} + \tau\bar\tau(z_j) - \bar D.
 \end{align*}
-Recall that $\tilde g_0(z_i,b_1)$ is our guess of optimal consumption today. Thus, $b^*_{i,1}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current productivity $z_i$, such that the borrowing constraint binds. Then, for all grid points $b_j \leq b^*_{i,1}$, when $z=z_i$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
+Recall that $\tilde g_0(z_i,b_1)$ is our guess of optimal consumption today. Accordingly, $b^*_{i,1}$ represents the \textit{highest} level of bond holdings \textit{today} for someone with current productivity $z_i$, such that the borrowing constraint binds. Then, for all grid points $b_j \leq b^*_{i,1}$, when $z=z_i$, the borrowing constraint must bind (i.e. $b_{t+1}=0$). Then, we can use the budget constraint to get the updated guess of today's optimal consumption for constrained agents:
 \begin{align*}
 g^{1,c}(z_i,b_j) = b_j + \left(g^{1,c}(z_i,b_j)\right)^{-\gamma/\psi} (\bar Wz_i)^{\frac{1+\psi}{\psi}} - \tau\bar\tau(z_i) +\bar D \text{ for all } b_j \leq b^*_{i,1},
 \end{align*}
-where $c$ superscript denotes `constrained'. \textcolor{blue}{Again, I'll need to use a nonlinear solver here.}\\
+where $c$ superscript denotes `constrained'. Again, with MNS's calibration this is just a quadratic equation.\\
 
 Putting all this together, the updated guess of the optimal policy function is
 \begin{align*}
@@ -146,15 +146,15 @@ g^{1,c}(z_i,b_j)&\text{ otherwise.}
 \end{cases}
 \end{align*}
 
-\subsection{Other details for computation}
+\subsection{Calibration}
 \subsubsection{The Markov chain for productivity}
-I think I found the Markov chain for productivity in MNS's \verb|initparams.m| file (in the `\verb|parameters|' folder). It looks like the grid is given by
+I found the Markov chain for productivity in MNS's \verb|initparams.m| file (in the `\verb|parameters|' folder). It looks like the grid is given by
 \begin{align*}
-Z = (0.493, 1, 2.031)
+Z = \{0.493, 1, 2.031\}
 \end{align*}
 with transition matrix
 \begin{align*}
-\Gamma = 
+\bm{\Gamma} = 
 \begin{bmatrix}
 0.966 &	0.0338 &	0.00029 \\
 0.017&	0.966& 	0.017 \\
@@ -162,11 +162,24 @@ with transition matrix
 \end{bmatrix}
 \end{align*}
 
-\subsubsection{Details I need to iron out}
+\subsubsection{Grid of bond holdings}
+I use a grid of 200 equally spaced points ranging from $b_{min} = 0$ and $b_{max} = 75$. Note that MNS use an unequally spaced grid, with more points at lower asset levels, because the policy function has more curvature in this region.
+
+\subsubsection{Steady state prices}
+Steady state prices are
 \begin{itemize}
-\item What are the steady state values of $W, D, r, \tau$? Can I solve for these by hand? I need these values for the above procedure.
-\item What is the exact form of the function $\bar \tau(z_j)$? Maybe I can leave this out, along with steady state $\tau_t$?
+\item $\bar W = 1/\mu$ (i.e. inverse over the intermediate goods firms' markup);
+\item $\bar{r}  = 0.005$ \textcolor{blue}{(I just took this from MNS's \texttt{initparams.m} file; add some commentary on what this means and that it ensures $\beta(1+r) < 1$ -- WHY IS THIS IMPORTANT IN HET AGENT MODELS?)}
+\item $\bar{D} = \bar Y(1-\bar W) = $?
+\item $\bar{\tau} = $?
 \end{itemize}
+
+\subsection{Some analysis}
+See the QuantEcon \href{https://lectures.quantecon.org/jl/ifp.html}{lecture} on occasionally binding borrowing constraint for some cool graphs I could replicate!
+
+\subsection{Simulating the distribution of bond holdings}
+The above QuantEcon lecture is also useful for this! Also see CH's notes!
+
 
 
 
