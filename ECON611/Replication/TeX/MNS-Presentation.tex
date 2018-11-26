@@ -1,0 +1,105 @@
+\documentclass[t]{beamer}
+
+
+%useful packages
+\usepackage{color,soul}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{xcolor}
+
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+% \usepackage{beamerthemesplit} // Activate for custom appearance
+
+\title{Replication of `The Power of Forward Guidance Revisited'}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+
+
+\begin{frame}
+\frametitle{Outline}
+\begin{enumerate}
+\item Motivation
+\item MNS's heterogenous agent NK model
+\item Steady state
+\item Dynamics: forward guidance
+\end{enumerate}
+\end{frame}
+
+\frame{
+\frametitle{Motivation}
+\begin{itemize}
+\item In the basic NKM, output/inflation response to forward guidance is implausibly large.
+\item A potential reason is the complete markets assumption.
+\item Is the output response to forward guidance smaller in a model with idiosyncratic income risk and incomplete markets?
+\end{itemize}
+
+}
+
+\frame{
+
+\frametitle{Forward guidance in the basic NKM}
+Consider the plain vanilla NKM studied in class
+\begin{align*}
+y_t &= \E_t[y_{t+1}] - \sigma(i_t - \E_t[\pi_{t+1}] - r_t^n) &\text{ `NK IS curve'}\\
+\pi_t  &= \beta\E_t[\pi_{t+1}]  + \kappa y_t &\text{ `NKPC'}
+\end{align*}
+}
+
+
+\frame{
+
+\frametitle{Forward guidance in the basic NKM}
+Consider the plain vanilla NKM studied in class
+\begin{align*}
+y_t &= \E_t[y_{t+1}] - \sigma(i_t - \E_t[\pi_{t+1}] - r_t^n) &\text{ `NK IS curve'}\\
+\pi_t  &= \beta\E_t[\pi_{t+1}]  + \kappa y_t &\text{ `NKPC'}
+\end{align*}
+with monetary policy rule:
+\begin{align*}
+r_t = i_t - \E_t[\pi_{t+1}] = r_t^n + \e_{t,t-j},
+\end{align*}
+where $\e_{t,t-j}$ is a monetary shock in period $t$ that is announced in period $t-j$.
+}
+
+\frame{
+
+\frametitle{Forward guidance in the basic NKM}
+ADD IMPULSE RESPONSE
+}
+
+\frame{
+\frametitle{Forward guidance in the basic NKM}
+Why is the output response so big?\vspace{1cm}
+
+$\implies$ Euler equation ($\sigma=1$):
+\begin{align*}
+\E_t[\Delta\tilde{c}_{t+1}] = \beta \tilde{r}_t 
+\end{align*}
+}
+
+
+
+
+
+\end{document}
