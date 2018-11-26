@@ -528,8 +528,6 @@ out_ols2[, model := "OLS 2"]
 # ==== 2sls ====
 #===============#
 
-# write this part as a function so I can use it in 3.2 
-# ACTUALLY, im gonna use different faster function but this is fine as a function too
 wrap_2sls <- function(in_data){
   
   #=================#
@@ -577,13 +575,6 @@ ak_2sls <- wrap_2sls(ak)
 
 output_3.1 <- rbind(out_ols1, out_ols2, ak_2sls)
 setcolorder(output_3.1, c("model", "term", "estimate", "std.error"))
-
-# out put it 
-
-print(xtable(output_3.1, type = "latex"), 
-      file = paste0("C://Users/Nmath_000/Documents/Code/courses/econ 675/PS_5_tex/q3.1_table.tex"),
-      include.rownames = FALSE,
-      floating = FALSE)
 
 
 
@@ -650,7 +641,7 @@ ak_perm <- copy(ak)
 # add constant 
 ak_perm[, const := 1]
 
-# write a function so I can parallel this shiz  
+# write a function 
 sim_warper <- function(sim_i, in_data = ak_perm ){
   
   # get random sampel 
@@ -693,13 +684,6 @@ sim_warper <- function(sim_i, in_data = ak_perm ){
   
 } # end funciton 
 
-# time this sucker 
-start_time <- Sys.time()
-
-# parallel setup
-cl <- makeCluster(4, type = "PSOCK")
-registerDoParallel(cl)
-
 # run simulations in parallel
 output_list <- foreach(sim = 1 : 5000,
                        .inorder = FALSE,
@@ -709,11 +693,6 @@ output_list <- foreach(sim = 1 : 5000,
 # stop clusters 
 stopCluster(cl)
 
-# check time 
-end_time <- Sys.time()
-
-# print time 
-print(paste0(round(as.numeric(end_time - start_time, units = "mins"), 3), " minutes to run"))
 
 
 #==========================#
