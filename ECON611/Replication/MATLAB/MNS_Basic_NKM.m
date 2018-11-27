@@ -9,7 +9,7 @@
 addpath ./AIM_subroutines;
 clc; clear all; close all;
 
-nimpdat 	= 40;	% No. of quarters in impulse response. 
+nimpdat 	= 15;	% No. of quarters in impulse response. 
 
 % ======================================================================= %
 % CALIBRATION
@@ -288,19 +288,20 @@ for t = 2:nimpdat;                          % loop through periods
  	  DATA(t,:)=y';
 end;
 
-time = 1:nimpdat; 
+time = 0:(nimpdat-1); 
 
 
 figure(1) 
 plot(time, DATA(:,Rpos),'-r');
 hold on; 
 plot(time, DATA(:,Xpos), 'b');
-plot(time, DATA(:,Pipos),'-k');
+%plot(time, DATA(:,Pipos),'-k');
 hold off; 
-legend('Real interest rate','Output gap','Inflation');
+legend('Real interest rate','Output gap');
+%legend('Real interest rate','Output gap','Inflation');
 xlabel('Horizon in quarters');
 ylabel('Percentage points');
-ylim([-1.5 2.5])
+ylim([-1.5 1.5])
 saveas(figure(1),'IR_1_R','epsc');
 
 
@@ -309,7 +310,7 @@ saveas(figure(1),'IR_1_R','epsc');
 %                        Inflation Response
 % ======================================================================= %
 % ======================================================================= %
-
+%{
 % NEED TO THINK ABOUT THIS MORE
 
 inflation = zeros(25,1);
@@ -322,6 +323,6 @@ end
 for j=1:25
     inflation(j,1)= sum(betavec(1:j),1);
 end
-
+%}
 
 

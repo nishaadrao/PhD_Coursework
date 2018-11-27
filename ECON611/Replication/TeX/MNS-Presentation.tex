@@ -51,6 +51,7 @@
 \begin{itemize}
 \item In the basic NKM, output/inflation response to forward guidance is implausibly large.
 \item A potential reason is the complete markets assumption.
+\pause
 \item Is the output response to forward guidance smaller in a model with idiosyncratic income risk and incomplete markets?
 \end{itemize}
 
@@ -64,17 +65,8 @@ Consider the plain vanilla NKM studied in class
 y_t &= \E_t[y_{t+1}] - \sigma(i_t - \E_t[\pi_{t+1}] - r_t^n) &\text{ `NK IS curve'}\\
 \pi_t  &= \beta\E_t[\pi_{t+1}]  + \kappa y_t &\text{ `NKPC'}
 \end{align*}
-}
+\pause
 
-
-\frame{
-
-\frametitle{Forward guidance in the basic NKM}
-Consider the plain vanilla NKM studied in class
-\begin{align*}
-y_t &= \E_t[y_{t+1}] - \sigma(i_t - \E_t[\pi_{t+1}] - r_t^n) &\text{ `NK IS curve'}\\
-\pi_t  &= \beta\E_t[\pi_{t+1}]  + \kappa y_t &\text{ `NKPC'}
-\end{align*}
 with monetary policy rule:
 \begin{align*}
 r_t = i_t - \E_t[\pi_{t+1}] = r_t^n + \e_{t,t-j},
@@ -84,8 +76,37 @@ where $\e_{t,t-j}$ is a monetary shock in period $t$ that is announced in period
 
 \frame{
 
+\frametitle{AIM implementation}
+\begin{align*}
+\tilde{r}_t &= a_1MA_t^1 + a_2MA_t^2 + a_2MA_t^3 + a_4MA_t^4 + a_5MA_t^5
+\end{align*}
+with
+\begin{align*}
+MA_t^1 &= \e_{t+5,t}=
+\begin{cases}
+1 &\text{ if } t=1 \\
+0 &\text{ otherwise.}
+\end{cases}
+\end{align*} 
+and
+\begin{align*}
+MA^j_t = MA_{t-1}^{j-1}
+\end{align*}
+and $a_1=a_2=a_3=a_4=0$, $a_5 = 1$
+}
+
+
+\frame{
 \frametitle{Forward guidance in the basic NKM}
-ADD IMPULSE RESPONSE
+\begin{figure}
+ \centering
+    
+        %\centering
+        \includegraphics[width=0.8\textwidth]{IR_1_R.eps}
+
+
+\end{figure}
+
 }
 
 \frame{
@@ -96,6 +117,55 @@ $\implies$ Euler equation ($\sigma=1$):
 \begin{align*}
 \E_t[\Delta\tilde{c}_{t+1}] = \beta \tilde{r}_t 
 \end{align*}
+\pause
+No borrowing constraint $\implies$ agent takes full advantage of intertemporal substitution.
+}
+
+\frame{
+\frametitle{MNS's HANK model}
+\pause
+Household's problem
+\begin{align*}
+&\max_{\{c,\ell, b_{t+1}\}} \E_0\sum_{t=0}^\infty \beta^t \left(\frac{c_{h,t}^{1-\gamma}}{1-\gamma} - \frac{\ell_{h,t}^{1+\psi}}{1+\psi}\right)\\
+\\
+&\text{s.t. } c_{h,t} + \frac{b_{h,t+1}}{1+r_t} = b_{h,t} + W_tz_{h,t}\ell_{h,t} - \tau_t\bar\tau(z_{h,t}) +D_t\\
+\\
+&\text{\& } b_{h,t+1} \geq 0.
+\end{align*}
+}
+
+\frame{
+\frametitle{Calibration}
+$z_{h,t}$ follows a 3-point Markov chain with transition matrix
+\begin{align*}
+\bm{\Gamma} = 
+\begin{bmatrix}
+0.966 &	0.0338 &	0.00029 \\
+0.017&	0.966& 	0.017 \\
+0.0003 &	0.0337 &	0.966
+\end{bmatrix}
+\end{align*}
+Other parameter values are standard.
+}
+
+\frame{
+\frametitle{Solving for steady state}
+\begin{itemize}
+\item Solve for the household's policy function using the `endogenous grid method'.
+\pause
+\item Basic idea is to iterate on the Euler equation:
+\begin{align*}
+c^{-\gamma} = \beta(1+\bar r) \sum_{z'}\Pr(z'|z)(g^0(z',b'))^{-\gamma}
+\end{align*}
+and use the budget constraint to back out today's bond holdings.
+\pause
+\item Some simplifications: 
+\begin{itemize}
+\item equally spaced bond grid
+\item linear interpolation instead of cubic spline
+\end{itemize}
+
+\end{itemize}
 }
 
 
