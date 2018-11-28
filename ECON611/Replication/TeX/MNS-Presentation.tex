@@ -158,15 +158,68 @@ Other parameter values are standard.
 c^{-\gamma} = \beta(1+\bar r) \sum_{z'}\Pr(z'|z)(g^0(z',b'))^{-\gamma}
 \end{align*}
 and use the budget constraint to back out today's bond holdings.
-\pause
-\item Some simplifications: 
-\begin{itemize}
-\item equally spaced bond grid
-\item linear interpolation instead of cubic spline
-\end{itemize}
 
 \end{itemize}
 }
+
+\frame{
+\frametitle{Solving for steady state}
+\begin{enumerate}
+\item Guess an initial level of s.s dividends $\bar D^0=0$.
+\item Using this guess and other steady state prices, compute the HH's policy function.
+\item Simulate the distribution of bond holdings, using the policy function.
+\item Compute aggregate consumption, $\bar C^0$.
+\item Compute the implied level of dividends, $\tilde{D}^0 = \bar C^0\times(1-\bar{W})$.
+\item Update the guess of dividends: $\bar D^1 = \omega  \tilde{D}^0 + (1-\omega)\bar D^0$. I set $\omega=0.5$.
+\item Iterate until convergence: $\bar D^n=\bar D^{n-1}$.
+\end{enumerate}
+
+}
+\frame{
+\frametitle{Some results}
+\begin{figure}
+ \centering
+    
+        %\centering
+        \includegraphics[width=1\textwidth]{pol_fn_C.pdf}
+
+
+\end{figure}
+
+}
+
+\frame{
+\frametitle{Some results}
+\begin{figure}
+ \centering
+    
+        %\centering
+        \includegraphics[width=1\textwidth]{pol_fn_B.pdf}
+
+
+\end{figure}
+
+}
+\frame{
+\frametitle{Some results}
+
+\begin{figure}
+ \centering
+    
+        %\centering
+        \includegraphics[width=0.7\textwidth]{bonds.pdf}
+
+
+\end{figure}
+
+}
+
+\frame{
+\frametitle{Problems with my `solution'}
+
+}
+
+
 
 
 
