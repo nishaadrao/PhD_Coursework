@@ -15,6 +15,7 @@ library(sandwich)           #for variance-covariance estimation
 library(xtable)             #for latex tables
 library(rdrobust)           #for RD plots and other stuff
 library(rddensity)          #for RD density continuity tests
+library(rdlocrand)          #for RD randomization inference
 options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
 
 ######################################################################
@@ -24,7 +25,7 @@ setwd("/Users/Anirudh/Desktop/GitHub/PhD_Coursework/ECON675/HW6")
 data <- as.data.table(read.csv('HeadStart.csv'))
 
 ######################################################################
-# [2.1] RD Plots of pre-intervention mortality
+# [2.1]A RD Plots of pre-intervention mortality
 ######################################################################
 
 # Evenly-spaced bins, IMSE optimal
@@ -48,7 +49,7 @@ dev.copy(pdf,'q2-1-qsmv.pdf')
 dev.off()
 
 ######################################################################
-# [2.1] Formal falsification tests
+# [2.1]B Formal falsification tests
 ######################################################################
 
 ## Exact binomial tests for different windows around the cutoff
@@ -73,4 +74,68 @@ binom.pvals = sapply(1:length(h.vec),function(i) binom.test(N.u[i],N.t[i])$p.val
 binom.results = cbind(h.vec,N.l,N.u,binom.pvals)
 xtable(binom.results,digits = c(0,1,0,0,3))
 
-## Continuity in density tests
+## Continuity in density tests (defaults are triangular kernel, jackknife SEs)
+rdtest = rddensity(x)
+
+######################################################################
+# [2.2]A Global polynomial regressions
+######################################################################
+
+# Create treatment dummy for regressions
+treat=ifelse(data[,povrate60]>=0,1,0)
+
+# Get outcome variable
+Y = data[,mort_related_post]
+
+# Generate covariates for polynomial regressions
+X.pol = cbind(x,x^2,x^3,x^4,x^5,x^6)
+
+# Run polynomial regressions
+global.regs = lapply(0:3,function(i) lm(Y ~ treat + X.pol[,c(1:(3+i))]))
+
+# Get point estimates
+global.betas = sapply(1:4,function(i) global.regs[[i]]$coefficients[2])
+
+# Get robust SEs
+global.SEs   = sapply(1:4,function(i) sqrt(diag(vcovHC(global.regs[[i]],"HC2")))[2])
+
+# Put results together
+global.results = rbind(global.betas, global.SEs)
+colnames(global.results) = c(3,4,5,6)
+xtable(global.results,digits=c(0,2,2,2,2))
+
+######################################################################
+# [2.3] Robust local polynomial methods
+######################################################################
+
+# MSE-optimal RD treatment effect estimates
+rd.regs = lapply(0:2, function(i) rdrobust(Y,x,p=i,all=TRUE))
+
+# Combine results for different polynomial orders
+rd.p0   = cbind(rd.regs[[1]]$coef,rd.regs[[1]]$se,rd.regs[[1]]$ci)
+rd.p1   = cbind(rd.regs[[2]]$coef,rd.regs[[2]]$se,rd.regs[[2]]$ci)
+rd.p2   = cbind(rd.regs[[3]]$coef,rd.regs[[3]]$se,rd.regs[[3]]$ci)
+
+xtable(rd.p0,digits=c(0,2,2,2,2))
+xtable(rd.p1,digits=c(0,2,2,2,2))
+xtable(rd.p2,digits=c(0,2,2,2,2))
+
+# Robustness checks
+rd.rob1 = rdrobust(data[,mort_related_pre],x,p=1,all=TRUE)
+rd.rob2 = rdrobust(data[,mort_injury_post],x,p=1,all=TRUE)
+
+rd.rob1.res   = cbind(rd.rob1$coef,rd.rob1$se,rd.rob1$ci)
+rd.rob2.res   = cbind(rd.rob2$coef,rd.rob2$se,rd.rob2$ci)
+
+xtable(rd.rob1.res,digits=c(0,2,2,2,2))
+xtable(rd.rob2.res,digits=c(0,2,2,2,2))
+
+######################################################################
+# [2.3] Local randomization inference
+######################################################################
+
+# Use defaults to compute recommended window for local randomization
+rdwindow = rdwinselect(x,c(data[,mort_related_pre],data[,mort_injury_post]))
+
+# Conduct randomization inference using recommended window
+rd.rand.res = rdrandinf(Y,x,wl=rdwindow$window[1],wr=rdwindow$window[2])
