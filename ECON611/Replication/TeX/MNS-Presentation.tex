@@ -165,13 +165,13 @@ and use the budget constraint to back out today's bond holdings.
 \frame{
 \frametitle{Solving for steady state}
 \begin{enumerate}
-\item Guess an initial level of s.s dividends $\bar D^0=0$.
+\item Guess an initial level of s.s dividends and taxes $X^0 = [\bar D^0, \bar\tau^0]$.
 \item Using this guess and other steady state prices, compute the HH's policy function.
 \item Simulate the distribution of bond holdings, using the policy function.
 \item Compute aggregate consumption, $\bar C^0$.
-\item Compute the implied level of dividends, $\tilde{D}^0 = \bar C^0\times(1-\bar{W})$.
-\item Update the guess of dividends: $\bar D^1 = \omega  \tilde{D}^0 + (1-\omega)\bar D^0$. I set $\omega=0.5$.
-\item Iterate until convergence: $\bar D^n=\bar D^{n-1}$.
+\item Compute the implied level of dividends and taxes consistent w/ mkt clearing, $\tilde X^0 = [\tilde{D}^0, \tilde{\tau}^0]$ 
+\item Update the guess of dividends and taxes: $X^1 = \omega  \tilde{X}^0 + (1-\omega)X^0$. I set $\omega=0.5$.
+\item Iterate until convergence: $X^n=X^{n-1}$.
 \end{enumerate}
 
 }
