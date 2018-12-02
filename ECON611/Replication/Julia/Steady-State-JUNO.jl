@@ -1,5 +1,4 @@
-using QuantEcon, Interpolations, Plots, LaTeXStrings, DataFrames
-import PyPlot
+using QuantEcon, Plots, LaTeXStrings, DataFrames
 
 ######################################################################
 # CALIBRATION
@@ -36,17 +35,17 @@ b_grid = collect(linspace(b_min,b_max,200));
 # EGM function
 ######################################################################
 
-function egm{TR<:Real,TF<:AbstractFloat}(G::Array{TF,2},
-             b_grid::Array{TF,1},
-             z_grid::Array{TF,1},
-             P::Array{Float64,2},
-             β::TR,
-             γ::TR,
-             ψ::TR,
-             R::TR,
-             W::TR,
-             D::TR,
-             τ::TR)
+function egm(G::AbstractArray,
+             b_grid::AbstractArray,
+             z_grid::AbstractArray,
+             P::AbstractArray,
+             β::Real,
+             γ::Real,
+             ψ::Real,
+             R::Real,
+             W::Real,
+             D::Real,
+             τ::Real)
 
     # Allocate memory for value of today's consumption on endogenous grid points,...
     # and the endogenous grid itself,...
@@ -96,24 +95,25 @@ end
 # Initial guess of policy function
 ######################################################################
 
-function G_init{TR<:Real}(W::Real,D::TR,τ::TR)
-
-    G0   = zeros(length(z_grid),length(b_grid))
+function G_init(W::Real,D::Real,τ::Real)
+    G0 = zeros(length(z_grid),length(b_grid))
 
     for (i,z) in enumerate(z_grid)
-            for(j,b) in enumerate(b_grid)
-                G0[i,j] = (b_grid[j]+D-τ*tax(z_grid[i])+sqrt((b_grid[j]+D-τ*tax(z_grid[i]))^2+4*(W*z_grid[i])^(1+1/ψ)))/2
-            end
+        for(j,b) in enumerate(b_grid)
+            G0[i,j] = (b_grid[j]+D-τ*tax(z_grid[i])
+            +sqrt((b_grid[j]+D-τ*tax(z_grid[i]))^2+4*(W*z_grid[i])^(1+1/ψ)))/2
+        end
     end
-    return G0
 
+    return G0
 end
+
 
 ######################################################################
 # Compute policy function
 ######################################################################
 
-function get_policy{TR<:Real}(G0,R::TR,W::TR, D::TR, τ::TR, tol=1e-8, maxiter=1000, err=1, i=0)
+function get_policy(G0,R::Real,W::Real, D::Real, τ::Real, tol=1e-8, maxiter=1000, err=1, i=0)
     G       = G0    # Initial guess
 
     while i<=maxiter && err > tol
@@ -167,7 +167,7 @@ end
 Z=mc_sample_path(MC.p,2,1000000)
 
 # Function to get associated bond holdings, using policy function
-function get_bonds{TR<:Real}(Z,G::AbstractArray,R::Real,W::Real,D::TR,τ::TR,c1,c2,c3,init=b_grid[1])
+function get_bonds(Z,G::AbstractArray,R::Real,W::Real,D::Real,τ::Real,c1,c2,c3,init=b_grid[1])
     B = zeros(length(Z)) #allocate memory
 
     # This is what c1,c2,c3 will be!
@@ -213,21 +213,14 @@ end
 ######################################################################
 # Solve for steady state
 ######################################################################
-#function solve_ss(D=0,tol=1e-8,maxiter=1000,err=1,i=0)
+function solve_ss(maxiter::Int64,R::Real,W::Real,D::Real,τ::Real,tol=1e-8,i=0,err=1)
 
-W       = Wbar   # Initial guess
-R       = Rbar
-D       = 0
-τ       = 0
-tol     = 1e-8
-maxiter = 1000
-err     = 1
-i       = 0
-
+    C  = zeros(length(Z))
+    G  = zeros(length(z_grid),length(b_grid))
+    B  = zeros(length(Z))
+    zL = zeros(length(Z))
 
     while i<=maxiter && err > tol
-
-        global G, W, R, C, D, B, τ       # Ensures the loop spits out these things (cf. local)
 
         X    = [R,W,D,τ]
 
@@ -244,18 +237,14 @@ i       = 0
         C  = get_C(B,c1,c2,c3)           # Get consumption distribution
 
         # CHECK LABOR MARKET CLEARING AND ADJUST WAGES
-        L    = C.^(-γ/ψ).*((W*Z).^(1/ψ)); # Compute lsupply using intratemporal sub condition
-        zL   = L.*Z;
+        L    = C.^(-γ/ψ).*((W*Z).^(1/ψ)) # Compute lsupply using intratemporal sub condition
+        zL   = L.*Z
         Lbar = mean(zL)
 
-        Wtil = W + 0.8*(mean(C)-Lbar)
-
-        Wnew = 0.5*Wtil + 0.5*W
+        Wnew = W + 0.1*(mean(C)-Lbar)
 
         # CHECK BOND MARKET CLEARING AND ADJUST INTEREST RATE
-        Rtil = R - 0.001*(mean(B)-1.4*4*mean(C))
-
-        Rnew = 0.5*Rtil + 0.5*R
+        Rnew = R - 0.001*(mean(B)-1.4*4*mean(C))
 
         Dnew = mean(C)*(1-W)             # Compute prelim updated guess of divs
 
@@ -265,11 +254,22 @@ i       = 0
 
         err  = maximum(abs, Xnew - X)  # Compute error
 
-        R    = Rnew
-        W    = Wnew
+        R    = 0.5*Rnew + 0.5*R
+        W    = 0.5*Wnew + 0.5*W
         D    = 0.5*Dnew + 0.5*D        # Update guess of dividends
         τ    = 0.5*τnew + 0.5*τ         # Update guess of τ
 
         i    = i+1
+
     end
-#end
+    return R,W,D,τ, mean(C), mean(B), mean(zL), err, (i-1)
+end
+
+## SOME COMMENTS
+# The above iteration doesn't converge for some reason.
+# But it's definitely working in the right direction.
+# After 100 iterations I get R ~ 1.003 and W ~ 0.91,
+# so the prices are moving the right way.
+# I think there's something fishy about the way I update prices, that doesn't
+# give me nice convergence.
+# Or is it possible that the simulation step is adding some small insurmountable error?
