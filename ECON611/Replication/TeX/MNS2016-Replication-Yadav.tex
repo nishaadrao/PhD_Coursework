@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+
+%useful packages
+\usepackage{color,soul}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath,amsthm,amscd,amssymb,bm}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=JungleGreen,
+    urlcolor  =JungleGreen,
+    citecolor = JungleGreen,
+    anchorcolor = JungleGreen
+}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+\usepackage{tcolorbox}
+\usepackage{centernot}
+\usepackage{mathtools}
+\usepackage{xcolor}
+
+%personal definitions and commands
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\e}{\epsilon}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %allows numbering of single equations in align* environment
+\newcommand{\mtx}[1]{\ensuremath{\bm{\mathit{#1}}}}
+\newcommand{\B}{\hat{\boldsymbol{\beta}}}
+\newcommand{\Cov}{\mathbb{C}\text{ov}}
+\newcommand{\N}{\mathcal{N}}
+
+
+
+\title{Replication of `The Power of Forward Guidance Revisited' by McKay, Nakamura \& Steinnson (2016)}
+\author{Anirudh Yadav}
+\setlength\parindent{0pt}
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\newpage
+
+\section{Overview}
+In the basic New Keynesian model (NKM) studied in class the output and inflation response to forward guidance is implausibly large. A potential reason for this `forward guidance puzzle' is the complete markets assumption, which allows the representative agent to take full advantage of any opportunity to intertemporally substitute consumption. McKay, Nakamura and Steinnson's (2016, henceforth MNS) main question is whether the output response to forward guidance is smaller in a NKM with idiosyncratic income risk and incomplete markets. It turns out that it is. The main intuition for their result is that in the model with incomplete markets agents exhibit precautionary savings behaviour. The desire to save for bad times mitigates agents' desire to move consumption forward, dampening the aggregate output response relative to the basic NKM.
+
+\section{Forward guidance in the basic New Keynesian Model}
+Consider the plain vanilla NKM studied in class:
+\begin{align*}
+y_t &= \E_t[y_{t+1}] - \sigma(i_t - \E_t[\pi_{t+1}] - r_t^n) &\text{ `NK IS curve'}\\
+\pi_t  &= \beta\E_t[\pi_{t+1}]  + \kappa y_t &\text{ `NKPC'}
+\end{align*}
+where the variables have the usual interpretation. Next, suppose the monetary policy rule is given by
+\begin{align*}
+r_t = i_t - \E_t[\pi_{t+1}] = r_t^n + \e_{t,t-j},
+\end{align*}
+where $\e_{t,t-j}$ is a monetary shock in period $t$ that is announced in period $t-j$.
+
+\section{MNS's model}
+
+\section{Steady state}
+
+\section{Appendix}
+\subsection{Endogenous grid method}
+
+
+
+
+
+\end{document}
