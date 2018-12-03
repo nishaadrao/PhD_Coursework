@@ -51,6 +51,55 @@
 
 \newpage
 
+\section{Continuity-based identification in SRD designs}
+
+\subsection{RD treatment effect with a single cutoff}
+We have
+\begin{align*}
+\tau_{\texttt{SRD}} = \lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = \e] - \lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = -\e]
+\end{align*}
+Using the definition $\tilde X_i = X_i - C_i$ and the single cutoff assumption, $\Prob[C_i = c] = 1$, gives
+\begin{align*}
+\tau_{\texttt{SRD}} &= \lim_{\e \to 0^+} \E[Y_i | X_i= c+ \e] - \lim_{\e \to 0^+} \E[Y_i | X_i = c -\e]\\
+&= \lim_{\e \to 0^+} \E[Y_{1i}(c)T_i + Y_{0i}(c)(1-T_i)| X_i= c+ \e] - \lim_{\e \to 0^+} \E[Y_{1i}(c)T_i + Y_{0i}(c)(1-T_i) | X_i = c -\e]\\
+&= \lim_{\e \to 0^+} \E[Y_{1i}(c)| X_i= c+ \e] - \lim_{\e \to 0^+} \E[Y_{0i}(c)| X_i = c -\e], \text{ using \textbf{S3}}\\
+&= \E[Y_{1i}(c)-Y_{0i}(c)| X_i= c],
+\end{align*}
+as required.
+
+\subsection{RD treatment effect with multiple cutoffs}
+Now, with multiple cutoffs
+\begin{align*}
+\tau_{\texttt{SRD}} &= \lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = \e] - \lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = -\e]\\
+\end{align*}
+Focusing on the first term on the RHS:
+\begin{align*}
+ \lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = \e]  &=   \lim_{\e \to 0^+} \E[Y_{1i}(C_i)T_i + Y_{0i}(C_i)(1-T_i)| X_i= C_i+ \e]\\
+ &=\E[Y_{1i}(C_i)| X_i= C_i] \text{ using \textbf{S3}},\\
+ &=\sum_{c\in \mathcal{C}}\E[Y_{1i}(C_i)| X_i=c, C_i = c]\Prob[X_i=c, C_i=c], \text{ since $C_i$ is a discrete r.v},\\
+ &=\sum_{c\in \mathcal{C}}\E[Y_{1i}(C_i)| X_i=c, C_i = c] \frac{f_{X|C}(c|c)\Prob[C_i=c]}{\sum_{c\in \mathcal{C}}f_{X|C}(c|c)\Prob[C_i=c]}.
+\end{align*}
+An analogous derivation shows that $$\lim_{\e \to 0^+} \E[Y_i | \tilde{X}_i = -\e] = \sum_{c\in \mathcal{C}}\E[Y_{0i}(C_i)| X_i=c, C_i = c] \frac{f_{X|C}(c|c)\Prob[C_i=c]}{\sum_{c\in \mathcal{C}}f_{X|C}(c|c)\Prob[C_i=c]},$$ which proves the desired result. In this case, $\tau_{\texttt{SRD}}$ is just a weighted average of the RD treatment effects for the different cutoff levels. 
+
+\subsection{RD treatment effect with individual heterogeneity}
+First consider the case with a single cutoff, $\Prob[C_i=c]=1$. Suppose that $W_i$ is a continuous random variable, with marginal cdf $G(\cdot)$, that affects $i$'s potential outcomes and is iid across observations. Now,
+\begin{align*}
+\tau_{\texttt{SRD}} &= \lim_{\e \to 0^+} \E[y_{1}(w_i) | X_i=c+ \e] - \lim_{\e \to 0^+} \E[y_{0}(w_i)| X_i = c -\e]\\
+&=\E[y_{1}(w_i) - y_{0}(w_i) | X_i=c]\\
+&= \int (y_{1}(w) - y_{0}(w))g_{W|X}(w)|_{X=c}
+\end{align*}
+Now, using Bayes' rule
+\begin{align*}
+g_{W|X}(w) = \frac{f(X|W)g(w)}{f(X)}
+\end{align*}
+where $f(\cdot)$ is the marginal density of the running variable $X_i$. Thus, for the single cutoff case
+\begin{align*}
+\tau_{\texttt{SRD}} &= \int (y_{1}(w) - y_{0}(w)) \frac{f_{X|W}(c)}{f(c)}g(w)dw
+\end{align*}
+which is the result presented by Lee (2008). Then, you can extend the multiple cutoff case to get the desired result.
+
+\newpage
+
 \section{The effect of Head Start on child mortality}
 
 \subsection{RD plots and falsification tests}
@@ -103,14 +152,13 @@ We can also conduct formal falsification tests. First, I conduct exact binomial 
 
 Next, I test for a discontinuity in the density of the running variable at the cutoff, as in Cattaneo, \textit{et al}. (2017), using the \verb|rddensity| package in \verb|R|. I compute the density test $p$-value using the package defaults, which specifies a local-quadratic polynomial estimator with triangular kernel and jackknife standard errors. I get $p = 0.639$, implying that we cannot reject the null that the density of the running variable is continuous at the cutoff.
 
-\subsection{Global and flexible parametric methods}
+\subsection{Global and flexible parametric methods -- BAD!}
+\subsubsection{Constant treatment effect}
 I estimate the following global polynomial regression models
 \begin{align*}
-y_i = \alpha_0 + \beta_0 t_i + \sum_{k=1}^p \beta_k x_i^k + \e_i
+y_i = \alpha_0 + \tau_{\texttt{SRD}} t_i + \sum_{k=1}^p \beta_k x_i^k + \e_i
 \end{align*}
-where $y_i$ is the outcome of interest (post-intervention mortality rate) and $x_i$ is the running variable (poverty rate in 1960) and $t_i$ is a treatment dummy equal to 1 if $x_i \geq 0$. Table 2 presents the point estimates of $\beta_0$ for $p=3,4,5,6$ and the corresponding robust standard errors. The estimated treatment effects are all negative as expected. \\
-
-Despite the negative estimated treatment effects, these are bad models. They all use global methods, but we know that RD treatment effects are inherently local to the cutoff. In essence, global methods do not compare `apples with apples', because counties well below or above the cutoff could be different in systematically important ways.
+where $y_i$ is the outcome of interest (post-intervention mortality rate) and $x_i$ is the running variable (poverty rate in 1960) and $t_i$ is a treatment dummy equal to 1 if $x_i \geq 0$. Table 2 presents the point estimates of $\tau_{\texttt{SRD}}$ for $p=3,4,5,6$ and the corresponding robust standard errors. The estimated treatment effects are all negative as expected. I also plot the fitted values for $p=4$ below.
 
 \begin{table}[htpb!]
 \centering
@@ -124,11 +172,49 @@ Std. err. & 0.59 & 0.75 & 0.81 & 0.86 \\
    \hline
 \end{tabular}
 \end{table}
+\captionsetup[figure]{font=small,skip=0pt}
+
+\begin{figure}[htpb!]
+    \centering
+    \caption{Fitted Values for 4-th Order Global Polynomial -- Constant Effect Assumption}
+        %\centering
+        \includegraphics[width=0.7\textwidth]{q2-2-const.pdf}
+\end{figure}
+
+\subsubsection{Fully interacted model}
+Next, I estimate the `fully-interacted' models
+\begin{align*}
+y_i = \alpha_0 +\tau_{\texttt{SRD}} t_i + \sum_{k=1}^p \beta_k t_i x_i^k + \e_i.
+\end{align*}
+These models amount to fitting a global polynomial of order $p$ separately on both sides of the cutoff. Table 3 shows the point estimates of $\tau_{\texttt{SRD}}$ for $p=3,4,5,6$ and the corresponding robust standard errors.
+
+\begin{table}[htpb!]
+\centering
+\caption{Global Polynomial Fit Separately on Both Sides of the Cutoff}
+\begin{tabular}{lrrrr}
+  \hline
+ & $p=3$ & $p=4$ & $p=5$ & $p=6$ \\  
+  \hline
+Point estimate & $-2.02$ & $-3.06$ & $-2.68$ & $-4.12$ \\ 
+Std. err. & 0.87 & 1.09 & 1.29 & 1.46 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[htpb!]
+    \centering
+    \caption{Fitted Values for 4-th Order Global Polynomial -- Fully Interacted Model}
+        %\centering
+        \includegraphics[width=0.7\textwidth]{q2-2-full.pdf}
+\end{figure}
+
+Despite the negative estimated treatment effects, these are bad models. They all use global methods, but we know that RD treatment effects are inherently local to the cutoff. In essence, global methods do not compare `apples with apples', because counties well below or above the cutoff could be different in systematically important ways.
 
 \subsection{Robust local polynomial methods}
 
 \subsubsection{Baseline estimates}
-Table 3 shows the MSE-optimal RD point estimators and robust confidence intervals using local constant, linear and quadratic estimators (implemented with the \verb|rdrobust| package in \verb|R|). The estimated treatment effects are negative and significantly different from zero for all specifications, as expected. The standard errors of the point estimates increase with the order of the local polynomial.
+Table 4 shows the MSE-optimal RD point estimators and robust confidence intervals using local constant, linear and quadratic estimators (implemented with the \verb|rdrobust| package in \verb|R|). The estimated treatment effects are negative and significantly different from zero for all specifications, as expected. The standard errors of the point estimates increase with the order of the local polynomial.
 
 \begin{table}[htpb!]
 \centering
@@ -159,7 +245,7 @@ Conventional & -3.47 & 1.37 & -6.16 & -0.79 \\
 \end{table}
 
 \subsubsection{Placebo tests}
-Table 4 shows estimated RD treatment effects for the pre-intervention outcome variable \verb|mort_related_pre| and the unaffected post-intervention variable, \verb|mort_injury_post|. Clearly, we cannot reject the null of no treatment effect on these placebo outcomes.
+Table 5 shows estimated RD treatment effects for the pre-intervention outcome variable \verb|mort_related_pre| and the unaffected post-intervention variable, \verb|mort_injury_post|. Clearly, we cannot reject the null of no treatment effect on these placebo outcomes.
 
 \begin{table}[htpb!]
 \centering
@@ -192,13 +278,193 @@ First we need to select a window around the cutoff where randomization inference
 Using \verb|rdwinselect| (and the default options), the recommended window is $[-0.976;0.976]$ with 126 observations (68 below, 58 above).
 
 \subsubsection{Randomization inference}
-With the recommended window above, the observed difference in means is $-2.304\%$, with Fisher exact $p$-value of $0.024$ (associated with the sharp null of no treatment effect and 1000 replications).
+With the recommended window above, the observed difference in means is $-2.304\%$, with Fisher $p$-value of $0.024$ (associated with the sharp null of no treatment effect and 1000 replications).
 
 
 \newpage
 
 
 \section{Appendix: \texttt{R} code}
+
+\scriptsize
+\begin{verbatim}
+## ECON675: ASSIGNMENT 5
+## Q2: WEAK INSTRUMENTS SIMULATIONS
+## Anirudh Yadav 
+## 11/19/2018
+
+######################################################################
+# Load packages, clear workspace
+######################################################################
+rm(list = ls())             #clear workspace
+library(foreach)            #for looping
+library(data.table)         #for data manipulation
+library(Matrix)             #fast matrix calcs
+library(ggplot2)            #for pretty plots
+library(sandwich)           #for variance-covariance estimation 
+library(xtable)             #for latex tables
+library(rdrobust)           #for RD plots and other stuff
+library(rddensity)          #for RD density continuity tests
+library(rdlocrand)          #for RD randomization inference
+options(scipen = 999)       #forces R to use normal numbers instead of scientific notation
+
+######################################################################
+# Input data
+######################################################################
+setwd("/Users/Anirudh/Desktop/GitHub/PhD_Coursework/ECON675/HW6")
+data <- as.data.table(read.csv('HeadStart.csv'))
+
+######################################################################
+# [2.1]A RD Plots of pre-intervention mortality
+######################################################################
+
+# Evenly-spaced bins, IMSE optimal
+rdplot(data[,mort_related_pre],data[,povrate60],p=1,binselect = "es",x.label="povrate60",y.label="mort_related_pre",title="")
+dev.copy(pdf,'q2-1-es.pdf')
+dev.off()
+
+# Evenly-spaced bins, mimicking variance 
+rdplot(data[,mort_related_pre],data[,povrate60],p=1,binselect = "esmv",x.label="povrate60",y.label="mort_related_pre",title="")
+dev.copy(pdf,'q2-1-esmv.pdf')
+dev.off()
+
+# Quantile-spaced bins, IMSE optimal
+rdplot(data[,mort_related_pre],data[,povrate60],p=1,binselect = "qs",x.label="povrate60",y.label="mort_related_pre",title="")
+dev.copy(pdf,'q2-1-qs.pdf')
+dev.off()
+
+# Quantile-spaced bins, mimicking variance
+rdplot(data[,mort_related_pre],data[,povrate60],p=1,binselect = "qsmv",x.label="povrate60",y.label="mort_related_pre",title="")
+dev.copy(pdf,'q2-1-qsmv.pdf')
+dev.off()
+
+######################################################################
+# [2.1]B Formal falsification tests
+######################################################################
+
+## Exact binomial tests for different windows around the cutoff
+
+# Vector of windows
+h.vec = seq(0.3,1.3,0.2)
+
+# Get running variable
+x     = data[,povrate60]
+
+# Number of observations just above and below the cutoff
+N.l   = sapply(1:length(h.vec),function(i) sum(x >= -h.vec[i] & x <=0))
+N.u   = sapply(1:length(h.vec),function(i) sum(x >= 0 & x <= h.vec[i]))
+
+# Total number of observations in the window
+N.t   = N.l + N.u
+
+# Conduct exact binomial tests (p=0.5), where success is treatment and store p-vals
+binom.pvals = sapply(1:length(h.vec),function(i) binom.test(N.u[i],N.t[i])$p.value)
+
+# Put results together for latex
+binom.results = cbind(h.vec,N.l,N.u,binom.pvals)
+xtable(binom.results,digits = c(0,1,0,0,3))
+
+## Continuity in density tests (defaults are triangular kernel, jackknife SEs)
+rdtest = rddensity(x)
+
+######################################################################
+# [2.2]A Global polynomial regression - constant treatment effect
+######################################################################
+
+# Create treatment dummy for regressions
+treat=ifelse(data[,povrate60]>=0,1,0)
+
+# Get outcome variable
+Y = data[,mort_related_post]
+
+# Generate covariates for polynomial regressions
+X.pol = cbind(x,x^2,x^3,x^4,x^5,x^6)
+
+# Run polynomial regressions
+global.regs = lapply(0:3,function(i) lm(Y ~ treat + X.pol[,c(1:(3+i))]))
+
+# Get point estimates
+global.betas = sapply(1:4,function(i) global.regs[[i]]$coefficients[2])
+
+# Get robust SEs
+global.SEs   = sapply(1:4,function(i) sqrt(diag(vcovHC(global.regs[[i]],"HC2")))[2])
+
+# Put results together
+global.results = rbind(global.betas, global.SEs)
+colnames(global.results) = c(3,4,5,6)
+xtable(global.results,digits=c(0,2,2,2,2))
+
+# Plot fitted values and data
+temp.rd = rdplot(Y,x,hide=TRUE)
+plot(temp.rd$vars_bins$rdplot_mean_x,temp.rd$vars_bins$rdplot_mean_y,pch=20,xlab="povrate60",ylab="mort_related_post")
+points(x,global.regs[[2]]$fitted.values,pch=6,col="blue")
+abline(v=0)
+dev.copy(pdf,'q2-2-const.pdf')
+dev.off()
+
+######################################################################
+# [2.2]B Global polynomial regression - fully interacted model
+######################################################################
+
+# Run fully-interacted polynomial regressions
+global.regs.full = lapply(0:3,function(i) lm(Y ~ treat + X.pol[,c(1:(3+i))] + treat*X.pol[,c(1:(3+i))]))
+
+# Get point estimates of treatment effect
+global.betas.full = sapply(1:4,function(i) global.regs.full[[i]]$coefficients[2])
+
+# Get robust SEs
+global.SEs.full   = sapply(1:4,function(i) sqrt(diag(vcovHC(global.regs.full[[i]],"HC2")))[2])
+
+# Put results together
+global.results.full = rbind(global.betas.full, global.SEs.full)
+colnames(global.results.full) = c(3,4,5,6)
+xtable(global.results.full,digits=c(0,2,2,2,2))
+
+# Plot fitted values + data
+temp.rd = rdplot(Y,x,hide=TRUE)
+plot(temp.rd$vars_bins$rdplot_mean_x,temp.rd$vars_bins$rdplot_mean_y,pch=20,xlab="povrate60",ylab="mort_related_post")
+points(x,global.regs.full[[2]]$fitted.values,pch=6,col="blue")
+abline(v=0)
+dev.copy(pdf,'q2-2-full.pdf')
+dev.off()
+
+######################################################################
+# [2.3] Robust local polynomial methods
+######################################################################
+
+# MSE-optimal RD treatment effect estimates
+rd.regs = lapply(0:2, function(i) rdrobust(Y,x,p=i,all=TRUE))
+
+# Combine results for different polynomial orders
+rd.p0   = cbind(rd.regs[[1]]$coef,rd.regs[[1]]$se,rd.regs[[1]]$ci)
+rd.p1   = cbind(rd.regs[[2]]$coef,rd.regs[[2]]$se,rd.regs[[2]]$ci)
+rd.p2   = cbind(rd.regs[[3]]$coef,rd.regs[[3]]$se,rd.regs[[3]]$ci)
+
+xtable(rd.p0,digits=c(0,2,2,2,2))
+xtable(rd.p1,digits=c(0,2,2,2,2))
+xtable(rd.p2,digits=c(0,2,2,2,2))
+
+# Robustness checks
+rd.rob1 = rdrobust(data[,mort_related_pre],x,p=1,all=TRUE)
+rd.rob2 = rdrobust(data[,mort_injury_post],x,p=1,all=TRUE)
+
+rd.rob1.res   = cbind(rd.rob1$coef,rd.rob1$se,rd.rob1$ci)
+rd.rob2.res   = cbind(rd.rob2$coef,rd.rob2$se,rd.rob2$ci)
+
+xtable(rd.rob1.res,digits=c(0,2,2,2,2))
+xtable(rd.rob2.res,digits=c(0,2,2,2,2))
+
+######################################################################
+# [2.3] Local randomization inference
+######################################################################
+
+# Use defaults to compute recommended window for local randomization
+rdwindow = rdwinselect(x,c(data[,mort_related_pre],data[,mort_injury_post]))
+
+# Conduct randomization inference using recommended window
+rd.rand.res = rdrandinf(Y,x,wl=rdwindow$window[1],wr=rdwindow$window[2])
+
+\end{verbatim}
 
 
 

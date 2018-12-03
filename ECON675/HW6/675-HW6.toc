@@ -1,10 +1,16 @@
-\contentsline {section}{\numberline {1}The effect of Head Start on child mortality}{2}{section.1}
-\contentsline {subsection}{\numberline {1.1}RD plots and falsification tests}{2}{subsection.1.1}
-\contentsline {subsection}{\numberline {1.2}Global and flexible parametric methods}{3}{subsection.1.2}
-\contentsline {subsection}{\numberline {1.3}Robust local polynomial methods}{4}{subsection.1.3}
-\contentsline {subsubsection}{\numberline {1.3.1}Baseline estimates}{4}{subsubsection.1.3.1}
-\contentsline {subsubsection}{\numberline {1.3.2}Placebo tests}{4}{subsubsection.1.3.2}
-\contentsline {subsection}{\numberline {1.4}Local randomization inference}{4}{subsection.1.4}
-\contentsline {subsubsection}{\numberline {1.4.1}Window selection}{5}{subsubsection.1.4.1}
-\contentsline {subsubsection}{\numberline {1.4.2}Randomization inference}{5}{subsubsection.1.4.2}
-\contentsline {section}{\numberline {2}Appendix: \texttt {R} code}{6}{section.2}
+\contentsline {section}{\numberline {1}Continuity-based identification in SRD designs}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}RD treatment effect with a single cutoff}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}RD treatment effect with multiple cutoffs}{2}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}RD treatment effect with individual heterogeneity}{3}{subsection.1.3}
+\contentsline {section}{\numberline {2}The effect of Head Start on child mortality}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}RD plots and falsification tests}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Global and flexible parametric methods -- BAD!}{5}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Constant treatment effect}{5}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Fully interacted model}{7}{subsubsection.2.2.2}
+\contentsline {subsection}{\numberline {2.3}Robust local polynomial methods}{8}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Baseline estimates}{8}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}Placebo tests}{8}{subsubsection.2.3.2}
+\contentsline {subsection}{\numberline {2.4}Local randomization inference}{9}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Window selection}{9}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Randomization inference}{9}{subsubsection.2.4.2}
+\contentsline {section}{\numberline {3}Appendix: \texttt {R} code}{10}{section.3}

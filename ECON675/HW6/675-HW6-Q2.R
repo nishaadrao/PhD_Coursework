@@ -78,7 +78,7 @@ xtable(binom.results,digits = c(0,1,0,0,3))
 rdtest = rddensity(x)
 
 ######################################################################
-# [2.2]A Global polynomial regressions
+# [2.2]A Global polynomial regression - constant treatment effect
 ######################################################################
 
 # Create treatment dummy for regressions
@@ -103,6 +103,40 @@ global.SEs   = sapply(1:4,function(i) sqrt(diag(vcovHC(global.regs[[i]],"HC2")))
 global.results = rbind(global.betas, global.SEs)
 colnames(global.results) = c(3,4,5,6)
 xtable(global.results,digits=c(0,2,2,2,2))
+
+# Plot fitted values and data
+temp.rd = rdplot(Y,x,hide=TRUE)
+plot(temp.rd$vars_bins$rdplot_mean_x,temp.rd$vars_bins$rdplot_mean_y,pch=20,xlab="povrate60",ylab="mort_related_post")
+points(x,global.regs[[2]]$fitted.values,pch=6,col="blue")
+abline(v=0)
+dev.copy(pdf,'q2-2-const.pdf')
+dev.off()
+
+######################################################################
+# [2.2]B Global polynomial regression - fully interacted model
+######################################################################
+
+# Run fully-interacted polynomial regressions
+global.regs.full = lapply(0:3,function(i) lm(Y ~ treat + X.pol[,c(1:(3+i))] + treat*X.pol[,c(1:(3+i))]))
+
+# Get point estimates of treatment effect
+global.betas.full = sapply(1:4,function(i) global.regs.full[[i]]$coefficients[2])
+
+# Get robust SEs
+global.SEs.full   = sapply(1:4,function(i) sqrt(diag(vcovHC(global.regs.full[[i]],"HC2")))[2])
+
+# Put results together
+global.results.full = rbind(global.betas.full, global.SEs.full)
+colnames(global.results.full) = c(3,4,5,6)
+xtable(global.results.full,digits=c(0,2,2,2,2))
+
+# Plot fitted values + data
+temp.rd = rdplot(Y,x,hide=TRUE)
+plot(temp.rd$vars_bins$rdplot_mean_x,temp.rd$vars_bins$rdplot_mean_y,pch=20,xlab="povrate60",ylab="mort_related_post")
+points(x,global.regs.full[[2]]$fitted.values,pch=6,col="blue")
+abline(v=0)
+dev.copy(pdf,'q2-2-full.pdf')
+dev.off()
 
 ######################################################################
 # [2.3] Robust local polynomial methods
