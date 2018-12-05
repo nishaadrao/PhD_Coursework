@@ -213,7 +213,7 @@ end
 ######################################################################
 # Solve for steady state
 ######################################################################
-function solve_ss(maxiter::Int64,R::Real,W::Real,D::Real,τ::Real,tol=1e-8,i=0,err=1)
+function solve_ss(maxiter::Int64,R::Real=Rbar,W::Real=Wbar,D::Real=0.17,τ::Real=0.1,tol=1e-8,i=0,err=1)
 
     C  = zeros(length(Z))
     G  = zeros(length(z_grid),length(b_grid))
@@ -248,7 +248,7 @@ function solve_ss(maxiter::Int64,R::Real,W::Real,D::Real,τ::Real,tol=1e-8,i=0,e
 
         Dnew = mean(C)*(1-W)             # Compute prelim updated guess of divs
 
-        τnew = 1.4*4*mean(C)*(Rnew-1)/Rnew     # Compute prelim updated guess of τ
+        τnew = 1.4*4*4*mean(C)*(Rnew-1)/Rnew     # Compute prelim updated guess of τ
 
         Xnew = [Rnew,Wnew,Dnew,τnew]
 
@@ -267,9 +267,9 @@ end
 
 ## SOME COMMENTS
 # The above iteration doesn't converge for some reason.
-# But it's definitely working in the right direction.
-# After 100 iterations I get R ~ 1.003 and W ~ 0.91,
-# so the prices are moving the right way.
+# But it definitely gets very close to the solution.
+# After 100 iterations I get R ~ 1.0053 and W ~ 0.81
+# err ~ 2.7e-5
 # I think there's something fishy about the way I update prices, that doesn't
 # give me nice convergence.
 # Or is it possible that the simulation step is adding some small insurmountable error?
