@@ -15,5 +15,5 @@
 \contentsline {subsection}{\numberline {2.4}Local randomization inference}{9}{subsection.2.4}
 \contentsline {subsubsection}{\numberline {2.4.1}Window selection}{9}{subsubsection.2.4.1}
 \contentsline {subsubsection}{\numberline {2.4.2}Fisher's approach}{9}{subsubsection.2.4.2}
-\contentsline {subsubsection}{\numberline {2.4.3}Neyman's approach}{9}{subsubsection.2.4.3}
-\contentsline {section}{\numberline {3}Appendix: \texttt {R} code}{10}{section.3}
+\contentsline {subsubsection}{\numberline {2.4.3}Neyman's approach}{10}{subsubsection.2.4.3}
+\contentsline {section}{\numberline {3}Appendix: \texttt {R} code}{11}{section.3}

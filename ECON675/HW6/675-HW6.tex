@@ -311,6 +311,24 @@ Using \verb|rdwinselect| (and the default options), the recommended window is $[
 With the recommended window above, the observed difference in means is $-2.304\%$, with Fisher $p$-value of $0.024$ (associated with the sharp null of no treatment effect and 1000 replications).
 
 \subsubsection{Neyman's approach}
+For Neyman's approach, I compute the difference in means between the treatment and control groups, for different windows around the cutoff. To implement this approach I simply run the simple linear regression
+\begin{align*}
+y_i = \alpha_0 + \beta_0t_i + \e_i.
+\end{align*}
+where $t_i$ is a treatment dummy equal to 1 if county $i$'s poverty rate is above the cutoff. The point estimate $\hat{\beta}_0$ gives me the difference in sample means.
+
+\begin{table}[htpb!]
+\centering
+\begin{tabular}{lrrrrrrrrrr}
+  \hline
+$w$ & 0.80 & 1.00 & 1.20 & 1.40 & 1.60 & 1.80 & 2.00 & 2.20 & 2.40 & 2.60 \\ 
+  \hline
+  $\hat{\beta}_0$& -1.66 & -2.31 & -2.19 & -3.09 & -2.94 & -2.56 & -2.52 & -2.47 & -2.00 & -1.76 \\ 
+  Robust std. err. & 0.99 & 0.90 & 0.82 & 1.38 & 1.36 & 1.20 & 1.10 & 1.05 & 1.04 & 1.00 \\ 
+  $p$-val. & 0.10 & 0.01 & 0.01 & 0.03 & 0.03 & 0.04 & 0.02 & 0.02 & 0.06 & 0.08 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \newpage
 
@@ -319,10 +337,10 @@ With the recommended window above, the observed difference in means is $-2.304\%
 
 \scriptsize
 \begin{verbatim}
-## ECON675: ASSIGNMENT 5
-## Q2: WEAK INSTRUMENTS SIMULATIONS
+## ECON675: ASSIGNMENT 6
+## Q2: THE EFFECT OF HEAD START ON CHILD MORTALITY
 ## Anirudh Yadav 
-## 11/19/2018
+## 12/07/2018
 
 ######################################################################
 # Load packages, clear workspace
@@ -475,7 +493,7 @@ xtable(rd.p0,digits=c(0,2,2,2,2))
 xtable(rd.p1,digits=c(0,2,2,2,2))
 xtable(rd.p2,digits=c(0,2,2,2,2))
 
-# Robustness checks
+# Placebo tests
 rd.rob1 = rdrobust(data[,mort_related_pre],x,p=1,all=TRUE)
 rd.rob2 = rdrobust(data[,mort_injury_post],x,p=1,all=TRUE)
 
@@ -485,8 +503,48 @@ rd.rob2.res   = cbind(rd.rob2$coef,rd.rob2$se,rd.rob2$ci)
 xtable(rd.rob1.res,digits=c(0,2,2,2,2))
 xtable(rd.rob2.res,digits=c(0,2,2,2,2))
 
+# Different kernel/bandwiths
+
 ######################################################################
-# [2.3] Local randomization inference
+# [2.3] Donut holes
+######################################################################
+
+# Order data according to running variable
+data.ordered = data[order(povrate60)]
+x.ordered    = data.ordered[,povrate60]
+y.ordered    = data.ordered[,mort_related_post]
+
+# Get indexes of closest counties to the cutoff
+i.below        = max(which(x.ordered<=0))
+i.above        = min(which(x.ordered>=0))
+
+# Run rdrobust for each donut hole!
+rd.donut = lapply(0:9,function(i) rdrobust(y.ordered[-seq(i.below-i,i.above+i,1)],x.ordered[-seq(i.below-i,i.above+i,1)]))
+
+# Get point estimates
+rd.donut.results = numeric()
+for (t in 1:10){
+  ans = rd.donut[[t]]$coef[3]
+  rd.donut.results = append(rd.donut.results,ans)
+}
+
+######################################################################
+# [2.3] Placebo cutoffs
+######################################################################
+
+cutoffs = seq(-10,10,2)
+
+rd.cutoffs = lapply(1:length(cutoffs), function(i) rdrobust(Y,x,c=cutoffs[i]))
+
+rd.cutoffs.results = numeric()
+for (t in 1:length(cutoffs)){
+  ans = rbind(rd.cutoffs[[t]]$coef[3],rd.cutoffs[[t]]$pv[3])
+  rd.cutoffs.results = cbind(rd.cutoffs.results,ans)
+}
+
+
+######################################################################
+# [2.4] Local randomization inference -- FISHER
 ######################################################################
 
 # Use defaults to compute recommended window for local randomization
@@ -495,6 +553,35 @@ rdwindow = rdwinselect(x,c(data[,mort_related_pre],data[,mort_injury_post]))
 # Conduct randomization inference using recommended window
 rd.rand.res = rdrandinf(Y,x,wl=rdwindow$window[1],wr=rdwindow$window[2])
 
+######################################################################
+# [2.4] Local randomization inference -- NEYMAN
+######################################################################
+
+# Windows around the cutoff
+windows = seq(0.8,2.6,0.2)
+
+# Sample sizes
+N.0   = sapply(1:length(windows),function(i) sum(x >= -windows[i] & x <=0))
+N.1   = sapply(1:length(windows),function(i) sum(x >= 0 & x <= windows[i]))
+N.t   = N.0 + N.1
+
+# Add treatment dummy to data table
+data[,treat:=treat]
+
+# Run simple regressions for different windows
+neyman.regs = lapply(1:length(windows),function(i) lm(mort_related_post ~ treat,data=data[povrate60>=-windows[i] & povrate60<=windows[i]]))
+
+# Get point estimates
+neyman.betas = sapply(1:length(windows), function(i) neyman.regs[[i]]$coefficients[2])
+
+# Get robust SEs
+neyman.SEs   = sapply(1:length(windows),function(i) sqrt(diag(vcovHC(neyman.regs[[i]],"HC2")))[2])
+
+# Get p-vals
+neyman.p     = sapply(1:length(windows),function(i) 2*pt(abs(neyman.betas[i]/neyman.SEs[i]),df=N.t[i]-2,lower.tail=FALSE))
+
+# Get results
+neyman.results = rbind(windows,neyman.betas,neyman.SEs,neyman.p)
 \end{verbatim}
 
 

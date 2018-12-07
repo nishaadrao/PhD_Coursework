@@ -1,7 +1,7 @@
-## ECON675: ASSIGNMENT 5
-## Q2: WEAK INSTRUMENTS SIMULATIONS
+## ECON675: ASSIGNMENT 6
+## Q2: THE EFFECT OF HEAD START ON CHILD MORTALITY
 ## Anirudh Yadav 
-## 11/19/2018
+## 12/07/2018
 
 ######################################################################
 # Load packages, clear workspace
@@ -218,13 +218,29 @@ rd.rand.res = rdrandinf(Y,x,wl=rdwindow$window[1],wr=rdwindow$window[2])
 # [2.4] Local randomization inference -- NEYMAN
 ######################################################################
 
+# Windows around the cutoff
 windows = seq(0.8,2.6,0.2)
 
+# Sample sizes
 N.0   = sapply(1:length(windows),function(i) sum(x >= -windows[i] & x <=0))
 N.1   = sapply(1:length(windows),function(i) sum(x >= 0 & x <= windows[i]))
+N.t   = N.0 + N.1
 
-T.diffmeans = sapply(1:length(windows), function(i) data[povrate60 >= 0 & povrate60 <=windows[i], mean(mort_related_post)]-data[povrate60 >= -windows[i] & povrate60 <=0, mean(mort_related_post)])
+# Add treatment dummy to data table
+data[,treat:=treat]
 
-SD.0  = sapply(1:length(windows), function(i) data[povrate60 >= -windows[i] & povrate60 <=0, sd(mort_related_post)] )
-SD.1  = sapply(1:length(windows), function(i) data[povrate60 >= 0 & povrate60 <=windows[i], sd(mort_related_post)] )
+# Run simple regressions for different windows
+neyman.regs = lapply(1:length(windows),function(i) lm(mort_related_post ~ treat,data=data[povrate60>=-windows[i] & povrate60<=windows[i]]))
+
+# Get point estimates
+neyman.betas = sapply(1:length(windows), function(i) neyman.regs[[i]]$coefficients[2])
+
+# Get robust SEs
+neyman.SEs   = sapply(1:length(windows),function(i) sqrt(diag(vcovHC(neyman.regs[[i]],"HC2")))[2])
+
+# Get p-vals
+neyman.p     = sapply(1:length(windows),function(i) 2*pt(abs(neyman.betas[i]/neyman.SEs[i]),df=N.t[i]-2,lower.tail=FALSE))
+
+# Get results
+neyman.results = rbind(windows,neyman.betas,neyman.SEs,neyman.p)
 
