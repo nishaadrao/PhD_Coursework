@@ -140,7 +140,30 @@ Std. err. & 0.0043 & 0.0012
 }
 
 \frame{\frametitle{Causal estimates}
+\begin{itemize}
+\item Basic idea: choose market pairs that are close together but separated by a border 
+\item Factors that affect price (other than spatial competition) should be similar for the market pairs. 
+\item For each market pair $(m,m')$ estimate:
+\begin{align*}
+\Delta \log p^f_{cmdt} = \beta_1(\Delta \text{comp}_m) + \gamma_{ss'} + \tilde \e_{cmdt}
+\end{align*}
+\end{itemize}
 
+}
+
+\frame{\frametitle{Causal estimates}
+\begin{table}
+\centering
+\caption{Border Discontinuity Regressions}
+\begin{tabular}{lrrr}
+\hline
+& \multicolumn{3}{c}{Distance between market pairs (km)} \\
+& $<25$ & $<30$ & $<35$ \\
+\hline
+$\hat{\beta}_1$ &0.025 & 0.035 & 0.036\\
+Robust std. err. & 0.011 & 0.013 & 0.009\\
+\end{tabular}
+\end{table}
 }
 
 
