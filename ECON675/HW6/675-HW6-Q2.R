@@ -154,7 +154,7 @@ xtable(rd.p0,digits=c(0,2,2,2,2))
 xtable(rd.p1,digits=c(0,2,2,2,2))
 xtable(rd.p2,digits=c(0,2,2,2,2))
 
-# Robustness checks
+# Placebo tests
 rd.rob1 = rdrobust(data[,mort_related_pre],x,p=1,all=TRUE)
 rd.rob2 = rdrobust(data[,mort_injury_post],x,p=1,all=TRUE)
 
@@ -164,8 +164,48 @@ rd.rob2.res   = cbind(rd.rob2$coef,rd.rob2$se,rd.rob2$ci)
 xtable(rd.rob1.res,digits=c(0,2,2,2,2))
 xtable(rd.rob2.res,digits=c(0,2,2,2,2))
 
+# Different kernel/bandwiths
+
 ######################################################################
-# [2.3] Local randomization inference
+# [2.3] Donut holes
+######################################################################
+
+# Order data according to running variable
+data.ordered = data[order(povrate60)]
+x.ordered    = data.ordered[,povrate60]
+y.ordered    = data.ordered[,mort_related_post]
+
+# Get indexes of closest counties to the cutoff
+i.below        = max(which(x.ordered<=0))
+i.above        = min(which(x.ordered>=0))
+
+# Run rdrobust for each donut hole!
+rd.donut = lapply(0:9,function(i) rdrobust(y.ordered[-seq(i.below-i,i.above+i,1)],x.ordered[-seq(i.below-i,i.above+i,1)]))
+
+# Get point estimates
+rd.donut.results = numeric()
+for (t in 1:10){
+  ans = rd.donut[[t]]$coef[3]
+  rd.donut.results = append(rd.donut.results,ans)
+}
+
+######################################################################
+# [2.3] Placebo cutoffs
+######################################################################
+
+cutoffs = seq(-10,10,2)
+
+rd.cutoffs = lapply(1:length(cutoffs), function(i) rdrobust(Y,x,c=cutoffs[i]))
+
+rd.cutoffs.results = numeric()
+for (t in 1:length(cutoffs)){
+  ans = rbind(rd.cutoffs[[t]]$coef[3],rd.cutoffs[[t]]$pv[3])
+  rd.cutoffs.results = cbind(rd.cutoffs.results,ans)
+}
+
+
+######################################################################
+# [2.4] Local randomization inference -- FISHER
 ######################################################################
 
 # Use defaults to compute recommended window for local randomization
@@ -173,3 +213,18 @@ rdwindow = rdwinselect(x,c(data[,mort_related_pre],data[,mort_injury_post]))
 
 # Conduct randomization inference using recommended window
 rd.rand.res = rdrandinf(Y,x,wl=rdwindow$window[1],wr=rdwindow$window[2])
+
+######################################################################
+# [2.4] Local randomization inference -- NEYMAN
+######################################################################
+
+windows = seq(0.8,2.6,0.2)
+
+N.0   = sapply(1:length(windows),function(i) sum(x >= -windows[i] & x <=0))
+N.1   = sapply(1:length(windows),function(i) sum(x >= 0 & x <= windows[i]))
+
+T.diffmeans = sapply(1:length(windows), function(i) data[povrate60 >= 0 & povrate60 <=windows[i], mean(mort_related_post)]-data[povrate60 >= -windows[i] & povrate60 <=0, mean(mort_related_post)])
+
+SD.0  = sapply(1:length(windows), function(i) data[povrate60 >= -windows[i] & povrate60 <=0, sd(mort_related_post)] )
+SD.1  = sapply(1:length(windows), function(i) data[povrate60 >= 0 & povrate60 <=windows[i], sd(mort_related_post)] )
+

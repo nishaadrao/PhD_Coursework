@@ -10,7 +10,10 @@
 \contentsline {subsection}{\numberline {2.3}Robust local polynomial methods}{8}{subsection.2.3}
 \contentsline {subsubsection}{\numberline {2.3.1}Baseline estimates}{8}{subsubsection.2.3.1}
 \contentsline {subsubsection}{\numberline {2.3.2}Placebo tests}{8}{subsubsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.3}Donut holes!}{9}{subsubsection.2.3.3}
+\contentsline {subsubsection}{\numberline {2.3.4}Placebo cutoffs}{9}{subsubsection.2.3.4}
 \contentsline {subsection}{\numberline {2.4}Local randomization inference}{9}{subsection.2.4}
 \contentsline {subsubsection}{\numberline {2.4.1}Window selection}{9}{subsubsection.2.4.1}
-\contentsline {subsubsection}{\numberline {2.4.2}Randomization inference}{9}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.2}Fisher's approach}{9}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Neyman's approach}{9}{subsubsection.2.4.3}
 \contentsline {section}{\numberline {3}Appendix: \texttt {R} code}{10}{section.3}
