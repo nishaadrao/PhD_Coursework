@@ -10,6 +10,10 @@
 \usepackage{xcolor}
 
 
+\let\OLDitemize\itemize
+\renewcommand\itemize{\OLDitemize\addtolength{\itemsep}{10pt}}
+
+
 %personal definitions and commands
 \newcommand{\R}{\mathbb{R}} 
 \newcommand{\E}{\mathbb{E}}
@@ -34,6 +38,7 @@
 
 \frame{\titlepage}
 
+\iffalse
 \frame{\frametitle{Outline}
   \begin{enumerate}    
   \item Motivation and overview
@@ -129,6 +134,104 @@ Std. err. & 0.0043 & 0.0012
 \end{itemize}
 
 }
+\fi
+
+\frame{\frametitle{Environment}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item $S$ regions (independent for now)
+\item One crop (we'll add more later)
+\item Within each region,
+\begin{itemize}\setlength{\itemsep}{5pt}
+\item farmers, $f\in \{1,...,F\} \equiv \mathcal{F}$
+\item intermediares, $m \in  \{1,...,M\} \equiv \mathcal{M}$
+\end{itemize}
+\item Iceberg trade costs: $\tau_{fm}>1$.
+\item Partial equilibrium (demand side is exogenously given)
+\end{itemize}
+
+}
+
+\frame{\frametitle{Technology}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item Farmers have Cobb-Douglas production technology,
+\begin{align*}
+y_f = \tilde{A}_f\left(h_f^\gamma l_f^\nu \prod_{k=1}^K(x_f^k)^{\alpha_k}\right)
+\end{align*}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item $\{x^k\}$ intermediate inputs, prices $\{w^k\}$ (exogenously given)
+\item $h_f$ and $l_f$ are endowments of land and labor (i.e. fixed).
+\end{itemize}
+
+\end{itemize}
+
+}
+
+\frame{\frametitle{Market choice}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item Farmer's problem is to choose the market $m$ that maximizes profit (note the trade cost):
+\begin{align*}
+\max_{m \in \mathcal{M}} \left\{\frac{p^f(m)y_f}{\tau_{fm}}\right\}
+\end{align*}
+\end{itemize}
+}
+
+\frame{\frametitle{Price determination}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item Once farmer $f$ reaches market $m$, all costs are sunk.
+\item Farmer's price is determined via Nash Bargaining.
+\item Farmer's outside option:
+\begin{align*}
+\underline{p}(m) = \max_{k \in \mathcal{M} \backslash \{m\}} \left\{\frac{p^f(k)}{\tau_{mk}}\right\}
+\end{align*}
+\item Intermediary's outside option is zero.
+\end{itemize}
+}
+
+\frame{\frametitle{Price determination: Nash bargaining}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item NB outcome is the solution to
+\begin{align*}
+\max_{\lambda}\text{ }  (\lambda - \underline{p}(m)q_m)^\delta(p^r_mq_m - \lambda)^{1-\delta}
+\end{align*}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item $\lambda$ is farmer's income
+\item $p^r_m$ is the retail price (exogenous)
+\end{itemize}
+\end{itemize}
+}
+
+
+\frame{\frametitle{Equilibrium}
+Set of farmer prices $p^f(\cdot)$, intermediate input choices $\{x^k_f\}_{k\in \mathcal{K}, f\in \mathcal{F}}$, and the optimal market choice of each farmer $\{\mu(f)\}_{f \in \mathcal{F}}$:
+\begin{enumerate}\setlength{\itemsep}{10pt}
+\item Farmers maximize profits;
+\item Farmers optimally choose the market to sell their output;
+\item At each market, the farmer's price is determined by the NB solution, assuming that NB in all other markets have reached an agreement.
+\end{enumerate}
+
+}
+
+\frame{\frametitle{Equilibrium -- solution}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item Solution to NB problem:
+\begin{align*}
+p^f(m) = (1-\delta) \underline{p}(m) + \delta p^r_m
+\end{align*}
+using $p^f(m)  = \lambda / q_m$.
+\item System of $M$ equations in $M$ endogenous variables $\{p^f(m)\}_{m \in \mathcal{M}}$
+\item \textbf{T1}: Equilibrium exists and is unique.
+\item \textbf{L1}: Given retail prices, removing the interregional trading restriction improves farmer prices.\\
+$\implies$ Intuition: farmer's outside option is better!
+\end{itemize}
+}
+
+\frame{\frametitle{Data + estimation + calibration}
+
+}
+
+\frame{\frametitle{Counterfactual 1:}
+
+}
 
 
 \section{Appendix}
@@ -165,6 +268,33 @@ Robust std. err. & 0.011 & 0.013 & 0.009\\
 \end{tabular}
 \end{table}
 }
+
+\frame{\frametitle{Estimation + calibration}
+\begin{itemize}
+\item Parameterize $\tau$:
+\begin{align*}
+&\tau_{mkct} = 
+\begin{cases}
+1 &\text{ if } m=k\\
+1+ A\cdot d_{mk} + \e_{mct} & \text{ if } m \neq k\\
+\infty & \text{ if } m, k \text{ in diff states}
+\end{cases}\\
+&\e_{mct} \sim \N(0,\sigma^2)
+\end{align*}
+\item Estimate $(\delta, \sigma^2, A)$ using SMM.
+\end{itemize}
+
+}
+
+\frame{\frametitle{Model fit}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{fit}
+\label{default}
+\end{figure}
+
+}
+
 
 
 
