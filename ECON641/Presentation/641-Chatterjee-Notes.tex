@@ -75,7 +75,54 @@ For the causal estimates, the basic idea is to choose market pairs close to each
 
 \subsection{Empirical results}
 
+\newpage
+
 \section{Model}
+\subsection{Environment}
+\begin{itemize}
+\item $S$ regions in the economy
+\item One crop (we'll add more later)
+\item Within each region,
+\begin{itemize}
+\item farmers, $f\in \{1,...,F\} \equiv \mathcal{F}$
+\item intermediares, $m \in  \{1,...,M\} \equiv \mathcal{M}$
+\end{itemize}
+\item Iceberg trade costs: $\tau_{fm}>1$.
+\end{itemize}
+
+\subsection{Production}
+\begin{itemize}
+\item Farmers have Cobb-Douglas production technology,
+\begin{align*}
+y_f = \tilde{A}_f\left(h_f^\gamma l_f^\nu \prod_{k=1}^K(x_f^k)^{\alpha_k}\right),
+\end{align*}
+\begin{itemize}
+\item $\{x^k\}$ are intermediate inputs, with prices $\{w^k\}$ (exogenously given)
+\item $h_f$ and $l_f$ are endowments of land and labor (i.e. fixed).
+\end{itemize}
+\end{itemize}
+
+\subsection{Market choice}
+\begin{itemize}
+\item Farmer's problem is to choose the market $m$ that maximizes profit:
+\begin{align*}
+\max_{m \in \mathcal{M}} \left\{\frac{p^f(m)y_f}{\tau_{fm}}\right\}
+\end{align*}
+\end{itemize}
+
+\subsection{Price determination}
+\begin{itemize}
+\item Once farmer $f$ reaches market $m$, all costs are sunk.
+\item Farmer's price is determined via Nash Bargaining.
+\item Farmer's outside option:
+\begin{align*}
+\underline{p}(m) = \max_{k \in \mathcal{M} \backslash \{m\}} \left\{\frac{p^f(k)}{\tau_{mk}}\right\}
+\end{align*}
+\end{itemize}
+
+
+
+
 
 \section{Counterfactuals}
 
