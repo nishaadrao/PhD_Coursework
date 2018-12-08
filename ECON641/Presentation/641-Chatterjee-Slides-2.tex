@@ -225,11 +225,58 @@ $\implies$ Intuition: farmer's outside option is better!
 \end{itemize}
 }
 
-\frame{\frametitle{Data + estimation + calibration}
+\frame{\frametitle{Taking model to the data}
+\begin{itemize}\setlength{\itemsep}{10pt}
+\item Expand to include multiple crops and time periods; system of $M \times C \times T$ equations/variables.
+\item Semi-annual data (7 years): market locations, farmer prices and retail prices for each crop, district-level crop choice.
+\item Estimation: (i) parameterize $\tau$; (ii) estimate $\delta$ + trade cost parameters using SMM.
+\item Calibrate other parameters $(\gamma, \nu)$.
+\end{itemize}
 
 }
 
-\frame{\frametitle{Counterfactual 1:}
+\frame{\frametitle{Counterfactual \#1: changing farmers' outside option}
+\pause
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{cf1-a}
+\caption{Change in Price vs. Change in Spatial Competition}
+\end{figure}
+
+}
+
+\frame{\frametitle{Counterfactual \#1: changing farmers' outside option}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{cf1-b}
+\caption{Change in Price vs. Distance to Nearest Border}
+\end{figure}
+
+}
+
+\frame{\frametitle{Other counterfactuals}
+\begin{table}
+\centering
+\caption{\textbf{Summary of Counterfactual Exercises}}
+Change in farmer prices (\%)
+\begin{tabular}{lrrrr}
+\hline
+& \multicolumn{2}{c}{Median} & \multicolumn{2}{c}{Mean} \\
+& \textit{Fall }& \textit{Spring} &\textit{ Fall }& \textit{Spring}\\
+\hline
+\#1: Change outside option &1.75  & 2.50 & 2.74 & 2.65\\
+\#2: \#1 + change market choice &8.35  & 5.82 & 12.60 & 10.72\\
+\#3: \#2 + adjust retail prices & 5.98  & 6.21 & 9.62 & 9.56\\
+\end{tabular}
+\end{table}
+
+}
+
+\frame{\frametitle{Conclusion}
+\begin{itemize}
+\item Very cool paper: nice data work + simple, but powerful model!
+\item Increasing spatial competition between intermediaries by removing interstate trade restrictions is good for farmers.
+\end{itemize}
 
 }
 
@@ -253,6 +300,8 @@ $\implies$ Intuition: farmer's outside option is better!
 \end{itemize}
 
 }
+
+
 
 \frame{\frametitle{Causal estimates}
 \begin{table}
@@ -293,6 +342,22 @@ Robust std. err. & 0.011 & 0.013 & 0.009\\
 \label{default}
 \end{figure}
 
+}
+
+\frame{\frametitle{Counterfactual \# 2: Allow farmers to sell at different market}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{cf2}
+\label{default}
+\end{figure}
+}
+
+\frame{\frametitle{Counterfactual \# 3: Allowing retail prices to adjust}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{cf4}
+\label{default}
+\end{figure}
 }
 
 
