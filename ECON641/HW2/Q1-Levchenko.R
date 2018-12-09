@@ -25,5 +25,15 @@ data = as.data.table(read.dta13('PanelAnnual_compustat1980_2015.dta'))
 # Create 1 digit SIC codes
 data[,sic1:=cut(sic,c(0,999,1999,3999,4999,5999,6999,8999,9999),labels=c("Ag","MinCon","Man","Tran","WRTrade","Fin","Serv","Pub"))]
 
-  
+# Create additional variables, by fyear
+data[,`:=`(rsales=rank(-sale), remp=rank(-emp), logsale=log(sale),logemp=log(emp)), by=fyear]
+
+# Keep only 2015 & 1985 data
+data=data[fyear==2015|fyear==1985]
+
+
+######################################################################
+# Plot data
+######################################################################
+
 
