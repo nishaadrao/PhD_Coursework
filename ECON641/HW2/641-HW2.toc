@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}The Firm Size Distribution}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Power law in firm size}{2}{subsection.1.1}
+\contentsline {subsubsection}{\numberline {1.1.1}Firm sales}{2}{subsubsection.1.1.1}
+\contentsline {subsubsection}{\numberline {1.1.2}Firm sales by industry}{3}{subsubsection.1.1.2}
+\contentsline {subsubsection}{\numberline {1.1.3}Employment}{3}{subsubsection.1.1.3}
+\contentsline {subsubsection}{\numberline {1.1.4}Employment by industry}{3}{subsubsection.1.1.4}
+\contentsline {subsubsection}{\numberline {1.1.5}Robustness check: 1985 data}{3}{subsubsection.1.1.5}
